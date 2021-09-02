@@ -28,7 +28,7 @@ addIRS(10,Irs)
 
 #L.extend(-1*cauchy.pdf(np.linspace(-5,5,200)))
 plt.plot(np.linspace(0,1000,6000),Irs)
-#plt.savefig("test.png")
+plt.savefig("test.png")
 #plt.axis([-10,20,-.34,0])
 #plt.show()
 

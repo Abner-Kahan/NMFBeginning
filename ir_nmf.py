@@ -7,28 +7,34 @@ import random
 
 
 Irs=[]
-for n in range (6000):
+PointNum=20000
+for n in range (PointNum):
     Irs+=[0]
 
 def addIRS(peakNum,L):
     for n in range(peakNum):
         xloc=  random.randrange(len(L))
+        #thickness= 10**(random.randrange(10,50)/10 )
+        thickness = random.randrange(10,1000)
+        thickness2 = random.randrange(1,5)
+        peakHeight=random.random()
 #add width
-        if (xloc + 201) > 6000:
-            end = 6000
+        if (xloc + thickness+1) > PointNum:
+            end = PointNum
         else: 
-            end = (xloc + 201)
-        if (xloc-200 < 0):
+            end = (xloc + thickness+1)
+        if (xloc-thickness < 0):
             start= 0
         else:
-            start = xloc - 200
-        L[start:end]= -1*cauchy.pdf(np.linspace(-5,5,end-start))
+            start = xloc - thickness
+        L[start:end]= -1*cauchy.pdf(np.linspace(-1*thickness2,thickness2,end-start))*peakHeight
     return L
-addIRS(10,Irs)
+addIRS(20,Irs)
 
 #L.extend(-1*cauchy.pdf(np.linspace(-5,5,200)))
-plt.plot(np.linspace(0,1000,6000),Irs)
+plt.plot(np.linspace(4000,400,PointNum),Irs)
 plt.savefig("test.png")
+
 #plt.axis([-10,20,-.34,0])
 #plt.show()
 

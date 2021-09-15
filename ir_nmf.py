@@ -4,7 +4,9 @@ import numpy as np
 import pandas as pd
 from scipy.stats import cauchy
 import random
-
+from scipy import constants
+#import radis
+ReducedMass = 
 
 Irs=[]
 for n in range (6000):

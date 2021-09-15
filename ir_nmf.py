@@ -8,30 +8,52 @@ from scipy import constants
 #import radis
 ReducedMass = 
 
-Irs=[]
-for n in range (6000):
-    Irs+=[0]
-
-def addIRS(peakNum,L):
+def addIRS(peakNum,PointNum):
+    Ir = np.zeros(PointNum)
     for n in range(peakNum):
-        xloc=  random.randrange(len(L))
-#add width
-        if (xloc + 201) > 6000:
-            end = 6000
+        xloc=  random.randrange(PointNum)
+        
+        thickness = random.randrange(10,1000)
+        thickness2 = random.randrange(1,5)
+        peakHeight=random.random()
+#This is supposed to deal with peaks toward the ends of the spectra
+        if (xloc + thickness+1) > PointNum:
+            end = PointNum
         else: 
-            end = (xloc + 201)
-        if (xloc-200 < 0):
+            end = (xloc + thickness+1)
+        if (xloc-thickness < 0):
             start= 0
         else:
-            start = xloc - 200
-        L[start:end]= -1*cauchy.pdf(np.linspace(-5,5,end-start))
-    return L
-addIRS(10,Irs)
+            start = xloc - thickness
+        Ir[start:end]= -1*cauchy.pdf(np.linspace(-1*thickness2,thickness2,end-start))*peakHeight
+    return Ir
 
+#IR2Stack= addIRS(30,20000).append[(addIRS(30,20000))]
+IR2Stack = np.column_stack((addIRS(30,20000),addIRS(30,20000)))
+
+IR2Stack = np.column_stack((IR2Stack, IR2Stack[:,1] + IR2Stack[:,0]))
+
+
+plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )
+plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
+
+plt.plot(np.linspace(4000,400,20000),IR2Stack[:,2] )
+#plt.savefig("test.png")
+
+
+
+
+#old code that may not work
+#thickness= 10**(random.randrange(10,50)/10 )
 #L.extend(-1*cauchy.pdf(np.linspace(-5,5,200)))
-plt.plot(np.linspace(0,1000,6000),Irs)
-plt.savefig("test.png")
 #plt.axis([-10,20,-.34,0])
 #plt.show()
+'''
+Irs=[]
 
+for n in range (PointNum):
+    Irs+=[0]
+    '''
+    #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
 
+#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )

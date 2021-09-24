@@ -65,7 +65,34 @@ def nmfTester(spectra):
     plt.savefig("0of" + str(spectra)+ ":Original Spectra.png")
     plt.show()
     plt.close()
-    for n in range(spectra - 1):
+    for n in range(spectra - 1):#plt.plot(np.linspace(4000,400,20000),IR2Stack)
+#plt.title("Two Original Spectra")
+plt.savefig("test.png")
+'''
+model = NMF(n_components=2, init='nndsvda', random_state=0)
+W = model.fit_transform(IR2Stack)
+plt.plot(np.linspace(4000,400,20000),W[:,0],color = 'cyan')
+plt.show()
+plt.close()
+plt.plot(np.linspace(4000,400,20000),W[:,1],color = 'yellow')
+plt.title("Two Calculated Spectra")
+plt.xlabel("cm^-1")
+#plt.savefig("calcSpectra.png")
+plt.show()
+plt.close()
+H = model.components_
+'''#plt.xlabel("cm^-1")
+#plt.savefig("basespectra.png")
+#plt.show()
+#plt.close()
+#IR2Stack = np.column_stack((IR2Stack, IR2Stack[:,1] + IR2Stack[:,0]))
+
+
+#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )
+#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
+
+#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,2] )
+#
         IR_stack = np.column_stack((IR_stack,addIRS(30,20000)))
         plt.plot(np.linspace(4000,400,20000),IR_stack[:,n+1])
         plt.title(str(n+1)+ " of " + str(spectra)+ ": Original Spectra")

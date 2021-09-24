@@ -61,7 +61,7 @@ H = model.components_
 def nmfTester(spectra):
     IR_stack = addIRS(30,20000)
     plt.plot(np.linspace(4000,400,20000),IR_stack)
-    plt.title("0 of" + str(spectra)+ " : Original Spectra")
+    plt.title("0 of " + str(spectra)+ " : Original Spectra")
     plt.savefig("0of" + str(spectra)+ ":Original Spectra.png")
     plt.show()
     plt.close()
@@ -89,20 +89,6 @@ def nmfTester(spectra):
     plt.title(str(spectra)+ " Calculated Spectra")
     plt.xlabel("cm^-1")
     return W
-nmfTester(4)
+nmfTester(1)
         
 
-#old code that may not work
-#thickness= 10**(random.randrange(10,50)/10 )
-#L.extend(-1*cauchy.pdf(np.linspace(-5,5,200)))
-#plt.axis([-10,20,-.34,0])
-#plt.show()
-'''
-Irs=[]
-
-for n in range (PointNum):
-    Irs+=[0]
-    '''
-    #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
-
-#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )

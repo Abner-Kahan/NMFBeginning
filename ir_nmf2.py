@@ -59,19 +59,20 @@ def nmfMatcher(OG_spectra,Calc_spectra):
     #print(OG_spectra[:50,0])
     #print("--------------")
     #print(Calc_spectra[650:700,1])
+    print(len(OG_spectra))
     errorTable = np.zeros((OG_spectra.shape[1], Calc_spectra.shape[1]))
-    for n in range (len(OG_spectra)):
-        for p in range(OG_spectra.shape[1]):
-            for q in range(OG_spectra.shape[1]):
-                errorTable[q,p] += abs( OG_spectra[n,q] - Calc_spectra[n,p])
-    matchTable=[]
-    #print("errorTable \n \n",errorTable)
-    for entry in range(OG_spectra.shape[1]):
-        Match = np.where(np.amin(errorTable) == errorTable)
-        matchTable += [Match]
-        #print(Match, errorTable[Match])
-        errorTable[Match[0],:]=10**5
-    return(matchTable)
+    # for n in range (len(OG_spectra)):
+    #     for p in range(OG_spectra.shape[1]):
+    #         for q in range(OG_spectra.shape[1]):
+    #             errorTable[q,p] += abs( OG_spectra[n,q] - Calc_spectra[n,p])
+    # matchTable=[]
+    # #print("errorTable \n \n",errorTable)
+    # for entry in range(OG_spectra.shape[1]):
+    #     Match = np.where(np.amin(errorTable) == errorTable)
+    #     matchTable += [Match]
+    #     #print(Match, errorTable[Match])
+    #     errorTable[Match[0],:]=10**5
+    # return(matchTable)
 
 def wholeNum(L,multiplier):
 #multiplier should be a lower bound int guess
@@ -82,7 +83,7 @@ def wholeNum(L,multiplier):
         return wholeNum(L,multiplier+1)
     else:
         return multiplier
-    
+    #
 #print(wholeNum([.20,.90,.15],1)  )  
 def nmfTester(spectra):
     IR_stack = addIRS(10,20000)
@@ -193,20 +194,24 @@ def nmfListTester(spectra):
     plt.gca().invert_yaxis()
     plt.title(str(spectra)+ " Calculated Spectra")
     plt.xlabel("cm^-1")
+    plt.show()
     plt.close()
-    IR_stack=IR_stack[:,1:]
-    for entri in nmfMatcher(IR_stack,W):
-        plt.plot(np.linspace(0,1000,20000),IR_stack[:,entri[0][0]],color="red")
-        plt.plot(np.linspace(0,1000,20000),W[:,entri[1][0]])
-        plt.legend(["Original", "Calculated"])
-        plt.gca().invert_yaxis()
-        plt.title(str(entri[0][0])+ " Both Spectra")
-        plt.xlabel("cm^-1")
-        plt.show()
-        plt.close()
-
+    nmfMatcher(IR_stack [:,1:],W)
+# =============================================================================
+    #for entri in nmfMatcher(IR_stack [:,1:],W):
+    #    print(entri)
+         # plt.plot(np.linspace(0,1000,20000),IR_stack2[:,entri[0][0]],color="red")
+#         plt.plot(np.linspace(0,1000,20000),W[:,entri[1][0]])
+#         plt.legend(["Original", "Calculated"])
+#         plt.gca().invert_yaxis()
+#         plt.title(str(entri[0][0])+ " Both Spectra")
+#         plt.xlabel("cm^-1")
+#         plt.show()
+#         plt.close()
+# 
+# =============================================================================
 #nmfTester(3)
-nmfListTester([.25,.75])
+nmfListTester([.25,.75,.1])
     
 
     

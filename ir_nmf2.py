@@ -15,13 +15,7 @@ def addIRS(peakNum,PointNum):
     Ir = np.zeros(PointNum)
     Irlocs = np.zeros(PointNum)
 
-    for n in range(peakNum):import matplotlib.pyplot as plt
-import numpy as np
-#import pandas as pd
-from scipy.stats import cauchy
-import random
-#from scipy import constants
-from sklearn.decomposition import NMF
+    for n in range(peakNum):
         thickness = int (PointNum * random.choice([.007,.008,.009,.01,.011,.012,.013,.014,.06]))
         for b in range(thickness):
             if any(Ir[b:b+10]):
@@ -89,45 +83,35 @@ def wholeNum(L,multiplier):
     else:
         return multiplier
     
-print(wholeNum([.20,.90,.15],1)  )  
+#print(wholeNum([.20,.90,.15],1)  )  
 def nmfTester(spectra):
-    #IR_stack = addIRS(10,20000)
-    #plt.plot(np.linspace(0,1000,20000),IR_stack)
-    #plt.gca().invert_yaxis()
-    #plt.title("0 of " + str(spectra)+ " : Original Spectra")
+    IR_stack = addIRS(10,20000)
+    plt.plot(np.linspace(0,1000,20000),IR_stack)
+    plt.gca().invert_yaxis()
+    plt.title("0 of " + str(spectra)+ " : Original Spectra")
     #plt.savefig("0of" + str(spectra)+ ":import matplotlib.pyplot as plt
-import numpy as np
-#import pandas as pd
-from scipy.stats import cauchy
-import random
-#from scipy import constants
-from sklearn.decomposition import NMFOriginal Spectra.png")
-   # plt.show()
-    IR_stack = np.empty(20000)
-    ind = 0
-    for n in spectra:
-        n = int(n * wholeNum(spectra, 1))
 
-        for q in range (n):
-            IR_stack = np.column_stack((IR_stack,addIRS(10,20000)))
-        
-        plt.plot(np.linspace(0,1000,20000),IR_stack[:,ind])
+    plt.show()
+    plt.close()
+    for n in range(spectra-1):
+        IR_stack = np.column_stack((IR_stack,addIRS(10,20000))) 
+        plt.plot(np.linspace(0,1000,20000),IR_stack[:,n+1])
         plt.gca().invert_yaxis()
-        plt.title(str(n+1)+ " of " + str(spectra)+ ": Original Spectra")
+        plt.title(str(n)+ " of " + str(spectra)+ ": Original Spectra")
         #plt.savefig((str(n+1)+ "of" + str(spectra)+ "_ Original Spectra.png"))
         plt.show()
         plt.close()
-        ind +=1
     plt.plot(np.linspace(0,1000,20000),IR_stack)
     plt.gca().invert_yaxis()
     plt.title(str(spectra)+ " Original Spectra")
     plt.xlabel("cm^-1")
    # plt.savefig((str(spectra)+ " Original Spectra.png"))
     plt.show()
-    model = NMF(n_components=len(spectra), init='random', random_state=0, shuffle=1 )
+    model = NMF(n_components=spectra, init='random', random_state=0, shuffle=1 )
     
     W = model.fit_transform(IR_stack)
-    for n in range(len(spectra)):
+ 
+    for n in range(spectra):
         plt.plot(np.linspace(0,1000,20000),W[:,n],markersize=1)
         plt.gca().invert_yaxis()
         plt.title(str(n)+ " of " + str(spectra)+ ": Calculated Spectra")
@@ -148,9 +132,8 @@ from sklearn.decomposition import NMFOriginal Spectra.png")
         plt.xlabel("cm^-1")
         plt.show()
         plt.close()
-        
-        
-        
+    print(IR_stack.shape)
+#nmfTester(3)        
         
 def nmfListTester(spectra):
     #IR_stack = addIRS(10,20000)
@@ -159,21 +142,36 @@ def nmfListTester(spectra):
     #plt.title("0 of " + str(spectra)+ " : Original Spectra")
     #plt.savefig("0of" + str(spectra)+ ":Original Spectra.png")
    # plt.show()
-    IR_stack = np.empty(20000)
+   
     ind = 0
     for n in spectra:
         n = int(n * wholeNum(spectra, 1))
-
-        for q in range (n):
-            IR_stack = np.column_stack((IR_stack,addIRS(10,20000)))
+        spectra[ind] = n
+        ind +=1
         
-        plt.plot(np.linspace(0,1000,20000),IR_stack[:,ind])
+    IR_stack = addIRS(10,20000)
+   
+   
+
+    ind= 0
+    start=0
+    end = 0
+    for n in spectra:
+        copi = addIRS(10,20000)
+        for q in range(n):
+             IR_stack = np.column_stack((copi))
+             end+=1
+        print (IR_stack.shape)
+        print(IR_stack[:,:])
+        plt.plot(np.linspace(0,1000,20000),IR_stack[:,start])
         plt.gca().invert_yaxis()
-        plt.title(str(n+1)+ " of " + str(spectra)+ ": Original Spectra")
+        plt.title(str(ind)+ " of " + " Original Spectra")
         #plt.savefig((str(n+1)+ "of" + str(spectra)+ "_ Original Spectra.png"))
         plt.show()
         plt.close()
-        ind +=1
+        ind+=1
+        start+=end
+        
     plt.plot(np.linspace(0,1000,20000),IR_stack)
     plt.gca().invert_yaxis()
     plt.title(str(spectra)+ " Original Spectra")
@@ -186,7 +184,7 @@ def nmfListTester(spectra):
     for n in range(len(spectra)):
         plt.plot(np.linspace(0,1000,20000),W[:,n],markersize=1)
         plt.gca().invert_yaxis()
-        plt.title(str(n)+ " of " + str(spectra)+ ": Calculated Spectra")
+        plt.title(str(n)+ " of "+ ": Calculated Spectra")
        # plt.savefig((str(n)+ " of " + str(spectra)+ "_ Calculated Spectra.png"))
         plt.show()        
         plt.close()
@@ -204,8 +202,9 @@ def nmfListTester(spectra):
         plt.xlabel("cm^-1")
         plt.show()
         plt.close()
-nmfTester([.25,.75])
-    
+
+#nmfTester(3)
+nmfListTester([.25,.75])
     
 
     

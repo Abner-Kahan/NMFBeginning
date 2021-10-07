@@ -142,7 +142,7 @@ def nmfTester(spectra):
         plt.show()
         plt.close()
     print(IR_stack.shape)
-#nmfTester(3)        
+nmfTester(3)        
         
 def nmfListTester(spectra):
     #IR_stack = addIRS(10,20000)

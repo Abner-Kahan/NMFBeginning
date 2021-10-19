@@ -56,23 +56,31 @@ def addIRS(peakNum,PointNum):
 #IR2Stack = np.column_stack((addIRS(30,20000),addIRS(30,20000)))
 
 def nmfMatcher(OG_spectra,Calc_spectra):
-    #print(OG_spectra[:50,0])
-    #print("--------------")
-    #print(Calc_spectra[650:700,1])
-    print(len(OG_spectra))
+    #Sprint(OG_spectra[:10,:])
+    
+    #print(Calc_spectra[:10,:])
+    
+    #print(len(OG_spectra))
     errorTable = np.zeros((OG_spectra.shape[1], Calc_spectra.shape[1]))
-    # for n in range (len(OG_spectra)):
-    #     for p in range(OG_spectra.shape[1]):
-    #         for q in range(OG_spectra.shape[1]):
-    #             errorTable[q,p] += abs( OG_spectra[n,q] - Calc_spectra[n,p])
-    # matchTable=[]
-    # #print("errorTable \n \n",errorTable)
-    # for entry in range(OG_spectra.shape[1]):
-    #     Match = np.where(np.amin(errorTable) == errorTable)
-    #     matchTable += [Match]
-    #     #print(Match, errorTable[Match])
-    #     errorTable[Match[0],:]=10**5
-    # return(matchTable)
+    for n in range (OG_spectra.shape[0]):
+         for p in range(OG_spectra.shape[1]):
+             for q in range(Calc_spectra.shape[1]):
+                 errorTable[p,q] += abs( OG_spectra[n,p] - Calc_spectra[n,q])
+    print("hi \n", errorTable)
+    matchTable=[]
+    #print("errorTable \n \n",errorTable)
+    for entry in range(OG_spectra.shape[1]):
+         Match = np.where(np.amin(errorTable) == errorTable)
+         matchTable += [Match]
+         #print(Match, errorTable[Match])
+         errorTable[Match[0],:]=10**5
+    #print("bob \n", matchTable)
+    #for match in matchTable:
+      #if matchTable.count(match) > 1:
+        #  matchTable.remove(match)
+    
+            
+    return(matchTable)
 
 def wholeNum(L,multiplier):
 #multiplier should be a lower bound int guess
@@ -134,7 +142,7 @@ def nmfTester(spectra):
         plt.show()
         plt.close()
     print(IR_stack.shape)
-#nmfTester(3)        
+nmfTester(3)        
         
 def nmfListTester(spectra):
     #IR_stack = addIRS(10,20000)
@@ -149,34 +157,6 @@ def nmfListTester(spectra):
         n = int(n * wholeNum(spectra, 1))
         spectra[ind] = n
         ind +=1
-<<<<<<< HEAD
-        
-    IR_stack = np.expand_dims(addIRS(1,20),axis=0)
-    print (IR_stack)
-    print("stop1")
-
-    
-    ind= 0
-    start = 1
-    print (spectra, "spectra")
-    for n in spectra:
-        copi = np.expand_dims(addIRS(1,20),axis=0)
-        print (copi)
-        print("stop2")
-        if start == 1:  
-            for q in range(n-1):
-                IR_stack = np.append(IR_stack,copi,axis=0)
-            start = 0
-            print (IR_stack)
-            print("stop3")
-        else:
-             for q in range(n):
-                IR_stack = np.append(IR_stack,copi,axis=0)     
-        ind +=1
-        print(IR_stack)
-        print (IR_stack.shape)
-        plt.plot(np.linspace(0,1000,20000),IR_stack[:,n-1])
-=======
     print(spectra)
     IR_stack = addIRS(10,20000)
    
@@ -189,41 +169,28 @@ def nmfListTester(spectra):
         copi = addIRS(10,20000)
         for q in range(n):
              IR_stack = np.column_stack((IR_stack, copi))
-        print (IR_stack.shape)
-        print(IR_stack[:,:])
+        #print (IR_stack.shape)
+       # print(IR_stack[:,:])
         plt.plot(np.linspace(0,1000,20000),IR_stack[:,ind])
->>>>>>> 10c4f5135892f83f0d59c06d6bde90ada061346e
         plt.gca().invert_yaxis()
         
         plt.title(str(ind)+ " of " + " Original Spectra")
         #plt.savefig((str(n+1)+ "of" + str(spectra)+ "_ Original Spectra.png"))
         plt.show()
         plt.close()
-<<<<<<< HEAD
-
-    plt.plot(np.linspace(0,1000,20000),IR_stack)
-=======
         ind+=n
        
         start+=end
         
     plt.plot(np.linspace(0,1000,20000),IR_stack[:,1:])
->>>>>>> 10c4f5135892f83f0d59c06d6bde90ada061346e
     plt.gca().invert_yaxis()
     plt.title(str(spectra)+ " Original Spectra")
     plt.xlabel("cm^-1")
    # plt.savefig((str(spectra)+ " Original Spectra.png"))
-<<<<<<< HEAD
-  #  plt.show()
-  #  model = NMF(n_components=len(spectra), init='random', random_state=0, shuffle=1 )
-    '''
-    W = model.fit_transform(IR_stack)
-=======
     plt.show()
     model = NMF(n_components=len(spectra), init='random', random_state=0, shuffle=1 )
     
     W = model.fit_transform(IR_stack[:,1:])
->>>>>>> 10c4f5135892f83f0d59c06d6bde90ada061346e
     for n in range(len(spectra)):
         plt.plot(np.linspace(0,1000,20000),W[:,n],markersize=1)
         plt.gca().invert_yaxis()
@@ -237,9 +204,13 @@ def nmfListTester(spectra):
     plt.xlabel("cm^-1")
     plt.show()
     plt.close()
-<<<<<<< HEAD
-    for entri in nmfMatcher(IR_stack,W):
-        plt.plot(np.linspace(0,1000,20000),IR_stack[:,entri[0][0]],color="red")
+    MatchT = nmfMatcher(IR_stack [:,1:],W)
+    IR_stack2 = IR_stack [:,1:]
+#=============================================================================
+      
+    for entri in MatchT:
+        print(entri)
+        plt.plot(np.linspace(0,1000,20000),IR_stack2[:,entri[0][0]],color="red")
         plt.plot(np.linspace(0,1000,20000),W[:,entri[1][0]])
         plt.legend(["Original", "Calculated"])
         plt.gca().invert_yaxis()
@@ -247,27 +218,15 @@ def nmfListTester(spectra):
         plt.xlabel("cm^-1")
         plt.show()
         plt.close()
-'''
-#nmfTester(3)
-nmfListTester([.25,.5])
-=======
-    nmfMatcher(IR_stack [:,1:],W)
-# =============================================================================
-    #for entri in nmfMatcher(IR_stack [:,1:],W):
-    #    print(entri)
-         # plt.plot(np.linspace(0,1000,20000),IR_stack2[:,entri[0][0]],color="red")
-#         plt.plot(np.linspace(0,1000,20000),W[:,entri[1][0]])
-#         plt.legend(["Original", "Calculated"])
-#         plt.gca().invert_yaxis()
-#         plt.title(str(entri[0][0])+ " Both Spectra")
-#         plt.xlabel("cm^-1")
-#         plt.show()
-#         plt.close()
-# 
-# =============================================================================
-#nmfTester(3)
-nmfListTester([.25,.75,.1])
->>>>>>> 10c4f5135892f83f0d59c06d6bde90ada061346e
+
+#=============================================================================
+#nmfTester(2)
+#IR comp1
+#IR comp2
+#mix 1
+#mix 2
+#GLYCLOPIDIS - FIGURE
+#nmfListTester([.25,.75])
     
 
     

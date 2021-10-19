@@ -149,37 +149,45 @@ def nmfListTester(spectra):
         spectra[ind] = n
         ind +=1
         
-    IR_stack = addIRS(10,20000)
-   
-   
+    IR_stack = np.expand_dims(addIRS(1,20),axis=0)
+    print (IR_stack)
+    print("stop1")
 
+    
     ind= 0
-    start=0
-    end = 0
+    start = 1
+    print (spectra, "spectra")
     for n in spectra:
-        copi = addIRS(10,20000)
-        for q in range(n):
-             IR_stack = np.column_stack((copi))
-             end+=1
+        copi = np.expand_dims(addIRS(1,20),axis=0)
+        print (copi)
+        print("stop2")
+        if start == 1:  
+            for q in range(n-1):
+                IR_stack = np.append(IR_stack,copi,axis=0)
+            start = 0
+            print (IR_stack)
+            print("stop3")
+        else:
+             for q in range(n):
+                IR_stack = np.append(IR_stack,copi,axis=0)     
+        ind +=1
+        print(IR_stack)
         print (IR_stack.shape)
-        print(IR_stack[:,:])
-        plt.plot(np.linspace(0,1000,20000),IR_stack[:,start])
+        plt.plot(np.linspace(0,1000,20000),IR_stack[:,n-1])
         plt.gca().invert_yaxis()
         plt.title(str(ind)+ " of " + " Original Spectra")
         #plt.savefig((str(n+1)+ "of" + str(spectra)+ "_ Original Spectra.png"))
         plt.show()
         plt.close()
-        ind+=1
-        start+=end
-        
+
     plt.plot(np.linspace(0,1000,20000),IR_stack)
     plt.gca().invert_yaxis()
     plt.title(str(spectra)+ " Original Spectra")
     plt.xlabel("cm^-1")
    # plt.savefig((str(spectra)+ " Original Spectra.png"))
-    plt.show()
-    model = NMF(n_components=len(spectra), init='random', random_state=0, shuffle=1 )
-    
+  #  plt.show()
+  #  model = NMF(n_components=len(spectra), init='random', random_state=0, shuffle=1 )
+    '''
     W = model.fit_transform(IR_stack)
     for n in range(len(spectra)):
         plt.plot(np.linspace(0,1000,20000),W[:,n],markersize=1)
@@ -202,9 +210,9 @@ def nmfListTester(spectra):
         plt.xlabel("cm^-1")
         plt.show()
         plt.close()
-
+'''
 #nmfTester(3)
-nmfListTester([.25,.75])
+nmfListTester([.25,.5])
     
 
     

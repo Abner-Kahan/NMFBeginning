@@ -9,19 +9,59 @@ from sklearn.decomposition import NMF
 
 #np.set_printoptions(precision=3)
 
-def addIRS(peakNum,graph):
-   
+def addIRS(peakNum,PointNum):
+    #Ir = np.zeros(PointNum)
+    #Irlocs = np.zeros(PointNum)
+
+    #for n in range(peakNum):
+    #    thickness = int (PointNum * random.choice([.007,.008,.009,.01,.011,.012,.013,.014,.042]))
+        #print (thickness)
+        #for b in range(thickness):
+        #    if any(Ir[b:b+10]):
+        #        Irlocs[b] = 1
+        #for c in range(PointNum - thickness):
+        #    if any(Ir[c + thickness : (c +thickness+10)]):
+        #        Irlocs[c] = 1
+                
+    #    xloc=  random.choice(np.where(Irlocs == 0)[0])
+        #print("xloc", xloc)
+         #frcations of graph
+        #print("thickness", thickness)
+        #thickness2 = 1. #random.randrange(1,5)
+     #   peakHeight=random.random()
+#This is supposed to deal with peaks toward the ends of the spectra
+      #  if (xloc + 1 + thickness ) > PointNum:
+       #     end = PointNum
+       # else: 
+       #     end = (xloc + 1 + thickness)
+       # if (xloc -  thickness < 0): 
+       #     start = 0
+       # else:
+       #start = xloc - thickness
+        #print("start", start)
+        #print("end", end)
+        #start = int(start)
+        #end = int(end)
+        #Ir[start:end]= np.random.normal((end-start)/2,thickness,end-start)
+        #Ir[start:end] = stats.norm.pdf(np.linspace(start,end,end-start),(end+start)/2,thickness)*peakHeight
+        #mean = int((end+start)/2)
+        #print(mean)
+        #Ir[mean-thickness:mean+thickness+1] = stats.norm.pdf(np.linspace(start,end,end-start), mean, thickness/3)
+# Ir[start:end] *= 1/ np.max(Ir)
+        #plt.clf()
+        #return Ir
+
 
         #IR = np.zeros((int(4000/resolution) + 1,))
         #X = np.linspace(0,4000, int(4000/resolution)+1)
-        IR = np.zeros((graph,))
-        X =  np.linspace(0, graph, graph)
+        IR = np.zeros((PointNum,))
+        X =  np.linspace(0, PointNum, PointNum)
 
-        xloc = [ random.randrange(0, graph) for i in range(peakNum) ] 
-        peakHeight = [ random.random() for i in range(peakNum) ] 
-        thickness = [ graph * random.randrange(7,28)/1000 for i in range(peakNum) ] 
+        xloc = [ random.randrange(0, PointNum) for i in range(peakNum) ] 
+        peakHeigh = [ random.random() for i in range(peakNum) ] 
+        thickness = [ PointNum * random.choice([.007,.008,.009,.01,.011,.012,.013,.014,.042]) for i in range(peakNum) ] 
 
-        for f, i, b in zip(xloc, peakHeight, thickness):  
+        for f, i, b in zip(xloc, peakHeigh, thickness):  
             IR += i*np.exp(-0.5*((X-f)/int(b))**2)
 
         plt.clf
@@ -56,7 +96,7 @@ def nmfMatcher(OG_spectra,Calc_spectra):
     return(matchTable)
 
 def IrPlotter(item,title):
-    plt.plot(np.linspace(0,1000,len(item)),item,markersize=.1)
+    plt.plot(np.linspace(0,1000,len(item)),item,markersize=.2)
     plt.gca().invert_yaxis()
     plt.title(title)
     plt.xlabel("cm^-1")
@@ -87,7 +127,6 @@ def nmf2TesterMix(fraction1,numPoints):
     #must analyze errors and create plots
     W = model.fit_transform(IrMix)
     H = model.components_
-    print(W)
     HO = H.copy()
     print(H)
     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
@@ -101,13 +140,13 @@ def nmf2TesterMix(fraction1,numPoints):
         
          plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
          if H[0,0]>.01:
-             print(f'The calculated fraction of the first is {H[0,2]:.3}.')
-             print(f'The calculated fraction of the second is {H[1,2]:.3}.')
+             print("The fraction of the first is", H[0,2])
+             print("The fraction of the second is", H[1,2])
 
              
          else:
-             print(f'The calculated fraction of the first is {H[1,2]:.3}')
-             print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
+             print("The fraction of the first is", H[1,2])
+             print("The fraction of the second is", H[0,2])
          plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
         # print("full", (max(HO[entri[0][0]])))
         
@@ -172,7 +211,6 @@ def nmfTesterMix(fracList,numPoints):
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
 # =============================================================================
-    W = np.matmul(W,H)
     for entri in nmfMatcher(IRF,W):
         
          plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")

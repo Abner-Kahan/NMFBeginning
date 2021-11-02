@@ -204,7 +204,7 @@ def nmfTesterMix(fracList,numPoints):
 
 def NMF2TestRapid(numPoints):
     fraction1 = random.random()
-    print(f'The expected fraction is {fraction1:.3}')
+    
     IRF = np.zeros((2,numPoints))
     IR0 = addIRS(8,numPoints)
     IR1 = addIRS(8,numPoints)
@@ -224,7 +224,7 @@ def NMF2TestRapid(numPoints):
     W = model.fit_transform(IrMix)
     H = model.components_
     W2 = np.matmul(W,H)
-    return np.sum(abs(IrMix-W2))/IrMix.size
+    return pd.DataFrame(data=[[fraction1, np.sum(abs(IrMix-W2))/IrMix.size]])
     #print(W)
     #HO = H.copy()
     #print(H)
@@ -261,7 +261,9 @@ def NMF2TestRapid(numPoints):
         # plt.show()
         # plt.clf()
 
-firstRun = pd.DataFrame(data={}, columns=['Fraction','Error'])
-for n in range (1000):
-    firstRun.loc[len(firstRun.index)] = NMF2TestRapid(10000)
-firstRun.to_csv('/home/abnerkahan/github/NMFBeginning/firstRun.csv')
+firstRun = pd.DataFrame(data={})
+for n in range (100):
+    firstRun= firstRun.append(NMF2TestRapid(10000))
+print(firstRun)
+plt.scatter(firstRun[0], firstRun[1])
+firstRun.to_csv('/home/abnerkahan/github/NMFBeginning/SecondRun.csv')

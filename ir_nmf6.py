@@ -224,7 +224,28 @@ def NMF2TestRapid(numPoints):
     W = model.fit_transform(IrMix)
     H = model.components_
     W2 = np.matmul(W,H)
-    return pd.DataFrame(data=[[fraction1, np.sum(abs(IrMix-W2))/IrMix.size]])
+    error = np.sum(abs(IrMix-W2))/IrMix.size
+    if error > 1*10**-7:
+        HO = H.copy()
+        H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
+        for entri in nmfMatcher(IRF,W):
+            plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
+            if H[0,0]>.01:
+                print(f'The calculated fraction of the first is {H[0,2]:.3}.')
+                print(f'The calculated fraction of the second is {H[1,2]:.3}.')
+            else:
+              print(f'The calculated fraction of the first is {H[1,2]:.3}')
+              print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
+            plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
+            print("full", (max(HO[entri[0][0]])))
+        plt.gca().invert_yaxis()
+
+        plt.legend(["Original", "Calculated"])
+        plt.title(str(entri[0][0])+ " Both Spectra")
+        plt.xlabel("cm^-1")
+        plt.show()
+        plt.clf()
+    return pd.DataFrame(data=[[fraction1, error]])
     #print(W)
     #HO = H.copy()
     #print(H)
@@ -254,16 +275,11 @@ def NMF2TestRapid(numPoints):
         
 
 
-#        #  plt.gca().invert_yaxis()
-#         # plt.legend(["Original", "Calculated"])
-        # plt.title(str(entri[0][0])+ " Both Spectra")
-        # plt.xlabel("cm^-1")
-        # plt.show()
-        # plt.clf()
+    
 
 firstRun = pd.DataFrame(data={})
 for n in range (100):
     firstRun= firstRun.append(NMF2TestRapid(10000))
 print(firstRun)
 plt.scatter(firstRun[0], firstRun[1])
-firstRun.to_csv('/home/abnerkahan/github/NMFBeginning/SecondRun.csv')
+firstRun.to_csv('SecondRun.csv')

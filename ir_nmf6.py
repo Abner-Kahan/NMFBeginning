@@ -168,7 +168,7 @@ def nmfTesterMix(fracList,numPoints):
       #  print 
     #print("real one")
     #print(f'The percentages of A are {H[0]:.2%f}')
-    #print(H)
+    #print(H)￼
     IrPlotter(W[:,0], "First Calc Spectra")
     IrPlotter(W[:,1], "Second Calc Spectra")
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
@@ -177,7 +177,7 @@ def nmfTesterMix(fracList,numPoints):
     W = np.matmul(W,H)
     for entri in nmfMatcher(IRF,W):
         
-         plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
+         #plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
         # if H[0,0]>.01:
             # print("The fraction of the first is", H[0,2])
              #print("The fraction of the second is", H[1,2])
@@ -218,33 +218,71 @@ def NMF2TestRapid(numPoints):
     IrMix[2,:] = IR0*fraction1 + IR1*(1-fraction1) 
     #IrMix[3,:] = IR0*(1-fraction2)  + IR1*fraction1
     IrMix= np.transpose(IrMix)
-    model = NMF(n_components=2, init='nndsvd',  max_iter=15000, tol= 1*10**-7)
+    model = NMF(n_components=2, init='nndsvd',  max_iter=200, tol= 1*10**-7)
     #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IrMix)
     H = model.components_
     W2 = np.matmul(W,H)
+    print("bob", W2[:,0].size)
     error = np.sum(abs(IrMix-W2))/IrMix.size
-    if error > 1*10**-7:
-        HO = H.copy()
-        H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-        for entri in nmfMatcher(IRF,W):
-            plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
-            if H[0,0]>.01:
-                print(f'The calculated fraction of the first is {H[0,2]:.3}.')
-                print(f'The calculated fraction of the second is {H[1,2]:.3}.')
-            else:
-              print(f'The calculated fraction of the first is {H[1,2]:.3}')
-              print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
-            plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
-            print("full", (max(HO[entri[0][0]])))
+    error = error/W2.sum()
+    HO = H.copy()
+    H = np.apply_along_axis(lambda l :l/np.amaxnumPoints(l) ,1,H)
+    if error > 1*10**-11:
+        print(f'The expected fraction is {fraction1:.3}')
+        print(f'The calculated fraction is {max(H[0,2],1-H[0,2]):.3}')
+        plt.plot(np.linspace(0,1000,numPoints),IR0)
+        plt.plot(np.linspace(0,1000,numPoints),W2[:,0])
         plt.gca().invert_yaxis()
 
         plt.legend(["Original", "Calculated"])
-        plt.title(str(entri[0][0])+ " Both Spectra")
+        
         plt.xlabel("cm^-1")
         plt.show()
         plt.clf()
+        plt.plot(np.linspace(0,1000,numPoints),IR1)
+        plt.plot(np.linspace(0,1000,numPoints),W2[:,1])
+        plt.gca().invert_yaxis()
+
+        plt.legend(["Original", "Calculated"])
+        plt.xlabel("cm^-1")
+        plt.show()
+        plt.clf()
+        #IrPlotter( IR0,"FirstSpectra")
+        #IrPlotter(IR1,"SecondSpectra")
+        # for entri in nmfMatcher(IRF,W):
+        
+        #     plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
+        #     if H[0,0]>.01:
+        #         print(f'The calculated fraction of the first is {H[0,2]:.3}.')
+        #         print(f'The calculated fraction of the second is {H[1,2]:.3}.')
+
+             
+        #     else:
+        #         print(f'The calculated fraction of the first is {H[1,2]:.3}')
+        #         print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
+        #     plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
+        # plt.gca().invert_yaxis()
+        # plt.legend(["Original", "Calculated"])
+        # plt.title(str(entri[0][0])+ " Both Spectra")
+        # plt.xlabel("cm^-1")
+        # plt.show()
+        # plt.clf()
+    # if error > 1*10**-7:
+    #     HO = H.copy()
+    #     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H) 
+    #     for entri in nmfMatcher(IRF,W):
+    #         plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
+    #         if H[0,0]>.01:
+    #             print(f'The calculated fraction of the first is {H[0,2]:.3}.')
+    #             print(f'The calculated fraction of the second is {H[1,2]:.3}.')
+    #         else:
+    #           print(f'The calculated fraction of the first is {H[1,2]:.3}') 
+    #           print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
+    #         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
+    #         print("full", (max(HO[entri[0][0]])))
+         
     return pd.DataFrame(data=[[fraction1, error]])
     #print(W)
     #HO = H.copy()
@@ -263,10 +301,8 @@ def NMF2TestRapid(numPoints):
         
 #           #plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
 #           if H[0,0]>.01:
-#               print(f'The calculated fraction of the first is {H[0,2]:.3}.')
+#               print(f'The calculated fraction of the first is {H[0,2]:.3numPoints}.')
 #               print(f'The calculated fraction of the second is {H[1,2]:.3}.')
-
-             
 #           else:
 #               print(f'The calculated fraction of the first is {H[1,2]:.3}')
 #               print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
@@ -279,7 +315,20 @@ def NMF2TestRapid(numPoints):
 
 firstRun = pd.DataFrame(data={})
 for n in range (100):
-    firstRun= firstRun.append(NMF2TestRapid(10000))
+    firstRun= firstRun.append(NMF2TestRapid(1000))
 print(firstRun)
 plt.scatter(firstRun[0], firstRun[1])
-firstRun.to_csv('SecondRun.csv')
+plt.xlabel("fraction")
+plt.ylabel("error")
+plt.title("Fraction vs Error")
+#firstRun.to_csv('SecondRun.csv')
+
+#impure components
+#pure components A
+#pure B
+
+#forget pure components off
+#how many mixtures vs error
+#nnvda
+#same size
+

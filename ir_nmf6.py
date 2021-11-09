@@ -38,6 +38,7 @@ def nmfMatcher(OG_spectra,Calc_spectra):
  
     
     #print(len(OG_spectra))
+    OG_spectra = np.transpose(OG_spectra)
     errorTable = np.zeros((OG_spectra.shape[1], Calc_spectra.shape[1]))
     for n in range (OG_spectra.shape[0]):
          for p in range(OG_spectra.shape[1]):
@@ -66,51 +67,72 @@ def IrPlotter(item,title):
     
 def nmf2TesterMix(numPoints):
     fraction1 = random.random()
-    print(f'The expected fraction is {fraction1:.3}')
+    fraction2 = random.random()
+    fraction3= random.random()
+    fraction4= random.random()
+    print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}, {fraction3:.3}')
     IRF = np.zeros((2,numPoints))
     IR0 = addIRS(8,numPoints)
-    IrPlotter(IR0,"FirstPlot")
+    #IrPlotter(IR0,"FirstPlot")
     IR1 = addIRS(8,numPoints)
-    IrPlotter(IR1,"SecondPlot")
-    IRF[0,:] = IR0
-    IRF[1,:] = IR1
-    IRF= np.transpose(IRF)
+    IROG = np.array([IR0,IR1])
+    print("IROG shape", IROG.shape)
+    #IrPlotter(IR1,"SecondPlot")
+    IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
+    IRF[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
     
-    IrMix = np.zeros((3,numPoints))
-    IrMix[0,:]=IR0
-    IrMix[1,:]=IR1
-    IrMix[2,:] = IR0*fraction1 + IR1*(1-fraction1) 
+    
+    IrMix = np.zeros((4,numPoints))
+    IrMix[0,:]=IRF[0,:]
+    IrMix[1,:]=IRF[1,:]
+    IrMix[2,:] = IR0*fraction3 + IR1*(1-fraction3)
+    IrMix[3,:] = IR0*.75 + IR1*.25
+    #IrMix[3,:] = IR0*fraction1 + IR1*(1-fraction1)
+    
+    IRF= np.transpose(IRF)
     #IrMix[3,:] = IR0*(1-fraction2)  + IR1*fraction1
-    IrPlotter( IrMix[0,:],"FirstMix")
-    IrPlotter(IrMix[1,:],"SecondMix")
+   # IrPlotter( IrMix[0,:],"FirstMix")
+   # IrPlotter(IrMix[1,:],"SecondMix")
     IrMix= np.transpose(IrMix)
-    model = NMF(n_components=2, init='nndsvd',  max_iter=15000, tol= 1*10**-7)
+    model  = NMF(n_components=2, init='nndsvda', max_iter=1000, tol= 1*10**-6, solver='mu')
+    print(model)
+    
+    Wbaby = model.fit_transform(IrMix)
+    Hbaby = model.components_
+    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd', init='custom')
     #it seems that mu gives more close results
     #must analyze errors and create plots
-    W = model.fit_transform(IrMix)
+    W = model.fit_transform(IrMix, W=Wbaby, H=Hbaby)
     H = model.components_
     print(W)
     HO = H.copy()
-    print(H)
+    print ("H", HO)
+    
     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
+    print ("H adjusted", H)
     #print(H)
     IrPlotter(W[:,0], "First Calc Spectra")
     IrPlotter(W[:,1], "Second Calc Spectra")
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
+    W2 = np.matmul(W,H)
+
 # =============================================================================
-    for entri in nmfMatcher(IRF,W):
+    for entri in nmfMatcher(IROG,W):
         
-         plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
+         print('entri', entri)
+         plt.plot(np.linspace(0,1000,numPoints),IROG[entri[0][0],:],color="red")
          if H[0,0]>.01:
-             print(f'The calculated fraction of the first is {H[0,2]:.3}.')
-             print(f'The calculated fraction of the second is {H[1,2]:.3}.')
+             print(f'The calculated fraction of the first is {H[0,2]:.5}.')
+             print(f'The calculated fraction of the second is {H[1,2]:.5}.')
+             
 
              
          else:
-             print(f'The calculated fraction of the first is {H[1,2]:.3}')
-             print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
-         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
+             print(f'The calculated fraction of the first is {H[1,2]:.5}')
+             print(f'The calculated fraction of the second is, {H[0,2]:.5}.')
+             
+         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]])*(max(HO[entri[1][0]])))
         # print("full", (max(HO[entri[0][0]])))
         
 
@@ -200,7 +222,7 @@ def nmfTesterMix(fracList,numPoints):
 
 #nmfTesterMix([1,.5,.25,0,.8,.3],10000)
 # =============================================================================
-#nmf2TesterMix(10000)
+nmf2TesterMix(10000)
 
 def NMF2TestRapid(numPoints):
     fraction1 = random.random()
@@ -313,14 +335,14 @@ def NMF2TestRapid(numPoints):
 
     
 
-firstRun = pd.DataFrame(data={})
-for n in range (100):
-    firstRun= firstRun.append(NMF2TestRapid(1000))
-print(firstRun)
-plt.scatter(firstRun[0], firstRun[1])
-plt.xlabel("fraction")
-plt.ylabel("error")
-plt.title("Fraction vs Error")
+# firstRun = pd.DataFrame(data={})
+# for n in range (100):
+#     firstRun= firstRun.append(NMF2TestRapid(1000))
+# print(firstRun)
+# plt.scatter(firstRun[0], firstRun[1])
+# plt.xlabel("fraction")
+# plt.ylabel("error")
+# plt.title("Fraction vs Error")
 #firstRun.to_csv('SecondRun.csv')
 
 #impure components

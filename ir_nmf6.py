@@ -94,12 +94,12 @@ def nmf2TesterMix(numPoints):
    # IrPlotter( IrMix[0,:],"FirstMix")
    # IrPlotter(IrMix[1,:],"SecondMix")
     IrMix= np.transpose(IrMix)
-    model  = NMF(n_components=2, init='nndsvda', max_iter=1000, tol= 1*10**-6, solver='mu')
-    print(model)
-    
-    Wbaby = model.fit_transform(IrMix)
-    Hbaby = model.components_
-    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd', init='custom')
+    #model  = NMF(n_components=2, init='nndsvda', max_iter=1000, tol= 1*10**-6, solver='mu')
+    #print(model)
+    #
+   # Wbaby = model.fit_transform(IrMix)
+    #Hbaby = model.components_
+    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd')#, init='custom')
     #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IrMix, W=Wbaby, H=Hbaby)

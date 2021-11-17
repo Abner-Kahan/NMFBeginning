@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 import random
+import statistics
 #from scipy import constants
 from sklearn.decomposition import NMF
 
@@ -30,28 +31,27 @@ def addIRS(peakNum,graph):
         #self.IR=np.vstack((X, IR)).T #tspec
 
 
-def nmfMatcher(OG_spectra,Calc_spectra):
- 
-    
+def nmfMatcher(OG_spectra, Calc_spectra):
+
     #print(len(OG_spectra))
     OG_spectra = np.transpose(OG_spectra)
     errorTable = np.zeros((OG_spectra.shape[1], Calc_spectra.shape[1]))
-    for n in range (OG_spectra.shape[0]):
-         for p in range(OG_spectra.shape[1]):
-             for q in range(Calc_spectra.shape[1]):
-                 errorTable[p,q] += abs( OG_spectra[n,p] - Calc_spectra[n,q])
+    for n in range(OG_spectra.shape[0]):
+        for p in range(OG_spectra.shape[1]):
+            for q in range(Calc_spectra.shape[1]):
+                errorTable[p, q] += abs(OG_spectra[n, p] - Calc_spectra[n, q])
    # print("hi \n", errorTable)
-    matchTable=[]
+    matchTable = []
     #print("errorTable \n \n",errorTable)
     for entry in range(OG_spectra.shape[1]):
-         Match = np.where(np.amin(errorTable) == errorTable)
-         matchTable += [Match]
-         #print(Match, errorTable[Match])
-         errorTable[Match[0],:]=10**7
+        Match = np.where(np.amin(errorTable) == errorTable)
+        matchTable += [Match]
+        #print(Match, errorTable[Match])
+        errorTable[Match[0], :] = 10**7
    # print("Here are matches",matchTable)
-            
+
     return(matchTable)
-  
+
 def IrPlotter(item,title):
     plt.plot(np.linspace(0,1000,len(item)),item,markersize=.1)
     plt.gca().invert_yaxis()
@@ -92,7 +92,7 @@ def nmf2TesterMix(numPoints,Nfrac):
     #
    # Wbaby = model.fit_transform(IrMix)
     #Hbaby = model.components_
-    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='kullback-leibler') 
+    model = NMF(n_components=2, max_iter=500, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='kullback-leibler') 
                 #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IRMix)
@@ -101,12 +101,12 @@ def nmf2TesterMix(numPoints,Nfrac):
     HO = H.copy()
     #print ("H", HO)
     
-    H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
+    #H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     #print ("H adjusted", H)
     #print(H)
     #IrPlotter(W[:,0], "First Calc Spectra")
     #IrPlotter(W[:,1], "Second Calc Spectra")
-    #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
+    #print (np.mean(np.where(W[0.015826254979​:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
     #W2 = np.matmul(W,H)
     #W2 =np.transpose(W2)
@@ -133,7 +133,7 @@ def nmf2TesterMix(numPoints,Nfrac):
          #plt.gca().invert_yaxis()
          #plt.legend(["Original", "Calculated"])
          #plt.title(str(entri[0][0])+ " Both Spectra")
-         #plt.xlabel("cm^-1")
+         #plt.xlabel("cm^-1"0.015826254979​)
          #plt.show()
          #plt.clf()
          DifferenceSum=0
@@ -146,12 +146,16 @@ def nmf2TesterMix(numPoints,Nfrac):
 
  
 # =============================================================================
-print(nmf2TesterMix(1000,4))
+print(nmf2TesterMix(1000,3))
 errorTot = 0
+errorTotL =[]
 for n in range (200):
-    errorTot += nmf2TesterMix(1000,2)
+    err = nmf2TesterMix(1000,500)
+    errorTot += err
+    errorTotL += [err]
+    
 print (errorTot/200)
-
+print(statistics.stdev(errorTotL)/200)
 
 
     
@@ -168,7 +172,7 @@ print (errorTot/200)
 
 #impure components
 #pure components A
-#pure B
+#pure B​
 
 #forget pure components off
 #how many mixtures vs error

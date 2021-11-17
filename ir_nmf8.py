@@ -70,7 +70,7 @@ def nmf2TesterMix(numPoints,Nfrac):
    
     
     IR0 = addIRS(8,numPoints)
-    IrPlotter(IR0,"First Plot")
+    #IrPlotter(IR0,"First Plot")
     #IrPlotter(IR0,"FirstPlot")
     IR1 = addIRS(8,numPoints)
     IrPlotter(IR1,"Second Plot")
@@ -81,8 +81,8 @@ def nmf2TesterMix(numPoints,Nfrac):
          rand2 = random.random()
          IRMix[row,:] = IR0*rand1 + IR1 *rand2
          randtable+= [[rand1,rand2]]
-         IrPlotter(IRMix[row,:],("Mix"+ str(row)))
-    print(randtable)
+         #IrPlotter(IRMix[row,:],("Mix"+ str(row)))
+    #print(randtable)
     IROG = np.array([IR0,IR1])
     #print("IROG shape", IROG.shape)
     
@@ -92,7 +92,7 @@ def nmf2TesterMix(numPoints,Nfrac):
     #
    # Wbaby = model.fit_transform(IrMix)
     #Hbaby = model.components_
-    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd', init='nndsvd')#, init='custom')
+    model = NMF(n_components=2, max_iter=500, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='itakura-saito')#, init='custom')
     #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IRMix)
@@ -104,12 +104,12 @@ def nmf2TesterMix(numPoints,Nfrac):
     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     #print ("H adjusted", H)
     #print(H)
-    IrPlotter(W[:,0], "First Calc Spectra")
-    IrPlotter(W[:,1], "Second Calc Spectra")
+    #IrPlotter(W[:,0], "First Calc Spectra")
+    #IrPlotter(W[:,1], "Second Calc Spectra")
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
-    W2 = np.matmul(W,H)
-    W2 =np.transpose(W2)
+    #W2 = np.matmul(W,H)
+    #W2 =np.transpose(W2)
     
    # HO = np.transpose(HO)
    # print(HO)
@@ -126,28 +126,31 @@ def nmf2TesterMix(numPoints,Nfrac):
 
         # print("full", (max(HO[entri[0][0]])))
        
-         plt.plot(np.linspace(0,1000,numPoints),IROG[entri[0][0],:],color="red")
+         #plt.plot(np.linspace(0,1000,numPoints),IROG[entri[0][0],:],color="red")
                            
           #plt.plot(np.linspace(0,1000,numPoints),((W[:,entri[1][0]]*proport)))
-         plt.plot(np.linspace(0,1000,numPoints), W[:,entri[1][0]]*np.max(HO))
-         plt.gca().invert_yaxis()
-         plt.legend(["Original", "Calculated"])
-         plt.title(str(entri[0][0])+ " Both Spectra")
-         plt.xlabel("cm^-1")
-         plt.show()
-         plt.clf()
+         #plt.plot(np.linspace(0,1000,numPoints), W[:,entri[1][0]]*np.max(HO))
+         #plt.gca().invert_yaxis()
+         #plt.legend(["Original", "Calculated"])
+         #plt.title(str(entri[0][0])+ " Both Spectra")
+         #plt.xlabel("cm^-1")
+         #plt.show()
+         #plt.clf()
          DifferenceSum=0
          for n in range (numPoints):
          
              DifferenceSum += abs(IROG[entri[0][0],n]-W[n,entri[1][0]]*np.max(HO))
          difsum += DifferenceSum/numPoints
-    print(difsum/2)
+    return difsum/2
          
 
  
 # =============================================================================
-nmf2TesterMix(1000,2)
-
+print(nmf2TesterMix(1000,2))
+errorTot = 0
+for n in range (200):
+    errorTot += nmf2TesterMix(1000,2)
+print (errorTot/200)
 
 
 

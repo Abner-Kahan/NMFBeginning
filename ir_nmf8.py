@@ -40,7 +40,7 @@ def nmfMatcher(OG_spectra,Calc_spectra):
          for p in range(OG_spectra.shape[1]):
              for q in range(Calc_spectra.shape[1]):
                  errorTable[p,q] += abs( OG_spectra[n,p] - Calc_spectra[n,q])
-    print("hi \n", errorTable)
+   # print("hi \n", errorTable)
     matchTable=[]
     #print("errorTable \n \n",errorTable)
     for entry in range(OG_spectra.shape[1]):
@@ -48,7 +48,7 @@ def nmfMatcher(OG_spectra,Calc_spectra):
          matchTable += [Match]
          #print(Match, errorTable[Match])
          errorTable[Match[0],:]=10**7
-    
+   # print("Here are matches",matchTable)
             
     return(matchTable)
   
@@ -61,195 +61,94 @@ def IrPlotter(item,title):
     plt.clf()
     
     
-def nmf2TesterMix(numPoints):
-    fraction1 = random.random()
-    fraction2 = random.random()
-    fraction3= random.random()
-    fraction4= random.random()
-    print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}, {fraction3:.3}')
+def nmf2TesterMix(numPoints,Nfrac):
     
-    IRF = np.zeros((2,numPoints))
+
+    
+    IRMix = np.zeros((Nfrac,numPoints))
+    #print(IRMix.shape[0])
+   
+    
     IR0 = addIRS(8,numPoints)
+    IrPlotter(IR0,"First Plot")
     #IrPlotter(IR0,"FirstPlot")
     IR1 = addIRS(8,numPoints)
+    IrPlotter(IR1,"Second Plot")
+
+    randtable= []
+    for row in range(Nfrac):
+         rand1 = random.random()
+         rand2 = random.random()
+         IRMix[row,:] = IR0*rand1 + IR1 *rand2
+         randtable+= [[rand1,rand2]]
+         IrPlotter(IRMix[row,:],("Mix"+ str(row)))
+    print(randtable)
     IROG = np.array([IR0,IR1])
-    print("IROG shape", IROG.shape)
-    #IrPlotter(IR1,"SecondPlot")
-    IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
-    IRF[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
+    #print("IROG shape", IROG.shape)
     
-    
-    IrMix = np.zeros((4,numPoints))
-    IrMix[0,:]=IRF[0,:]
-    IrMix[1,:]=IRF[1,:]
-    IrMix[2,:] = IR0*fraction3 + IR1*(1-fraction3)
-    IrMix[3,:] = IR0*.75 + IR1*.25
-    #IrMix[3,:] = IR0*fraction1 + IR1*(1-fraction1)
-    
-    IRF= np.transpose(IRF)
-    #IrMix[3,:] = IR0*(1-fraction2)  + IR1*fraction1
-   # IrPlotter( IrMix[0,:],"FirstMix")
-   # IrPlotter(IrMix[1,:],"SecondMix")
-    IrMix= np.transpose(IrMix)
+    IRMix= np.transpose(IRMix)
     #model  = NMF(n_components=2, init='nndsvda', max_iter=1000, tol= 1*10**-6, solver='mu')
     #print(model)
     #
    # Wbaby = model.fit_transform(IrMix)
     #Hbaby = model.components_
-    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd')#, init='custom')
+    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd', init='nndsvd')#, init='custom')
     #it seems that mu gives more close results
     #must analyze errors and create plots
-    W = model.fit_transform(IrMix, W=Wbaby, H=Hbaby)
+    W = model.fit_transform(IRMix)
     H = model.components_
-    print(W)
+   # print(W)
     HO = H.copy()
-    print ("H", HO)
+    #print ("H", HO)
     
     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    print ("H adjusted", H)
+    #print ("H adjusted", H)
     #print(H)
     IrPlotter(W[:,0], "First Calc Spectra")
     IrPlotter(W[:,1], "Second Calc Spectra")
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
     W2 = np.matmul(W,H)
-
+    W2 =np.transpose(W2)
+    
+   # HO = np.transpose(HO)
+   # print(HO)
+    #print ("wait", nmfMatcher(IROG,W)[:])
+    difsum = 0
 # =============================================================================
     for entri in nmfMatcher(IROG,W):
         
-         print('entri', entri)
-         plt.plot(np.linspace(0,1000,numPoints),IROG[entri[0][0],:],color="red")
-         if H[0,0]>.01:
-             print(f'The calculated fraction of the first is {H[0,2]:.5}.')
-             print(f'The calculated fraction of the second is {H[1,2]:.5}.')
-             
-
-             
-         else:
-             print(f'The calculated fraction of the first is {H[1,2]:.5}')
-             print(f'The calculated fraction of the second is, {H[0,2]:.5}.')
-             
-         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]])*(max(HO[entri[1][0]])))
-        # print("full", (max(HO[entri[0][0]])))
+        # print('entri', entri)
+         
+         
         
+         #for proport in (H[entri[1][0]]):
 
-
+        # print("full", (max(HO[entri[0][0]])))
+       
+         plt.plot(np.linspace(0,1000,numPoints),IROG[entri[0][0],:],color="red")
+                           
+          #plt.plot(np.linspace(0,1000,numPoints),((W[:,entri[1][0]]*proport)))
+         plt.plot(np.linspace(0,1000,numPoints), W[:,entri[1][0]]*np.max(HO))
          plt.gca().invert_yaxis()
          plt.legend(["Original", "Calculated"])
          plt.title(str(entri[0][0])+ " Both Spectra")
          plt.xlabel("cm^-1")
          plt.show()
          plt.clf()
-# =============================================================================
-nmf2TesterMix(5000)
-
-def NMF2TestRapid(numPoints):
-    fraction1 = random.random()
-    
-    IRF = np.zeros((2,numPoints))
-    IR0 = addIRS(8,numPoints)
-    IR1 = addIRS(8,numPoints)
-    IRF[0,:] = IR0
-    IRF[1,:] = IR1
-    IRF= np.transpose(IRF)
-    
-    IrMix = np.zeros((3,numPoints))
-    IrMix[0,:]=IR0
-    IrMix[1,:]=IR1
-    IrMix[2,:] = IR0*fraction1 + IR1*(1-fraction1) 
-    #IrMix[3,:] = IR0*(1-fraction2)  + IR1*fraction1
-    IrMix= np.transpose(IrMix)
-    model = NMF(n_components=2, init='nndsvd',  max_iter=200, tol= 1*10**-7)
-    #it seems that mu gives more close results
-    #must analyze errors and create plots
-    W = model.fit_transform(IrMix)
-    H = model.components_
-    W2 = np.matmul(W,H)
-    print("bob", W2[:,0].size)
-    error = np.sum(abs(IrMix-W2))/IrMix.size
-    error = error/W2.sum()
-    HO = H.copy()
-    H = np.apply_along_axis(lambda l :l/np.amaxnumPoints(l) ,1,H)
-    if error > 1*10**-11:
-        print(f'The expected fraction is {fraction1:.3}')
-        print(f'The calculated fraction is {max(H[0,2],1-H[0,2]):.3}')
-        plt.plot(np.linspace(0,1000,numPoints),IR0)
-        plt.plot(np.linspace(0,1000,numPoints),W2[:,0])
-        plt.gca().invert_yaxis()
-
-        plt.legend(["Original", "Calculated"])
-        
-        plt.xlabel("cm^-1")
-        plt.show()
-        plt.clf()
-        plt.plot(np.linspace(0,1000,numPoints),IR1)
-        plt.plot(np.linspace(0,1000,numPoints),W2[:,1])
-        plt.gca().invert_yaxis()
-
-        plt.legend(["Original", "Calculated"])
-        plt.xlabel("cm^-1")
-        plt.show()
-        plt.clf()
-        #IrPlotter( IR0,"FirstSpectra")
-        #IrPlotter(IR1,"SecondSpectra")
-        # for entri in nmfMatcher(IRF,W):
-        
-        #     plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
-        #     if H[0,0]>.01:
-        #         print(f'The calculated fraction of the first is {H[0,2]:.3}.')
-        #         print(f'The calculated fraction of the second is {H[1,2]:.3}.')
-
-             
-        #     else:
-        #         print(f'The calculated fraction of the first is {H[1,2]:.3}')
-        #         print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
-        #     plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
-        # plt.gca().invert_yaxis()
-        # plt.legend(["Original", "Calculated"])
-        # plt.title(str(entri[0][0])+ " Both Spectra")
-        # plt.xlabel("cm^-1")
-        # plt.show()
-        # plt.clf()
-    # if error > 1*10**-7:
-    #     HO = H.copy()
-    #     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H) 
-    #     for entri in nmfMatcher(IRF,W):
-    #         plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
-    #         if H[0,0]>.01:
-    #             print(f'The calculated fraction of the first is {H[0,2]:.3}.')
-    #             print(f'The calculated fraction of the second is {H[1,2]:.3}.')
-    #         else:
-    #           print(f'The calculated fraction of the first is {H[1,2]:.3}') 
-    #           print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
-    #         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
-    #         print("full", (max(HO[entri[0][0]])))
+         DifferenceSum=0
+         for n in range (numPoints):
          
-    return pd.DataFrame(data=[[fraction1, error]])
-    #print(W)
-    #HO = H.copy()
-    #print(H)
-   # H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    
-#     #print ("taco", IrMix[:,0:10])
-#     print ("squash", W2[:,0:10])
-#     ##print(H)
-# #   IrPlotter(W[:,0], "First Calc Spectra")
-#    # IrPlotter(W[:,1], "Second Calc Spectra")
-#     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
-#     #print(model.fit(IrMix))
-# # =============================================================================
-#     for entri in nmfMatcher(IRF,W):
-        
-#           #plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
-#           if H[0,0]>.01:
-#               print(f'The calculated fraction of the first is {H[0,2]:.3numPoints}.')
-#               print(f'The calculated fraction of the second is {H[1,2]:.3}.')
-#           else:
-#               print(f'The calculated fraction of the first is {H[1,2]:.3}')
-#               print(f'The calculated fraction of the second is, {H[0,2]:.3}.')
-#          #plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
-#         # print("full", (max(HO[entri[0][0]])))
-        
+             DifferenceSum += abs(IROG[entri[0][0],n]-W[n,entri[1][0]]*np.max(HO))
+         difsum += DifferenceSum/numPoints
+    print(difsum/2)
+         
+
+ 
+# =============================================================================
+nmf2TesterMix(1000,2)
+
+
 
 
     
@@ -273,3 +172,17 @@ def NMF2TestRapid(numPoints):
 #nnvda
 #same size
 
+'''
+         fractBoi = 0
+         lenBoi = 0
+         for n in range(len(IROG[entri[0][0],:])):
+             
+             if (IROG[entri[0][0],n] != 0) and (W[n,entri[1][0]] != 0):
+                 fractBoi += IROG[entri[0][0],n]/ W[n,entri[1][0]]
+                 #print (IROG[entri[0][0],n]/ W[n,entri[1][0]])
+                 lenBoi +=1.0
+         fract = fractBoi/lenBoi
+         print("fract", fract)
+             
+         #frac = (IROG[entri[0][0],:])/(W[:,entri[1][0]]*np.max(HO))
+        # print(frac)'''        

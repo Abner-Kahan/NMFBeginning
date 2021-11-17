@@ -12,43 +12,23 @@ import scipy.integrate as integrate
 import scipy.special as special
 
 
-def addIRS(peakNum,PointNum):
-    Ir = np.zeros(PointNum)
-    Irlocs = np.zeros(PointNum)
+def addIRS(peakNum,graph):
+   
 
-    for n in range(peakNum):
-        thickness = int (PointNum * random.choice([.007,.008,.009,.01,.011,.012,.013,.014,.042]))
-        for b in range(thickness):
-            if any(Ir[b:b+10]):
-                Irlocs[b] = 1
-        for c in range(PointNum - thickness):
-            if any(Ir[c + thickness : (c +thickness+10)]):
-                Irlocs[c] = 1
-                
-        xloc=  random.choice(np.where(Irlocs == 0)[0])
-        #print("xloc", xloc)
-         #frcations of graph
-        #print("thickness", thickness)
-        #thickness2 = 1. #random.randrange(1,5)
-        peakHeight=random.random()
-#This is supposed to deal with peaks toward the ends of the spectra
-        if (xloc + 1 + thickness ) > PointNum:
-            end = PointNum
-        else: 
-            end = (xloc + 1 + thickness)
-        if (xloc -  thickness < 0):
-            start = 0
-        else:
-            start = xloc - thickness
-        #print("start", start)
-        #print("end", end)
-        start = int(start)
-        end = int(end)
-        #Ir[start:end]= np.random.normal((end-start)/2,thickness,end-start)
-        Ir[start:end] = stats.norm.pdf(np.linspace(start,end,end-start),(end+start)/2,thickness)*thickness*peakHeight
-       # Ir[start:end] *= 1/ np.max(Ir)
-        plt.clf()
-    return Ir
+        #IR = np.zeros((int(4000/resolution) + 1,))
+        #X = np.linspace(0,4000, int(4000/resolution)+1)
+        IR = np.zeros((graph,))
+        X =  np.linspace(0, graph, graph)
+
+        xloc = [ random.randrange(0, graph) for i in range(peakNum) ] 
+        peakHeight = [ random.random() for i in range(peakNum) ] 
+        thickness = [ graph * random.randrange(7,28)/1000 for i in range(peakNum) ] 
+
+        for f, i, b in zip(xloc, peakHeight, thickness):  
+            IR += i*np.exp(-0.5*((X-f)/int(b))**2)
+
+        plt.clf
+        return IR 
 #IR_stack = addIRS(10,10000)
 #plt.gca().invert_yaxis()
 #plt.plot(np.linspace(0,1000,10000),IR_stack)
@@ -146,7 +126,7 @@ def IrPlotter(item,title):
     
 def nmfTester2Frac(fraction):
     IrMix = np.zeros((2,20000))
-    IrMix[0,:] = addIRS(10,20000)*fraction
+    IrMix[0,:] = addIRS(10,20000)*fraction 
     IrMix[1,:] = addIRS(10,20000)*(1-fraction)
     IrPlotter(IrMix[0,:], "IrMixSpectra Small")
     IrPlotter(IrMix[1,:], "IrMixSpectra Large")

@@ -92,7 +92,7 @@ def nmf2TesterMix(numPoints,Nfrac):
     #
    # Wbaby = model.fit_transform(IrMix)
     #Hbaby = model.components_
-    model = NMF(n_components=2, max_iter=500, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='kullback-leibler') 
+    model = NMF(n_components=2, max_iter=50, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='kullback-leibler') 
                 #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IRMix)
@@ -150,7 +150,7 @@ print(nmf2TesterMix(1000,3))
 errorTot = 0
 errorTotL =[]
 for n in range (200):
-    err = nmf2TesterMix(1000,500)
+    err = nmf2TesterMix(1000,5)
     errorTot += err
     errorTotL += [err]
     

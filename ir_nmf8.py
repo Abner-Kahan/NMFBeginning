@@ -73,7 +73,7 @@ def nmf2TesterMix(numPoints,Nfrac):
     #IrPlotter(IR0,"First Plot")
     #IrPlotter(IR0,"FirstPlot")
     IR1 = addIRS(8,numPoints)
-    IrPlotter(IR1,"Second Plot")
+    #IrPlotter(IR1,"Second Plot")
 
     randtable= []
     for row in range(Nfrac):
@@ -92,8 +92,8 @@ def nmf2TesterMix(numPoints,Nfrac):
     #
    # Wbaby = model.fit_transform(IrMix)
     #Hbaby = model.components_
-    model = NMF(n_components=2, max_iter=500, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='itakura-saito')#, init='custom')
-    #it seems that mu gives more close results
+    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-8, solver= 'mu', init='nndsvda', beta_loss='kullback-leibler') 
+                #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IRMix)
     H = model.components_
@@ -146,7 +146,7 @@ def nmf2TesterMix(numPoints,Nfrac):
 
  
 # =============================================================================
-print(nmf2TesterMix(1000,2))
+print(nmf2TesterMix(1000,4))
 errorTot = 0
 for n in range (200):
     errorTot += nmf2TesterMix(1000,2)

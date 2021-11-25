@@ -6,6 +6,7 @@ import scipy.stats as stats
 import random
 #from scipy import constants
 from sklearn.decomposition import NMF
+import glob
 
 #np.set_printoptions(precision=3)
 
@@ -102,7 +103,7 @@ def nmf2TesterMix(numPoints):
     model = NMF(n_components=2, max_iter=10000, tol= 1*10**-8, solver= 'cd')#, init='custom')
     #it seems that mu gives more close results
     #must analyze errors and create plots
-    W = model.fit_transform(IrMix, W=Wbaby, H=Hbaby)
+    W = model.fit_transform(IrMix)
     H = model.components_
     print(W)
     HO = H.copy()

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy.stats as stats
 import random
+import pdb
 import re
 import glob
 from sklearn.decomposition import NMF
@@ -36,8 +37,7 @@ def file2Spectra(path):
 
 def nmfMatcher(OG_spectra,Calc_spectra):
  
-    
-    #print(len(OG_spectra))
+        #print(len(OG_spectra))
     OG_spectra = np.transpose(OG_spectra)
     errorTable = np.zeros((OG_spectra.shape[1], Calc_spectra.shape[1]))
     for n in range (OG_spectra.shape[0]):
@@ -62,20 +62,29 @@ def IrPlotter(item,title):
     plt.xlabel("cm^-1")
     plt.show()
     plt.clf()
+    
+    
+    
 fileList = glob.glob('Tri_A1*/Tri_A1*/input.log')
+
+print(isinstance(fileList[0],str))
+plt.vlines(file2Spectra(fileList[1])[:,0],0,file2Spectra(fileList[0])[:,1])
 
 
 def nmf2TesterMix():
-    
+    pdb.set_trace()
+
     fraction1 = random.random()
     fraction2 = random.random()
     IR0 =random.choice(fileList)
+    IR0 = file2Spectra(IR0)
     print(IR0.shape)
+    
     numPoints = len(IR0[:,0])
     IR1 =random.choice(fileList)
     print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}')
     IRF = np.zeros((2,numPoints))
-    IROG = np.array([IR0,IR1])
+    IROG = np.array([IR0,IR1],dtype='object')
     print("IROG shape", IROG.shape)
     #IrPlotter(IR1,"SecondPlot")
     IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)

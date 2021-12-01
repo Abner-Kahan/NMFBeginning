@@ -148,9 +148,9 @@ def nmf2TesterMix(numPoints):
 
 def nmfTesterMix(fracList,numPoints):
     IRF = np.zeros((2,numPoints))
-    IR0 = addIRS(8,numPoints)
+    IR0 = addIRS(12,numPoints)
     IrPlotter(IR0,"Plot A")
-    IR1 = addIRS(8,numPoints)
+    IR1 = addIRS(12,numPoints)
     IrPlotter(IR1,"Plot B")
     IRF[0,:] = IR0
     IRF[1,:] = IR1

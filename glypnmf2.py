@@ -72,7 +72,7 @@ plt.vlines(file2Spectra(fileList[1])[:,0],0,file2Spectra(fileList[0])[:,1])
 
 
 def nmf2TesterMix():
-    pdb.set_trace()
+   # pdb.set_trace()
 
     fraction1 = random.random()
     fraction2 = random.random()

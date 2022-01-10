@@ -74,7 +74,7 @@ def gaussian_broadening(spectra, broaden, resolution=1):
 
 
 def nmfMatcher(OG_spectra,Calc_spectra):
-    pdb.set_trace() 
+    #pdb.set_trace() 
         #print(len(OG_spectra))
     #OG_spectra = np.transpose(OG_spectra)
     mindim = np.amin(OG_spectra.shape)

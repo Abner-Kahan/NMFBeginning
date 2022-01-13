@@ -14,7 +14,8 @@ import pdb
 import re
 import glob
 from sklearn.decomposition import NMF
-
+from scipy.signal import chirp, find_peaks, peak_widths
+import scipy
 
 
 
@@ -131,9 +132,24 @@ def VertPlotParamaters():
 
 # In[53]:
 
+def ImaginaryEnergy(spectra):
+    peaks, _ = find_peaks(spectra)
+    results_half = peak_widths(spectra, peaks, rel_height=0.5)
+    ImaginaryEnergy = np.average (results_half[0])/2
+    return ImaginaryEnergy
+def Y(wavelength, spectra,V_oi):
+    L = scipy.misc.derivative (lambda x:(spectra[int(x)]), wavelength)/spectra[int(wavelength)]
+    return (L**-1)/(L**-2 + V_oi**2)
 
+def num(wavelength, TheoSpec,ExperSpec,V_oi):
+    return (Y(wavelength, TheoSpec,V_oi) - Y(wavelength, ExperSpec,V_oi))**2
+def denom(wavelength, TheoSpec,ExperSpec,V_oi):
+    return (Y(wavelength, TheoSpec,V_oi)**2) + (Y(wavelength, ExperSpec,V_oi)**2)
 
-
+def ypendry(TheoSpec,ExperSpec):
+    #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
+    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)))[0]) / (
+    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec))))[0])
 def nmf2TesterMixB():
     #pdb.set_trace()
 
@@ -153,7 +169,7 @@ def nmf2TesterMixB():
     IR1 = gaussian_broadening(IR1,25,1)
     IrPlotter(IR1,"Second Spectra")
    # print(IR1.shape)
- 
+    print("Correlation between Functions", ypendry(IR0,IR1))
     IRF = np.zeros((2,4001))
     IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
     IRF[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
@@ -165,8 +181,8 @@ def nmf2TesterMixB():
     W = model.fit_transform(IRF)
     H = model.components_
     Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    print(H)
-    print(Hnorm)
+    print("H", H)
+    print("H_Norm", Hnorm)
     product = np.matmul(W,H)
     matchTable = nmfMatcher (IRF, product)
     IrOrgs = [IR0,IR1]
@@ -176,8 +192,8 @@ def nmf2TesterMixB():
                #[W[matchTable[0][1],:]]], "First Matched Spectra", True)
     
     print(matchTable)
-    
-    
+    print(ypendry(IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]))
+    print(ypendry(IrOrgs[matchTable[1,0]], product[:,matchTable[1,1]]))
    # print("Matrix product size", product.shape)
     ##print("Variable matrix", H)
    # print("Product Sizes", W.shape, IRF.shape)

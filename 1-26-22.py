@@ -7,8 +7,6 @@ import pdb
 import re
 import glob
 from sklearn.decomposition import NMF
-from scipy.signal import savgol_filter
-from scipy.signal import find_peaks
 
 def fetchIr(path,column):
     logfile =  open(path, 'r')
@@ -103,19 +101,19 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     
     #Creating Two Spectra
     Untreated =gaussian_broadening(fetchIr('UntreatedSample.txt',FileSelection1),broad,ran1,ran2,res)
-    IrPlotter(Untreated, f'Untreated Spectra:  {Humdities[FileSelection1]}% humidity',ran1,ran2)
+    #IrPlotter(Untreated, f'Untreated Spectra:  {Humdities[FileSelection1]}% humidity',ran1,ran2)
 
     MEOH1 =gaussian_broadening(fetchIr('MeOHSample.txt',FileSelection1),broad,ran1,ran2,res)
-    IrPlotter(MEOH1,f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity',ran1,ran2)
+    #IrPlotter(MEOH1,f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity',ran1,ran2)
     
     MEOH2 =gaussian_broadening(fetchIr('MeOHSample.txt',FileSelection2),broad,ran1,ran2,res)
-    IrPlotter(MEOH2,f'MeOH Spectra 2: {Humdities[FileSelection2]}% humidity',ran1,ran2)
+   # IrPlotter(MEOH2,f'MeOH Spectra 2: {Humdities[FileSelection2]}% humidity',ran1,ran2)
     
     WA45_1 =gaussian_broadening(fetchIr('WA45Sample.txt',FileSelection1),broad,ran1,ran2,res)
-    IrPlotter(WA45_1,f'WA45 Spectra 1: {Humdities[FileSelection1]}% humidity',ran1,ran2)
+    #IrPlotter(WA45_1,f'WA45 Spectra 1: {Humdities[FileSelection1]}% humidity',ran1,ran2)
     
     WA45_2 =gaussian_broadening(fetchIr('WA45Sample.txt',FileSelection2),broad,ran1,ran2,res)
-    IrPlotter(WA45_2,f'WA45 Spectra 2: {Humdities[FileSelection2]}% humidity',ran1,ran2)
+    #IrPlotter(WA45_2,f'WA45 Spectra 2: {Humdities[FileSelection2]}% humidity',ran1,ran2)
     
     
     IrPlotter([Untreated,MEOH1,MEOH2,WA45_1,WA45_2], 'Input Spectra', ran1,ran2,[f'Untreated Spectra:  {Humdities[FileSelection1]}% humidity', 
@@ -140,42 +138,19 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     
     IRF= np.transpose(IRF)
     
-    model = NMF(n_components=4, max_iter=5000, tol= 1*10**-10, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler' )
+    model = NMF(n_components=4, max_iter=4000, tol= 1*10**-10, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler' )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
     
     print ("W-size",W.shape)
-    #print("mean", np.mean(W), np.mean(IRF[:,0]))
-    numPeaks0 = len(find_peaks(W[:,0])[0])
-    numPeaks1 = len(find_peaks(W[:,1])[0])
-    numPeaks2 = len(find_peaks(W[:,2])[0])
-    numPeaks3 = len(find_peaks(W[:,3])[0])
-    print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
-    W= W* np.max(IRF[:,0]) / ( np.max([W]))
-    if len(W[:,0]) % 2 == 1:
-        win = len(W[:,0])
-    else:
-        win = len(W[:,0]) - 1
-        
-    W[:,0]= savgol_filter(W[:,0],win,numPeaks0 )
-    W[:,1]= savgol_filter(W[:,1],win,numPeaks1 )
-    W[:,2]= savgol_filter(W[:,2],win,numPeaks2 )
-    W[:,3]= savgol_filter(W[:,3], win,numPeaks3 )
-     
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0] ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,2] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH B"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,3] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 A"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,4] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 B"], True)
-    #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
    # IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3] ],'4Spectra',["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra"], True)
     H = model.components_
     Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    print(H)
-    print(Hnorm)
-    #product = np.matmul(W,H)
-    #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,0] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
-    #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
+    #print(H)
+    #print(Hnorm)
+    product = np.matmul(W,H)
+    IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,0] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
+    IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
    # matchTable = nmfMatcher (IRF, product)
     #IrOrgs = [IR0,IR1]
     #IrPlotter ([IR0, W[:,0]], "First Calculated Spectra", ['Original Ir', 'NMF Generated IR'],True)
@@ -191,5 +166,5 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     #print(matchTable)
    # 
     
-nmf2TesterMixB(1500,1700,20,4)  
+nmf2TesterMixB(1000,1500,20,3)  
    

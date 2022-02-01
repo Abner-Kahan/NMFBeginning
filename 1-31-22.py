@@ -152,15 +152,7 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     numPeaks3 = len(find_peaks(W[:,3])[0])
     print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
     W= W* np.max(IRF[:,0]) / ( np.max([W]))
-    if len(W[:,0]) % 2 == 1:
-        win = len(W[:,0])
-    else:
-        win = len(W[:,0]) - 1
-        
-    W[:,0]= savgol_filter(W[:,0],win,numPeaks0 )
-    W[:,1]= savgol_filter(W[:,1],win,numPeaks1 )
-    W[:,2]= savgol_filter(W[:,2],win,numPeaks2 )
-    W[:,3]= savgol_filter(W[:,3], win,numPeaks3 )
+   
      
     IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0] ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
     IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)

@@ -41,7 +41,7 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
             plt.plot(np.linspace(ran1,ran2,len(n)),n,markersize=.1)
     if len (leg) > 0:
         plt.legend(leg,fontsize='x-small')
-    plt.gca().invert_yaxis()
+    #plt.gca().invert_yaxis()
     plt.title(title)
     plt.xlabel("cm^-1")    
     plt.show()
@@ -82,7 +82,12 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
 #print(isinstance(fileList[0],str))
 #plt.vlines(file2Spectra(fileList[1])[:,0],0,file2Spectra(fileList[0])[:,1])
 
-
+def peakPlotter(W,numPeaks,ran1,ran2,col):
+    plt.plot(np.linspace(ran1,ran2,(ran2-ran1+1)), W[:,col])
+    plt.vlines(numPeaks, 0,W[:,0][numPeaks-ran1]+2)
+    plt.title("peaks")
+    plt.show()
+    plt.clf()
 
 
 
@@ -147,9 +152,18 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     print ("W-size",W.shape)
     #print("mean", np.mean(W), np.mean(IRF[:,0]))
     numPeaks0 = (find_peaks(W[:,0])[0])+ran1
+    
     numPeaks1 = (find_peaks(W[:,1])[0])+ran1
     numPeaks2 = (find_peaks(W[:,2])[0]) +ran1
     numPeaks3 = (find_peaks(W[:,3])[0]) +ran1
+    
+    peakPlotter(W,numPeaks0,ran1,ran2,0)
+    peakPlotter(W,numPeaks1,ran1,ran2,1)
+    peakPlotter(W,numPeaks2,ran1,ran2,2)
+    peakPlotter(W,numPeaks3,ran1,ran2,3)
+    
+    
+    
     print ("Peaks",numPeaks0,numPeaks1,numPeaks2,numPeaks3 )
     print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
     K0= np.mean([W]) /  np.mean(IRF[:,0])
@@ -159,7 +173,17 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     K4= np.mean([W]) /  np.mean(IRF[:,4])
    
      
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
+    #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
+    
+    IrPlotter(W[:,0], "Calculated Spectra 1",ran1,ran2)
+    IrPlotter(W[:,1], "Calculated Spectra 2",ran1,ran2)
+    IrPlotter(W[:,2], "Calculated Spectra 3",ran1,ran2)
+    IrPlotter(W[:,3], "Calculated Spectra 4",ran1,ran2)
+    #IrPlotter(W[:,4], "Calculated Spectra 5",ran1,ran2)
+    
+    
+    
+    
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1]*K1 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,2]*K2 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH B"], True)
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,3]*K3 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 A"], True)

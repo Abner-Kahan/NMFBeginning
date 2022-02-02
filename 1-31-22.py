@@ -140,25 +140,30 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     
     IRF= np.transpose(IRF)
     
-    model = NMF(n_components=4, max_iter=5000, tol= 1*10**-10, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler' )
+    model = NMF(n_components=4, max_iter=5000, tol= 1*10**-10, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
     
     print ("W-size",W.shape)
     #print("mean", np.mean(W), np.mean(IRF[:,0]))
-    numPeaks0 = len(find_peaks(W[:,0])[0])
-    numPeaks1 = len(find_peaks(W[:,1])[0])
-    numPeaks2 = len(find_peaks(W[:,2])[0])
-    numPeaks3 = len(find_peaks(W[:,3])[0])
+    numPeaks0 = (find_peaks(W[:,0])[0])+ran1
+    numPeaks1 = (find_peaks(W[:,1])[0])+ran1
+    numPeaks2 = (find_peaks(W[:,2])[0]) +ran1
+    numPeaks3 = (find_peaks(W[:,3])[0]) +ran1
+    print ("Peaks",numPeaks0,numPeaks1,numPeaks2,numPeaks3 )
     print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
-    W= W* np.max(IRF[:,0]) / ( np.max([W]))
+    K0= np.mean([W]) /  np.mean(IRF[:,0])
+    K1= np.mean([W]) /  np.mean(IRF[:,1])
+    K2= np.mean([W]) /  np.mean(IRF[:,2])
+    K3= np.mean([W]) /  np.mean(IRF[:,3])
+    K4= np.mean([W]) /  np.mean(IRF[:,4])
    
      
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0] ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,2] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH B"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,3] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 A"], True)
-    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,4] ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 B"], True)
+    IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
+    #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1]*K1 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
+    #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,2]*K2 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH B"], True)
+    #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,3]*K3 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 A"], True)
+    #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,4]*K4 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 B"], True)
     #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
    # IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3] ],'4Spectra',["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra"], True)
     H = model.components_
@@ -183,5 +188,5 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     #print(matchTable)
    # 
     
-nmf2TesterMixB(1500,1700,20,4)  
+nmf2TesterMixB(1600,1700,20,1)  
    

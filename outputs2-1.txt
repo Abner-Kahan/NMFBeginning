@@ -1,0 +1,8 @@
+nmf2TesterMixB(1600,1700,20,1)  : The first selection is 70% humidity
+The second selection is 20% humidity.
+
+Peaks [1616 1646 1693] [1615 1650] [1624 1653 1672 1680] [1620 1640 1647 1677 1686]
+
+Peaks [1616 1618 1647 1666 1681] [1615 1617 1648 1667] [1613 1616 1647 1681] [1615 1617 1641 1646 1665 1667 1682 1699]
+
+beta sheet 1620, r0coil1645, alpha heluix 1660, beta -turn1678

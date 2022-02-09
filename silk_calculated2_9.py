@@ -44,7 +44,9 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
         plt.legend(leg,fontsize='x-small')
     #plt.gca().invert_yaxis()
     plt.title(title)
+    plt.ylim(0,40000)
     plt.xlabel("cm^-1")
+    plt.savefig(title+'.png')
     plt.show()
     plt.clf()    
 
@@ -77,9 +79,11 @@ output = subprocess.check_output(('find . -name input_ir.txt'), shell=True)
 
 output = output.split()
 for n in output:
-    IrPlotter( gaussian_broadening(fetchIr(n), 20, 0, 4000),n[2:20], 0, 4000)
-    IrPlotter( gaussian_broadening(fetchIr(n), 20, 1450, 1700),n[2:20], 1450, 1750)
-
+    n= n.decode('UTF-8')
+    i = n.index('/',8,20)
+    IrPlotter( gaussian_broadening(fetchIr(n), 20, 0, 4000),n[2:i], 0, 4000)
+    IrPlotter( gaussian_broadening(fetchIr(n), 20, 1450, 1700),n[2:i] + ' amide region', 1450, 1750)
+    
    # 
     
 # =============================================================================

@@ -41,7 +41,11 @@ def fetchIr(path,column):
 
 #print(fetchIr('UntreatedSample.txt',3))
 
-def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
+def IrPlotter(item,title,ran1,ran2,ax = 0, leg = [], multiple = False):
+    if ax == 0:
+        plt.ylim()
+    else:
+        plt.ylim(top =ax)
     if not(multiple):
         plt.plot(np.linspace(ran1,ran2,len(item)),item,markersize=.1)
     else:
@@ -93,8 +97,9 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
 def peakPlotter(W,numPeaks,ran1,ran2,col):
     plt.plot(np.linspace(ran1,ran2,(ran2-ran1+1)), W[:,col])
     plt.vlines(numPeaks, 0,W[:,col][numPeaks-ran1])
-    plt.legend(numPeaks)
-    plt.title("peaks")
+    plt.legend(np.ndarray.tolist(numPeaks))
+    plt.ylim(top =2)
+    plt.title(f"peaks Calculated Spectra{col}")
     plt.show()
     plt.clf()
 
@@ -104,7 +109,7 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     #pdb.set_trace()
 
 
-    Humdities = [5,10,20,20,30,40,50,60,70,80,90,95]
+    Humdities = [5,10,20,30,40,50,60,70,80,90,95]
     
     
     IRF = np.zeros((33,(ran2-ran1+1)*res))
@@ -118,19 +123,19 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     
         
     
-    IrPlotter( IRF [:12,:], 'Unstreated Spectra', ran1,ran2,['5','10','20','30','40','50','60','70','80','90','95']
+    IrPlotter( IRF [:11,:], 'Unstreated Spectra', ran1,ran2,80, ['5','10','20','30','40','50','60','70','80','90','95']
                                                                                 ,True)
-    IrPlotter( IRF [12:23,:], 'MEOH Spectra', ran1,ran2,['5','10','20','30','40','50','60','70','80','90','95']
+    IrPlotter( IRF [11:22,:], 'MEOH Spectra', ran1,ran2, 80, ['5','10','20','30','40','50','60','70','80','90','95']
                                                                                  ,True)
-    IrPlotter( IRF [23:,:], 'WA45 Spectra', ran1,ran2,['5','10','20','30','40','50','60','70','80','90','95']
+    IrPlotter( IRF [22:,:], 'WA45 Spectra', ran1,ran2,80, ['5','10','20','30','40','50','60','70','80','90','95']
                                                                                  ,True)
    # print(IR1.shape)
     
 
-    
+   # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
     IRF= np.transpose(IRF)
     
-    model = NMF(n_components=4, max_iter=5000, tol= 1*10**-10, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler')#, alpha = .3  )
+    model = NMF(n_components=5, max_iter=5000, tol= 1*10**-10, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
     
@@ -160,10 +165,12 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
      
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
     
-    IrPlotter(W[:,0], "Calculated Spectra 1",ran1,ran2)
-    IrPlotter(W[:,1], "Calculated Spectra 2",ran1,ran2)
-    IrPlotter(W[:,2], "Calculated Spectra 3",ran1,ran2)
-    IrPlotter(W[:,3], "Calculated Spectra 4",ran1,ran2)
+    IrPlotter(W[:,0], "Calculated 1",ran1,ran2,1.3)
+    IrPlotter(W[:,1], "Calculated 2",ran1,ran2,1.3)
+    IrPlotter(W[:,2], "Calculated 3",ran1,ran2,1.3)
+    IrPlotter(W[:,3], "Calculated 4",ran1,ran2,1.3)
+    IrPlotter(W[:,4], "Calculated 5",ran1,ran2,1.3)
+    
     #IrPlotter(W[:,4], "Calculated Spectra 5",ran1,ran2)
     
     
@@ -181,4 +188,4 @@ def nmf2TesterMixB(ran1,ran2,broad,res):
     np.save("Hnorm.npy",Hnorm)
 
 
-nmf2TesterMixB(1600,1700,20,1)  
+nmf2TesterMixB(0,4000,20,1)  

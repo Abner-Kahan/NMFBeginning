@@ -41,12 +41,11 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
         for n in item:
             plt.plot(np.linspace(ran1,ran2,len(n)),n,markersize=.1)
     if len (leg) > 0:
-        plt.legend(leg,fontsize='x-small')
+        plt.legend(leg)
     #plt.gca().invert_yaxis()
     plt.title(title)
     plt.ylim(0,40000)
     plt.xlabel("cm^-1")
-    plt.savefig(title+'.png')
     plt.show()
     plt.clf()    
 
@@ -78,11 +77,36 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
 output = subprocess.check_output(('find . -name input_ir.txt'), shell=True)
 
 output = output.split()
+print (output)
+ind = 0
 for n in output:
     n= n.decode('UTF-8')
-    i = n.index('/',8,20)
-    IrPlotter( gaussian_broadening(fetchIr(n), 20, 0, 4000),n[2:i], 0, 4000)
-    IrPlotter( gaussian_broadening(fetchIr(n), 20, 1450, 1700),n[2:i] + ' amide region', 1450, 1750)
+    output[ind] = n
+    ind +=1
+for Type in ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/' ]:
+    type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
+    Inter =list(type_filter)
+    specs = []
+    legend = []
+    for spec in Inter:
+       i = spec.index('/',9)
+       legend.append(spec[8:i])
+       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1700))
+       #print("check" ,specs)
+    IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1750, leg = legend, multiple = True)
+
+for Type in ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/' ]:
+    type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
+    Inter =list(type_filter)
+    specs = []
+    legend = []
+    for spec in Inter:
+       #i = spec.index('/',9)
+       legend.append(spec[2:5])
+       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1700))
+       #print("check" ,specs)
+    IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 1450, 1750, leg = legend, multiple = True)
+
     
    # 
     

@@ -35,11 +35,19 @@ def fetchIr(path):
 
 
 def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
+    #colors = np.array([(254,230,206), (253,174,107),(230,85,13)])
+    #colors = colors/256
+    colors =['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603']
+    print(colors)
+
+        
     if not(multiple):
-        plt.plot(np.linspace(ran1,ran2,len(item)),item,markersize=.1)
+        plt.plot(np.linspace(ran1,ran2,(int(ran2-ran1) + 1)),item,markersize=.1)
     else:
+        index = 0
         for n in item:
-            plt.plot(np.linspace(ran1,ran2,len(n)),n,markersize=.1)
+            plt.plot(np.linspace(ran1,ran2,(int(ran2-ran1) + 1)),n,markersize=.1,color=colors[index+1])
+            index += 1
     if len (leg) > 0:
         plt.legend(leg)
     #plt.gca().invert_yaxis()
@@ -61,12 +69,15 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
     """
     IR = np.zeros(resolution*(int(ran2-ran1) + 1))
     X = np.linspace(ran1,ran2, resolution*(int(ran2-ran1)+1))
+   
 
     #for f, i in zip(spectra[:,0]):
       #  IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
       #  IR=np.vstack((X, IR)).T #tspec
    
-    freq = spectra[:,0]
+    freq = spectra[:,0]*.965
+   # print(np.max(freq))
+    #print(np.min(freq))
     inten = spectra[:,1]
     #print(len(freq))
     for f,i in zip(freq,inten):
@@ -94,10 +105,10 @@ if OperatingSystem =='Windows':
     #output = output.split(B'C:/Users/Abner/Documents/Python Scripts')
 
     #output=output[::2]
-    output = glob.glob('./**/**/input_ir.txt',recursive = True)
+    output = glob.glob('./**/*/input_ir.txt',recursive = True)
     
 
-print (output)
+#print (output) 
 if OperatingSystem =='Windows':
     TypeList = ['\\gas\\', '\\wat_gas\\', '\\pcm\\', '\\wat_pcm\\']
 else:
@@ -106,14 +117,18 @@ else:
 for Type in TypeList:
     type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
     Inter =list(type_filter)
+    #print(Inter)
     specs = []
     legend = []
     for spec in Inter:
-       i = spec.index('/',9)
+       i = spec.index('\\',9)
        legend.append(spec[8:i])
-       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1700))
+       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
        #print("check" ,specs)
-    IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1750, leg = legend, multiple = True)
+       #print('specs', len(specs))
+    #print(specs)
+       
+    IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
 
 for Type in TypeList:
     type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
@@ -123,9 +138,9 @@ for Type in TypeList:
     for spec in Inter:
        #i = spec.index('/',9)
        legend.append(spec[2:5])
-       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1700))
+       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
        #print("check" ,specs)
-    IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 1450, 1750, leg = legend, multiple = True)
+    IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
 
     
    # 

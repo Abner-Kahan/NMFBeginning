@@ -74,7 +74,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
         
     
     return IR
-OperatingSystem= 'Windows'
+OperatingSystem= 'Linux'
 ind = 0
 if OperatingSystem =='Linux':
     output = subprocess.check_output(('find . -name input_ir.txt'), shell=True)

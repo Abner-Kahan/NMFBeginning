@@ -61,7 +61,7 @@ def IrPlotter(item,title,ran1,ran2,ax = 0, leg = [], multiple = False):
     
     
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
-def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
+def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolution=1):
  
     """ Performs gaussian broadening on IR spectrum
     generates attribute self.IR - np.array with dimmension 4000/resolution consisting gaussian-boraden spectrum
@@ -78,6 +78,8 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
       #  IR=np.vstack((X, IR)).T #tspec
    
     freq = spectra[0]
+    if experiment:
+         freq = spectra[0] *.965
     inten = spectra[1]
     #print(len(freq))
     for f,i in zip(freq,inten):

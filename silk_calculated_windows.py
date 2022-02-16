@@ -26,7 +26,7 @@ def fetchIr(path):
         spectra[index] = line.split()[1:3]
         index+=1
                                       
-   
+    #print(spectra)
     return spectra
 
 #print(fetchIr('3A6/gas/input_ir.txt'))
@@ -85,16 +85,10 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
         
     
     return IR
-OperatingSystem= 'Windows'
+OperatingSystem= 'Linux'
 ind = 0
-if OperatingSystem =='Linux':
-    output = subprocess.check_output(('find . -name input_ir.txt'), shell=True)
-    for n in output:
-        n= n.decode('UTF-8')
-        output[ind] = n
-    #output[ind] =  output[ind][1:]
-        ind +=1
-if OperatingSystem =='Windows':
+
+
    # output = subprocess.check_output(('dir /S  /B input_ir.txt'), shell=True)
    # output = output.replace(b'\\',b'/')
    # output = output.replace(b'\n',b'')
@@ -105,21 +99,18 @@ if OperatingSystem =='Windows':
     #output = output.split(B'C:/Users/Abner/Documents/Python Scripts')
 
     #output=output[::2]
-    output = glob.glob('./**/*/input_ir.txt',recursive = True)
+output = glob.glob('./**/*/input_ir.txt',recursive = True)
     
 
 #print (output) 
 if OperatingSystem =='Windows':
     TypeList = ['\\gas\\', '\\wat_gas\\', '\\pcm\\', '\\wat_pcm\\']
-else:
-    TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
-
-for Type in TypeList:
-    type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
-    Inter =list(type_filter)
+    for Type in TypeList:
+        type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
+        Inter =list(type_filter)
     #print(Inter)
-    specs = []
-    legend = []
+        specs = []
+        legend = []
     for spec in Inter:
        i = spec.index('\\',9)
        legend.append(spec[8:i])
@@ -130,17 +121,54 @@ for Type in TypeList:
        
     IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
 
-for Type in TypeList:
-    type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
-    Inter =list(type_filter)
-    specs = []
-    legend = []
-    for spec in Inter:
+    for Type in TypeList:
+        type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
+        Inter =list(type_filter)
+        specs = []
+        legend = []
+        for spec in Inter:
+           #i = spec.index('/',9)
+           legend.append(spec[2:5])
+           specs.append(gaussian_broadening(fetchIr(spec), 20, 0, 4000))
+           #print("check" ,specs)
+        IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 0, 4000, leg = legend, multiple = True)
+    else:
+        TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
+        
+     
+if OperatingSystem =='Linux':
+    TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
+    for Type in TypeList:
+        type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
+        Inter =list(type_filter)
+        print("test", Inter)
+        specs = []
+        legend = []
+        for spec in Inter:
        #i = spec.index('/',9)
-       legend.append(spec[2:5])
-       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
+       #legend.append(spec[8:i])
+           specs.append(gaussian_broadening(fetchIr(spec), 20, 0, 4000))
        #print("check" ,specs)
-    IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
+       #print('specs', len(specs))
+    #print(specs)
+        IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 0, 4000, multiple = True)
+
+    for Type in TypeList:
+        type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
+        Inter =list(type_filter)
+        specs = []
+        legend = []
+        for spec in Inter:
+           #i = spec.index('/',9)
+           legend.append(spec[2:5])
+           specs.append(gaussian_broadening(fetchIr(spec), 20, 0, 4000))
+           #print("check" ,specs)
+        IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 0, 4000, leg = legend, multiple = True)
+    else:
+        TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']        
+
+
+
 
     
    # 

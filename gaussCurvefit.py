@@ -110,32 +110,36 @@ IRF = np.zeros((2,(ran2-ran1+1)))
 IR1 = fetchIr('UntreatedSample.txt',3)
 IR2 = fetchIr('UntreatedSample.txt',3)
 
-def gauss(x, H, A, x0, sigma):
-    return H + A * np.exp(-(x - x0) ** 2 / (2 * sigma ** 2))
+def gauss(x, A, x0):
+    return A * np.exp(-(x - x0) ** 2 / (2 * 20 ** 2))
 def fourgauss(x, H_0, A_0, x0_0, sigma_0, x_0, H_1, A_1, x0_1, sigma_1, x_1, H_2, A_2, x0_2, sigma_2, x_2, H_3, A_3, x0_3, sigma_3):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (2 * sigma_0 ** 2))) +   \
-             (H_1 + A_1 * np.exp(-(x - x0_1) ** 2 / (2 * sigma_1 ** 2)))   \
-        (H_2 + A_2 * np.exp(-(x - x0_2) ** 2 / (2 * sigma_2 ** 2)))    \
+             (H_1 + A_1 * np.exp(-(x - x0_1) ** 2 / (2 * sigma_1 ** 2)))  + \
+        (H_2 + A_2 * np.exp(-(x - x0_2) ** 2 / (2 * sigma_2 ** 2)))   + \
     ( H_3 + A_3 * np.exp(-(x - x0_3) ** 2 / (2 * sigma_3 ** 2)))
 
-fit_y = (curve_fit(gauss,IR1[0],IR1[1]))[0]
-print(fit_y)
-fit_y =gauss(IR1, fit_y[0],fit_y[1],fit_y[2],fit_y[3])
-print(fit_y)
-plt.plot(IR1[0],fit_y[1])
-plt.xlim(0,4000)
+fit_y = curve_fit(gauss,IR1[0],IR1[1],method='dogbox')
+print("fit1", fit_y[0])
+#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
+y_out =[]
+#for x in IR1[0]:
+ #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
+#plt.plot(IR1[0],y_out)
+plt.plot(IR1[0], gauss(IR1, *fit_y[0])[0])
+#plt.xlim(0,4000)
 plt.title("fit")
 plt.show()
 plt.clf()
 
 
 fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
-print(fit_y2)
+print("fit2", fit_y2)
 fit_y2 =fourgauss(IR1, fit_y2[0],fit_y2[1],fit_y2[2],fit_y2[3],fit_y2[4],fit_y2[5],fit_y2[6],fit_y2[7],fit_y2[8],fit_y2[9],
-                  fit_y2[10],fit_y2[11],fit_y2[12],fit_y2[13],fit_y2[14],fit_y2[15],fit_y2[16])
-print(fit_y2)
+                  fit_y2[10],fit_y2[11],fit_y2[12],fit_y2[13],fit_y2[14],fit_y2[15],fit_y2[16],fit_y2[17], fit_y2[18] )
+print("gauss2",fit_y2)
 plt.plot(IR1[0],fit_y2[1])
-plt.xlim(0,4000)
+plt.plot()
+#plt.xlim(0,4000)
 plt.title("fit2")
 plt.show()
 plt.clf()

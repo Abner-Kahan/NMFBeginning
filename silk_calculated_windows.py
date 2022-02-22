@@ -52,7 +52,7 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
         plt.legend(leg)
     #plt.gca().invert_yaxis()
     plt.title(title)
-    plt.ylim(0,40000)
+    plt.ylim(0,45000)
     plt.xlabel("cm^-1")
     plt.show()
     plt.clf()    
@@ -85,7 +85,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
         
     
     return IR
-OperatingSystem= 'Linux'
+OperatingSystem= 'Windows'
 ind = 0
 
 
@@ -100,7 +100,7 @@ ind = 0
 
     #output=output[::2]
 output = glob.glob('./**/*/input_ir.txt',recursive = True)
-    
+print (output)
 
 #print (output) 
 if OperatingSystem =='Windows':
@@ -122,16 +122,16 @@ if OperatingSystem =='Windows':
     IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
 
     for Type in TypeList:
-        type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
+        type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
         Inter =list(type_filter)
         specs = []
         legend = []
         for spec in Inter:
            #i = spec.index('/',9)
-           legend.append(spec[2:5])
-           specs.append(gaussian_broadening(fetchIr(spec), 20, 0, 4000))
+           legend.append(spec[:])
+           specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
            #print("check" ,specs)
-        IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 0, 4000, leg = legend, multiple = True)
+        IrPlotter(specs, "helix" + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
     else:
         TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
         

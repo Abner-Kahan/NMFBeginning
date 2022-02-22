@@ -1,0 +1,7 @@
+%nproc=24
+%mem=64GB
+#P PBE1PBE/6-31+G(d,p) opt freq  int=(grid=99590) scrf=(cpcm, solvent=water) EmpiricalDispersion=GD3
+
+solv sp
+
+0 1

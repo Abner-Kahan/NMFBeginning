@@ -47,8 +47,8 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
 
 
     
-ran1 =0
-ran2 = 4000   
+ran1 =1600
+ran2 = 1800   
 broad =20
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):

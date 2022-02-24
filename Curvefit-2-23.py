@@ -137,18 +137,18 @@ print(np.max(IR1))
 def gauss(x, h, A, x0, c):
     return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
 #=============================================================================
-def fourgauss(x, H_0, A_0, x0_0, sigma_0, x_0, H_1, A_1, x0_1, sigma_1, x_1, H_2, A_2, x0_2, sigma_2, x_2, H_3, A_3, x0_3, sigma_3):
+def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
-              (H_1 + A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))  + \
-        (H_2 + A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
-    ( H_3 + A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
+              ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))  + \
+        ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
+    (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
 #=============================================================================
 
 fit_y = curve_fit(gauss,IR1[0],IR1[1],[1,1,1650,1] )
 
-print("fit1", fit_y)
+#print("fit1", fit_y)
 #fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
-x_range = np.linspace(1600,1700,20000)
+x_range = np.linspace(1600,1700,2000)
 y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
     
 #for x in IR1[0]:
@@ -163,28 +163,40 @@ plt.xlabel("cm^-1")
 plt.title("One Guassian")
 plt.show()
 plt.clf()
-
-
-fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))
-print("fit2", fit_y2)
-fit_y2 =fourgauss(IR1, fit_y2[0],fit_y2[1],fit_y2[2],fit_y2[3],fit_y2[4],fit_y2[5],fit_y2[6],fit_y2[7],fit_y2[8],fit_y2[9],
-                  fit_y2[10],fit_y2[11],fit_y2[12],fit_y2[13],fit_y2[14],fit_y2[15],fit_y2[16],fit_y2[17], fit_y2[18] )
-print("gauss2",fit_y2)
-plt.plot(IR1[0],fit_y2[1])
-plt.plot()
+peak1 = random.randrange(1600,1700,1)
+peak2 = random.randrange(1600,1700,1)
+peak3 = random.randrange(1600,1700,1)
+peak4 = random.randrange(1600,1700,1)
+print('The peaks are',peak1, peak2,peak3,peak4)
+guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
+constraints = ([-20,0,1600,0,0,1600,0,0,1600,0,0,1600,0],[20,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf] )
+fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='dogbox')
+print(fit_y2)
+par4 = fit_y2[0]
+#print("fit2",fit_y2)
+#print("bob", par4)
+yplot4 =fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] )
+#print("gauss2",fit_y2)
+plt.plot(x_range,yplot4)
+plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
+plt.xlabel("cm^-1")
 #plt.xlim(0,4000)
 #fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
-print("fit2", fit_y2)
-fit_y2 =fourgauss(IR1, fit_y2[0],fit_y2[1],fit_y2[2],fit_y2[3],fit_y2[4],fit_y2[5],fit_y2[6],fit_y2[7],fit_y2[8],fit_y2[9],
-                  fit_y2[10],fit_y2[11],fit_y2[12],fit_y2[13],fit_y2[14],fit_y2[15],fit_y2[16],fit_y2[17], fit_y2[18] )
-print("gauss2",fit_y2)
-plt.plot(IR1[0],fit_y2[1])
-plt.plot()
+#plt.plot(IR1[0],fit_y2[1])
+#plt.plot()
 #plt.xlim(0,4000)
-plt.title("fit2")
+plt.title("Four Gaussians")
 plt.show()
 plt.clf()
-plt.title("fit2")
+
+#OneOf4_gauss = 
+plt.plot(x_range, gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
+plt.plot(x_range, gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
+plt.plot(x_range, gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
+plt.plot(x_range, gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
+plt.title('Four Gaussians')
+plt.legend(["Gauss1", "Gauss2","Gauss3","Gauss4"])
+plt.xlabel("cm^-1")
 plt.show()
 plt.clf()
 IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)

@@ -91,6 +91,8 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
     #plt.gca().invert_yaxis()
     plt.title(title)
     plt.xlabel("cm^-1")
+    plt.xlim(ran2,ran1)
+    
     plt.show()
     plt.clf()   
 
@@ -131,9 +133,9 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
 
 
 IRF = np.zeros((2,(ran2-ran1+1)))
-IR1 = fetchIr('MeOHSample.txt',3,ran1,ran2)
+IR1 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
 print('A \n', IR1[1][::10])
-IR2 = fetchIr('MeOHSample.txt',3,ran1,ran2)
+IR2 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
 print(np.max(IR1))
 def gauss(x, h, A, x0, c):
     return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
@@ -159,7 +161,7 @@ y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
 plt.plot(x_range, y_out)#,markersize=1)
 plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
 plt.xlabel("cm^-1")
-
+plt.xlim(max(x_range), min(x_range))
 #plt.xlim(0,4000)
 plt.title("One Guassian")
 plt.show()
@@ -172,7 +174,7 @@ for b in range(35):
      peak4 = random.randrange(1600,1700,1)
      print('The peaks are',peak1, peak2,peak3,peak4)
      guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
-     constraints = ([-20,0,1600,.01,0,1600,.01,0,1600,.01,0,1600,.01],[20,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf] )
+     constraints = ([-20,0,1600,.01,0,1600,.01,0,1600,.01,0,1600,.01],[20,np.inf,1700,25,np.inf,1700,25,np.inf,1700,25,np.inf,1700,25] )
      fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='trf')
      #print(fit_y2)
      par4 = fit_y2[0]
@@ -198,8 +200,10 @@ for b in range(35):
 
 #print("gauss2",fit_y2)
      plt.plot(x_range,yplot4)
+     plt.xlim(max(x_range), min(x_range))
      plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
      plt.xlabel("cm^-1")
+     
      #plt.ylim(bottom=0)
 #plt.xlim(0,4000)
 #fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
@@ -207,6 +211,7 @@ for b in range(35):
 #plt.plot()
 #plt.xlim(0,4000)
      plt.title("Four Gaussians")
+     
      plt.show()
      plt.clf()
      #print (max (gauss(x_range, par4[0], par4[1], par4[2], par4[3])))
@@ -222,11 +227,12 @@ for b in range(35):
      plt.title('Four Gaussians')
      plt.legend(["Gauss1", "Gauss2","Gauss3","Gauss4"])
      plt.xlabel("cm^-1")
+     plt.xlim(max(x_range), min(x_range))
      #plt.ylim(bottom=0)
      plt.show()
      plt.clf()
      IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
      IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
 
-     IrPlotter( IRF [0,:], 'MEOH Spectra_Old_fit', ran1,ran2)  
+     IrPlotter( IRF [0,:], 'Unstreated Spectra_Old_fit', ran1,ran2)  
 #IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)

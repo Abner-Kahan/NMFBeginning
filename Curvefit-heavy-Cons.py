@@ -87,7 +87,7 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
             index += 1
     if len (leg) > 0:
         plt.legend(leg)
-    plt.ylim(bottom=0)
+    #plt.ylim(bottom=0)
     #plt.gca().invert_yaxis()
     plt.title(title)
     plt.xlabel("cm^-1")
@@ -131,9 +131,9 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
 
 
 IRF = np.zeros((2,(ran2-ran1+1)))
-IR1 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
+IR1 = fetchIr('MeOHSample.txt',3,ran1,ran2)
 print('A \n', IR1[1][::10])
-IR2 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
+IR2 = fetchIr('MeOHSample.txt',3,ran1,ran2)
 print(np.max(IR1))
 def gauss(x, h, A, x0, c):
     return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
@@ -164,50 +164,69 @@ plt.xlabel("cm^-1")
 plt.title("One Guassian")
 plt.show()
 plt.clf()
-peak1 = random.randrange(1600,1700,1)
-peak2 = random.randrange(1600,1700,1)
-peak3 = random.randrange(1600,1700,1)
-peak4 = random.randrange(1600,1700,1)
-print('The peaks are',peak1, peak2,peak3,peak4)
-guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
-constraints = ([-20,0,1600,0,0,1600,0,0,1600,0,0,1600,0],[20,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf] )
-fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='dogbox')
-print(fit_y2)
-par4 = fit_y2[0]
+for b in range(35):
+     print("Run", b)
+     peak1 = random.randrange(1600,1700,1)
+     peak2 = random.randrange(1600,1700,1)
+     peak3 = random.randrange(1600,1700,1)
+     peak4 = random.randrange(1600,1700,1)
+     print('The peaks are',peak1, peak2,peak3,peak4)
+     guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
+     constraints = ([-20,0,1600,.01,0,1600,.01,0,1600,.01,0,1600,.01],[20,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf,np.inf,1700,np.inf] )
+     fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='trf')
+     #print(fit_y2)
+     par4 = fit_y2[0]
+     minSpec = min(fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] ))
+     max1 = max (gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
+     max2 = max(gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
+     max3 = max (gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
+     max4 = max(gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
+     br = False
+     for maxNum in [max1,max2,max3,max4]:
+         print("XD \n", maxNum / (min([max1,max2,max3,max4])-minSpec))
+         if maxNum / abs((min([max1,max2,max3,max4])-minSpec)) > 10:
+             br = True
+     if br:
+          continue
+     if minSpec < 0:
+         continue
+         
+     
 #print("fit2",fit_y2)
 #print("bob", par4)
-yplot4 =fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] )
+     yplot4 =fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] )
+
 #print("gauss2",fit_y2)
-plt.plot(x_range,yplot4)
-plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
-plt.xlabel("cm^-1")
-plt.ylim(bottom=0)
+     plt.plot(x_range,yplot4)
+     plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
+     plt.xlabel("cm^-1")
+     #plt.ylim(bottom=0)
 #plt.xlim(0,4000)
 #fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
 #plt.plot(IR1[0],fit_y2[1])
 #plt.plot()
 #plt.xlim(0,4000)
-plt.title("Four Gaussians")
-plt.show()
-plt.clf()
-print (max (gauss(x_range, par4[0], par4[1], par4[2], par4[3])))
-print (max (gauss(x_range, par4[0], par4[4], par4[5], par4[6])))
-print (max (gauss(x_range, par4[0], par4[7], par4[8], par4[9])))
-print (max (gauss(x_range, par4[0], par4[10], par4[11], par4[12])))
+     plt.title("Four Gaussians")
+     plt.show()
+     plt.clf()
+     #print (max (gauss(x_range, par4[0], par4[1], par4[2], par4[3])))
+    # print (max (gauss(x_range, par4[0], par4[4], par4[5], par4[6])))
+    # print (max (gauss(x_range, par4[0], par4[7], par4[8], par4[9])))
+    # print (max (gauss(x_range, par4[0], par4[10], par4[11], par4[12])))
 
 #OneOf4_gauss = 
-plt.plot(x_range, gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
-plt.plot(x_range, gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
-plt.plot(x_range, gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
-plt.plot(x_range, gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
-plt.title('Four Gaussians')
-plt.legend(["Gauss1", "Gauss2","Gauss3","Gauss4"])
-plt.xlabel("cm^-1")
-plt.ylim(bottom=0)
-plt.show()
-plt.clf()
-IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
-IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
+     plt.plot(x_range, gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
+     plt.plot(x_range, gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
+     plt.plot(x_range, gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
+     plt.plot(x_range, gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
+     plt.title('Four Gaussians')
+     plt.legend(["Gauss1", "Gauss2","Gauss3","Gauss4"])
+     plt.xlabel("cm^-1")
+     #plt.ylim(bottom=0)
+     plt.show()
+     plt.clf()
+     IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
+     IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
 
-IrPlotter( IRF [0,:], 'Unstreated Spectra_Old_fit', ran1,ran2)  
+     IrPlotter( IRF [0,:], 'MEOH Spectra_Old_fit', ran1,ran2)  
 #IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)

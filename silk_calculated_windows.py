@@ -86,7 +86,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
         
     
     return IR
-OperatingSystem= 'Linux'
+OperatingSystem= 'Windows'
 ind = 0
 
 
@@ -101,6 +101,7 @@ ind = 0
 
     #output=output[::2]
 output = glob.glob('*A6/**/input_ir.txt',recursive = True)
+outputWin = glob.glob('*A6\\**\\input_ir.txt',recursive = True)
 print (output)
 
 #print (output) 

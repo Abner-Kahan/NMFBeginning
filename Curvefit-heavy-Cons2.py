@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-
+import scipy
 import scipy.stats as stats
 import random
 import pdb
@@ -19,13 +19,34 @@ import re
 import glob
 from sklearn.decomposition import NMF
 from scipy.signal import savgol_filter
-from scipy.signal import find_peaks,deconvolve
+from scipy.signal import find_peaks,deconvolve, peak_widths
 from scipy.optimize import curve_fit
 
 
-ran1 =1450
-ran2 = 1800
+ran1 =1600
+ran2 = 1700
 broad = 15
+
+
+def ImaginaryEnergy(spectra):
+    peaks, _ = find_peaks(spectra)
+    results_half = peak_widths(spectra, peaks, rel_height=0.5)
+    ImaginaryEnergy = np.average (results_half[0])/2
+    return ImaginaryEnergy
+def Y(wavelength, spectra,V_oi):
+    L = scipy.misc.derivative (lambda x:(spectra[int(x)]), wavelength)/spectra[int(wavelength)]
+    return (L**-1)/(L**-2 + V_oi**2)
+
+def num(wavelength, TheoSpec,ExperSpec,V_oi):
+    return (Y(wavelength, TheoSpec,V_oi) - Y(wavelength, ExperSpec,V_oi))**2
+def denom(wavelength, TheoSpec,ExperSpec,V_oi):
+    return (Y(wavelength, TheoSpec,V_oi)**2) + (Y(wavelength, ExperSpec,V_oi)**2)
+
+def ypendry(TheoSpec,ExperSpec):
+    #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
+    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)), limit=100)[0]) / (
+    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec)), limit=100))[0])
+
 
 
 def fetchIr(path,column,ran1,ran2):
@@ -134,9 +155,10 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
 
 IRF = np.zeros((2,(ran2-ran1+1)))
 IR1 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
-print('A \n', IR1[1][::10])
+#print('A \n', IR1[1][::10])
 IR2 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
-print(np.max(IR1))
+IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
+#print(np.max(IR1))
 def gauss(x, h, A, x0, c):
     return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
 #=============================================================================
@@ -151,10 +173,10 @@ def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
     
 fit_y = curve_fit(gauss,IR1[0],IR1[1],[1,1,1650,1] )
-fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],[1,1,1650,1],  )
+#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
 #print("fit1", fit_y)
 #fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
-x_range = np.linspace(ran1,ran2,2000)
+x_range = np.linspace(ran1,ran2,101)
 y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
     
 #for x in IR1[0]:
@@ -166,9 +188,10 @@ plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
 plt.xlabel("cm^-1")
 plt.xlim(max(x_range), min(x_range))
 #plt.xlim(0,4000)
-plt.title("One Guassian")
+plt.title("One Guassian ")
 plt.show()
 plt.clf()
+print(f"{ypendry(IRF [0,:], y_out):.5f}")
 for b in range(20):
      print("Run", b)
      peak1 = random.randrange(ran1,ran2,1)
@@ -182,7 +205,7 @@ for b in range(20):
      #print(fit_y2)
      par4 = fit_y2[0]
      #erro = par4[1]
-     print(fit_y2[1])
+     #print(fit_y2[1])
      minSpec = min(fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] ))
      max1 = max (gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
      max2 = max(gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
@@ -190,7 +213,7 @@ for b in range(20):
      max4 = max(gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
      br = False
      for maxNum in [max1,max2,max3,max4]:
-         print("XD \n", maxNum / (min([max1,max2,max3,max4])-minSpec))
+         #print("XD \n", maxNum / (min([max1,max2,max3,max4])-minSpec))
          if maxNum / abs((min([max1,max2,max3,max4])-minSpec)) > 10:
              br = True
      if br:
@@ -202,7 +225,7 @@ for b in range(20):
 #print("fit2",fit_y2)
 #print("bob", par4)
      yplot4 =fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] )
-
+     
 #print("gauss2",fit_y2)
      plt.plot(x_range,yplot4)
      plt.xlim(max(x_range), min(x_range))
@@ -215,7 +238,7 @@ for b in range(20):
 #plt.plot(IR1[0],fit_y2[1])
 #plt.plot()
 #plt.xlim(0,4000)
-     plt.title("Four Gaussians")
+     plt.title('Four Gaussians')
      
      plt.show()
      plt.clf()
@@ -229,15 +252,16 @@ for b in range(20):
      plt.plot(x_range, gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
      plt.plot(x_range, gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
      plt.plot(x_range, gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
-     plt.title('Four Gaussians')
+     plt.title(f"Four Gaussians: ({par4[2]:4.1f}, {par4[5]:4.1f}, {par4[8]:4.1f}, {par4[11]:4.1f}")
      plt.legend(["Gauss1", "Gauss2","Gauss3","Gauss4"])
      plt.xlabel("cm^-1")
      plt.xlim(max(x_range), min(x_range))
      #plt.ylim(bottom=0)
      plt.show()
      plt.clf()
-     IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
-     IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
+     #IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
+     #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
+     print(f"Error: {ypendry(IRF [0,:], yplot4):.5f}")
 
      IrPlotter( IRF [0,:], 'Unstreated Spectra_Old_fit', ran1,ran2)  
 #IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)

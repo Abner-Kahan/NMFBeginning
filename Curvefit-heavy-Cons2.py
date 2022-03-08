@@ -23,8 +23,8 @@ from scipy.signal import find_peaks,deconvolve
 from scipy.optimize import curve_fit
 
 
-ran1 =1600
-ran2 = 1700
+ran1 =1450
+ran2 = 1800
 broad = 15
 
 
@@ -146,12 +146,15 @@ def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma
         ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
     (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
 #=============================================================================
-
+def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
+    return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
+              ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
+    
 fit_y = curve_fit(gauss,IR1[0],IR1[1],[1,1,1650,1] )
-
+fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],[1,1,1650,1],  )
 #print("fit1", fit_y)
 #fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
-x_range = np.linspace(1600,1700,2000)
+x_range = np.linspace(ran1,ran2,2000)
 y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
     
 #for x in IR1[0]:
@@ -166,15 +169,15 @@ plt.xlim(max(x_range), min(x_range))
 plt.title("One Guassian")
 plt.show()
 plt.clf()
-for b in range(1):
+for b in range(20):
      print("Run", b)
-     peak1 = random.randrange(1600,1700,1)
-     peak2 = random.randrange(1600,1700,1)
-     peak3 = random.randrange(1600,1700,1)
-     peak4 = random.randrange(1600,1700,1)
+     peak1 = random.randrange(ran1,ran2,1)
+     peak2 = random.randrange(ran1,ran2,1)
+     peak3 = random.randrange(ran1,ran2,1)
+     peak4 = random.randrange(ran1,ran2,1)
      print('The peaks are',peak1, peak2,peak3,peak4)
      guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
-     constraints = ([-20,0,1600,.01,0,1600,.01,0,1600,.01,0,1600,.01],[20,np.inf,1700,15,np.inf,1700,15,np.inf,1700,15,np.inf,1700,15] )
+     constraints = ([-20,0,ran1,.01,0,ran1,.01,0,ran1,.01,0,ran1,.01],[20,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15] )
      fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='trf')
      #print(fit_y2)
      par4 = fit_y2[0]

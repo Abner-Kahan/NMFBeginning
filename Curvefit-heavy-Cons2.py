@@ -151,16 +151,103 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
     
     return IR
 #Define the Gaussian function
-
+def gauss(x, h, A, x0, c):
+    return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
 
 IRF = np.zeros((2,(ran2-ran1+1)))
 IR1 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
 #print('A \n', IR1[1][::10])
-IR2 = fetchIr('UntreatedSample.txt',3,ran1,ran2)
+IR2 = fetchIr('UntreatedSample.txt',5,ran1,ran2)
 IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
+
+# =============================================================================
+for n in range(0,1):
+     IRboy = fetchIr('UntreatedSample.txt',n,ran1,ran2)
+     fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
+     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
+#print("fit1", fit_y)
+#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
+     x_range = np.linspace(ran1,ran2,ran2-ran1+1)
+     y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
+    
+#for x in IR1[0]:
+ #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
+#plt.plot(IR1[0],y_out)
+
+     plt.plot(x_range, y_out)#,markersize=1)
+     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
+     plt.xlim(max(x_range), min(x_range))
+#plt.xlim(0,4000)
+     plt.title("One Guassian" + " untreated " + str(n))
+     plt.show()
+     plt.clf()
+     #plt.plot(IRboy[0], IRboy[1])
+     #plt.title("untreated" + str(n))
+     #plt.show()
+     #plt.clf()
+# =============================================================================
+    
+# =============================================================================
+for n in range(0):
+     IRboy = fetchIr('MeOHSample.txt',n,ran1,ran2)
+     fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
+     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
+#print("fit1", fit_y)
+#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
+     x_range = np.linspace(ran1,ran2,ran2-ran1+1)
+     y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
+    
+#for x in IR1[0]:
+ #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
+#plt.plot(IR1[0],y_out)
+
+     plt.plot(x_range, y_out)#,markersize=1)
+     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
+     plt.xlim(max(x_range), min(x_range))
+#plt.xlim(0,4000)
+     plt.title("One Guassian" + " MeOH " + str(n))
+     plt.show()
+     plt.clf()
+     #plt.plot(IRboy[0], IRboy[1])
+     #plt.title("untreated" + str(n))
+     #plt.show()
+     #plt.clf()
+# =============================================================================    
 #print(np.max(IR1))
-def gauss(x, h, A, x0, c):
-    return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
+
+for n in range(0):
+     IRboy = fetchIr('Wa45Sample.txt',n,ran1,ran2)
+     fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
+     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
+#print("fit1", fit_y)
+#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
+     x_range = np.linspace(ran1,ran2,ran2-ran1+1)
+     y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
+    
+#for x in IR1[0]:
+ #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
+#plt.plot(IR1[0],y_out)
+
+     plt.plot(x_range, y_out)#,markersize=1)
+     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
+     plt.xlim(max(x_range), min(x_range))
+#plt.xlim(0,4000)
+     plt.title("One Guassian" + " WA45 " + str(n))
+     plt.show()
+     plt.clf()
+     #plt.plot(IRboy[0], IRboy[1])
+     #plt.title("untreated" + str(n))
+     #plt.show()
+     #plt.clf()
+# =============================================================================    
+#print(np.max(IR1))
+
 #=============================================================================
 def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
@@ -168,39 +255,32 @@ def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma
         ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
     (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
 #=============================================================================
+def fivegauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2,  \
+              sigma_2, A_3, x0_3, sigma_3, A_4, x0_4, sigma_4 ):
+    return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
+              ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))  + \
+        ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
+    (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2))) +   \
+       (A_4 * np.exp(-(x - x0_4) ** 2 / (sigma_4 ** 2))) 
+
+
 def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
     
-fit_y = curve_fit(gauss,IR1[0],IR1[1],[1,1,1650,1] )
-#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
-#print("fit1", fit_y)
-#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
-x_range = np.linspace(ran1,ran2,101)
-y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
-    
-#for x in IR1[0]:
- #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
-#plt.plot(IR1[0],y_out)
 
-plt.plot(x_range, y_out)#,markersize=1)
-plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
-plt.xlabel("cm^-1")
-plt.xlim(max(x_range), min(x_range))
-#plt.xlim(0,4000)
-plt.title("One Guassian ")
-plt.show()
-plt.clf()
 print(f"{ypendry(IRF [0,:], y_out):.5f}")
+IRboy = fetchIr('UntreatedSample.txt',1,ran1,ran2)
+broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
 for b in range(20):
      print("Run", b)
-     peak1 = random.randrange(ran1,ran2,1)
-     peak2 = random.randrange(ran1,ran2,1)
-     peak3 = random.randrange(ran1,ran2,1)
-     peak4 = random.randrange(ran1,ran2,1)
+     peak1 =  random.randrange(ran1,ran2,1) #1620
+     peak2 =  random.randrange(ran1,ran2,1) #1645
+     peak3 =  random.randrange(ran1,ran2,1) #1660
+     peak4 =  random.randrange(ran1,ran2,1) #1678
      print('The peaks are',peak1, peak2,peak3,peak4)
      guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
-     constraints = ([-20,0,ran1,.01,0,ran1,.01,0,ran1,.01,0,ran1,.01],[20,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15] )
+     constraints = ([-20,0,ran1,.1,0,ran1,.1,0,ran1,.1,0,ran1,.1],[20,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15] )
      fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='trf')
      #print(fit_y2)
      par4 = fit_y2[0]
@@ -230,7 +310,7 @@ for b in range(20):
      plt.plot(x_range,yplot4)
      plt.xlim(max(x_range), min(x_range))
      plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
-     plt.xlabel("cm^-1")
+     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot4):.5f} ")
      
      #plt.ylim(bottom=0)
 #plt.xlim(0,4000)
@@ -238,7 +318,7 @@ for b in range(20):
 #plt.plot(IR1[0],fit_y2[1])
 #plt.plot()
 #plt.xlim(0,4000)
-     plt.title('Four Gaussians')
+     plt.title('Sum of Four Gaussians')
      
      plt.show()
      plt.clf()
@@ -248,12 +328,30 @@ for b in range(20):
     # print (max (gauss(x_range, par4[0], par4[10], par4[11], par4[12])))
 
 #OneOf4_gauss = 
-     plt.plot(x_range, gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
-     plt.plot(x_range, gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
-     plt.plot(x_range, gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
-     plt.plot(x_range, gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
-     plt.title(f"Four Gaussians: ({par4[2]:4.1f}, {par4[5]:4.1f}, {par4[8]:4.1f}, {par4[11]:4.1f}")
-     plt.legend(["Gauss1", "Gauss2","Gauss3","Gauss4"])
+
+     
+     peaks4s = ([par4[2], par4[5],par4[8],par4[11]])
+     indexL =[]
+     for peaky in sorted(peaks4s):
+         indexL.append(peaks4s.index(peaky))
+     
+     print(peaks4s)
+                                 
+     gauss1 = gauss(x_range, par4[0], par4[1], par4[2], par4[3])
+     gauss2 = gauss(x_range, par4[0], par4[4], par4[5], par4[6])
+     gauss3 = gauss(x_range, par4[0], par4[7], par4[8], par4[9])
+     gauss4 = gauss(x_range, par4[0], par4[10], par4[11], par4[12])
+     gausses = [gauss1,gauss2,gauss3,gauss4]
+     plt.plot(x_range, gausses[indexL[0]])
+     plt.plot(x_range, gausses[indexL[1]])
+     plt.plot(x_range, gausses[indexL[2]])
+     plt.plot(x_range, gausses[indexL[3]])                            
+         
+     
+         
+     
+     plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f})")
+     plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
      plt.xlabel("cm^-1")
      plt.xlim(max(x_range), min(x_range))
      #plt.ylim(bottom=0)

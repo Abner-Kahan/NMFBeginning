@@ -164,6 +164,7 @@ IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
 for n in range(0,1):
      IRboy = fetchIr('UntreatedSample.txt',n,ran1,ran2)
      fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
+     
      broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
 #fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
 #print("fit1", fit_y)
@@ -268,20 +269,79 @@ def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
     
+def fitFive(selec):
+    IRboy = fetchIr('UntreatedSample.txt',selec,ran1,ran2)
+    broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+    print("bob")
+    peak1 =  random.randrange(ran1,ran2,1) #1620
+    peak2 =  random.randrange(ran1,ran2,1) #1645
+    peak3 =   random.randrange(ran1,ran2,1)# # random.randrange(ran1,ran2,1)
+    peak4 =  random.randrange(ran1,ran2,1)
+    peak5 = 1650 #1678
+    print('The peaks are',peak1, peak2,peak3,peak4)
+    guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,25]
+    constraints = ([-20,0,ran1,5,0,ran1,5,0,ran1,5,0,ran1,5,0,ran1,5],[20,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,50] )
+                                                              
+    fit_y5 = curve_fit(fivegauss,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
+     #print(fit_y2)
+    par5 = fit_y5[0]
+    yplot5 =fivegauss(x_range, par5[0],par5[1],par5[2],par5[3],par5[4],par5[5],par5[6],par5[7],par5[8],par5[9],par5[10],par5[11], par5[12], par5[13],par5[14], par5[15] )
+     
+#print("gauss2",fit_y2)
+    plt.plot(x_range,yplot5)
+    plt.xlim(max(x_range), min(x_range))
+    plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+    plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot5):.5f} ")
+     
+     #plt.ylim(bottom=0)
+#plt.xlim(0,4000)
+#fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
+#plt.plot(IR1[0],fit_y2[1])
+#plt.plot()
+#plt.xlim(0,4000)
+    plt.title('Sum of Five Gaussians')
+     
+    plt.show()
+    plt.clf()
+    gauss1 = gauss(x_range, par5[0], par5[1], par5[2], par5[3])
+    gauss2 = gauss(x_range, par5[0], par5[4], par5[5], par5[6])
+    gauss3 = gauss(x_range, par5[0], par5[7], par5[8], par5[9])
+    gauss4 = gauss(x_range, par5[0], par5[10], par5[11], par5[12])
+    gauss5 = gauss(x_range, par5[0], par5[13], par5[14], par5[15])
+    
+    gausses = [gauss1,gauss2,gauss3,gauss4,gauss5]
+    plt.plot(x_range, gausses[0])
+    plt.plot(x_range, gausses[1])
+    plt.plot(x_range, gausses[2])
+    plt.plot(x_range, gausses[3])
+    plt.plot(x_range, gausses[4])
+    plt.title("Five Gaussians Individually")
+    plt.legend(["Gauss 1","Gauss 2","Gauss 3","Gauss 4","Gauss 5"] )
+    plt.xlabel("cm^-1")
+    plt.xlim(max(x_range), min(x_range))
+     #plt.ylim(bottom=0)
+    plt.show()
+    plt.clf()
+ 
+     #erro = par4[1]
+     #print(fit_y2[1])
+#for n in range(15):
+ #   fitFive (1)
 
 print(f"{ypendry(IRF [0,:], y_out):.5f}")
-IRboy = fetchIr('UntreatedSample.txt',1,ran1,ran2)
+IRboy = fetchIr('MeOHSample.txt',11,ran1,ran2)
 broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-for b in range(20):
+for b in range(15):
      print("Run", b)
      peak1 =  random.randrange(ran1,ran2,1) #1620
      peak2 =  random.randrange(ran1,ran2,1) #1645
-     peak3 =  random.randrange(ran1,ran2,1) #1660
+     peak3 =   1660# # random.randrange(ran1,ran2,1)
      peak4 =  random.randrange(ran1,ran2,1) #1678
      print('The peaks are',peak1, peak2,peak3,peak4)
-     guesses =[1] +[1,peak1,1]+[1,peak2,1]+[1,peak3,1]+[1,peak4,1]
-     constraints = ([-20,0,ran1,.1,0,ran1,.1,0,ran1,.1,0,ran1,.1],[20,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15,np.inf,ran2,15] )
-     fit_y2 = curve_fit(fourgauss,IR1[0],IR1[1], p0 = guesses,bounds = constraints, method ='trf')
+     guesses =[1] +[1,peak1,10]+[1,peak2,10]+[.2,peak3,.1]+[1,peak4,10]
+     constraints = ([-20,0,ran1,5,0,ran1,5,0,ran1,.1,0,ran1,5],[20,np.inf,ran2,15,np.inf,ran2,15,np
+                                                                .inf,ran2,15,np.inf,ran2,15] )
+     fit_y2 = curve_fit(fourgauss,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
      #print(fit_y2)
      par4 = fit_y2[0]
      #erro = par4[1]
@@ -297,7 +357,7 @@ for b in range(20):
          if maxNum / abs((min([max1,max2,max3,max4])-minSpec)) > 10:
              br = True
      if br:
-          continue
+          print('bad fit')#continue
      if minSpec < 0:
          continue
          
@@ -309,7 +369,7 @@ for b in range(20):
 #print("gauss2",fit_y2)
      plt.plot(x_range,yplot4)
      plt.xlim(max(x_range), min(x_range))
-     plt.scatter(IR1[0],IR1[1],color='red')#, linewidth = .001 )
+     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
      plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot4):.5f} ")
      
      #plt.ylim(bottom=0)
@@ -359,7 +419,7 @@ for b in range(20):
      plt.clf()
      #IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
      #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
-     print(f"Error: {ypendry(IRF [0,:], yplot4):.5f}")
+     print(f"Error: {ypendry(broadMan, yplot4):.5f}")
 
-     IrPlotter( IRF [0,:], 'Unstreated Spectra_Old_fit', ran1,ran2)  
+     IrPlotter( broadMan, 'Unstreated Spectra_Old_fit', ran1,ran2)  
 #IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)

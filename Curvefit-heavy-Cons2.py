@@ -329,7 +329,7 @@ def fitFive(selec):
  #   fitFive (1)
 
 print(f"{ypendry(IRF [0,:], y_out):.5f}")
-IRboy = fetchIr('MeOHSample.txt',11,ran1,ran2)
+IRboy = fetchIr('MeOHSample.txt',1,ran1,ran2)
 broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
 for b in range(15):
      print("Run", b)
@@ -411,7 +411,8 @@ for b in range(15):
          
      
      plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f})")
-     plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
+     #plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
+     plt.legend(["Gauss1", "Gauss2", "Gauss3", "Gauss4"])
      plt.xlabel("cm^-1")
      plt.xlim(max(x_range), min(x_range))
      #plt.ylim(bottom=0)

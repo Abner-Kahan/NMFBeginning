@@ -147,5 +147,15 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
     #print(len(freq))
     for f,i in zip(freq,inten):
        IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
+       
+def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3):
+    return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
+              ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))  + \
+        ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
+    (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
+#=============================================================================
+
+
+
         
     

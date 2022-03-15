@@ -317,7 +317,12 @@ def fitFive(selec):
     plt.plot(x_range, gausses[3])
     plt.plot(x_range, gausses[4])
     plt.title("Five Gaussians Methanol")
-    plt.legend(["Gauss 1","Gauss 2","Gauss 3","Gauss 4","Gauss 5"] )
+    peaks0 = find_peaks(gausses[0])[0] +ran1
+    peaks1 = find_peaks(gausses[1])[0] +ran1
+    peaks2 = find_peaks(gausses[2])[0] +ran1  
+    peaks3 = find_peaks(gausses[3])[0] +ran1
+    peaks4 = find_peaks(gausses[4])[0] +ran1
+    plt.legend([f"Gauss 1 {peaks0}cm ",f"Gauss 2 {peaks1}cm ",f"Gauss 3 {peaks2}cm ",f"Gauss 4 {peaks3}cm",f"Gauss 5 {peaks4}cm"] )
     plt.xlabel("cm^-1")
     plt.xlim(max(x_range), min(x_range))
      #plt.ylim(bottom=0)
@@ -328,106 +333,115 @@ def fitFive(selec):
      #print(fit_y2[1])
 #for n in range(15):
 #fitFive (1)
-
+b = 11
 print(f"{ypendry(IRF [0,:], y_out):.5f}")
 Humdities = [5,10,20,30,40,50,60,70,80,90,95]
-for b in range(12):
-    plt.imshow([[1,1,1],[1,1,1],[1,1,1]] )
-    plt.show()
-    plt.clf()
+#for b in range(1):
+#    plt.imshow([[1,1,1],[1,1,1],[1,1,1]] )
+#    plt.show()
+#    plt.clf()
 
-    for n in range (10):
-         IRboy = fetchIr('MeOHSample.txt',b,ran1,ran2)
-         broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-         print("Run", b)
-         peak1 =  random.randrange(ran1,ran2,1) #1620
-         peak2 =  random.randrange(ran1,ran2,1) #1645
-         peak3 =   1660# # random.randrange(ran1,ran2,1)
-         peak4 =  random.randrange(ran1,ran2,1) #1678
-         print('The peaks are',peak1, peak2,peak3,peak4)
-         guesses =[1] +[1,peak1,10]+[1,peak2,10]+[.2,peak3,.1]+[1,peak4,10]
-         constraints = ([-20,0,ran1,5,0,ran1,5,0,ran1,.1,0,ran1,5],[20,np.inf,ran2,15,np.inf,ran2,15,np
-                                                                    .inf,ran2,15,np.inf,ran2,15] )
-         fit_y2 = curve_fit(fourgauss,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
-         #print(fit_y2)
-         par4 = fit_y2[0]
-         #erro = par4[1]
-         #print(fit_y2[1])
-         minSpec = min(fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] ))
-         max1 = max (gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
-         max2 = max(gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
-         max3 = max (gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
-         max4 = max(gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
-         br = False
-         for maxNum in [max1,max2,max3,max4]:
-             #print("XD \n", maxNum / (min([max1,max2,max3,max4])-minSpec))
-             if maxNum / abs((min([max1,max2,max3,max4])-minSpec)) > 10:
-                 br = True
-         if br:
-              print('bad fit')#continue
-         if minSpec < 0:
-             continue
-             
+for n in range (10):
+      IRboy = fetchIr('Wa45Sample.txt',b,ran1,ran2)
+      broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+      print("Run", b)
+      peak1 =  random.randrange(ran1,ran2,1) #1620
+      peak2 =  random.randrange(ran1,ran2,1) #1645
+      peak3 =   1660# # random.randrange(ran1,ran2,1)
+      peak4 =  random.randrange(ran1,ran2,1) #1678
+      print('The peaks are',peak1, peak2,peak3,peak4)
+      guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]
+      constraints = ([-20,0,ran1,5,0,ran1,5,0,ran1,5,0,ran1,5],[20,np.inf,ran2,15,np.inf,ran2,15,np
+                                                                .inf,ran2,15,np.inf,ran2,15] )
+      fit_y2 = curve_fit(fourgauss,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
+      #print(fit_y2)
+      par4 = fit_y2[0]
+      #erro = par4[1]
+      #print(fit_y2[1])
+      minSpec = min(fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] ))
+      max1 = max (gauss(x_range, par4[0], par4[1], par4[2], par4[3]))
+      max2 = max(gauss(x_range, par4[0], par4[4], par4[5], par4[6]))
+      max3 = max (gauss(x_range, par4[0], par4[7], par4[8], par4[9]))
+      max4 = max(gauss(x_range, par4[0], par4[10], par4[11], par4[12]))
+      br = False
+      for maxNum in [max1,max2,max3,max4]:
+          #print("XD \n", maxNum / (min([max1,max2,max3,max4])-minSpec))
+          if maxNum / abs((min([max1,max2,max3,max4])-minSpec)) > 10:
+              br = True
+      if br:
+          print('bad fit')#continue
+      if minSpec < 0:
+          continue
          
-    #print("fit2",fit_y2)
-    #print("bob", par4)
-         yplot4 =fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] )
+     
+#print("fit2",fit_y2)
+#print("bob", par4)
+      yplot4 =fourgauss(x_range, par4[0],par4[1],par4[2],par4[3],par4[4],par4[5],par4[6],par4[7],par4[8],par4[9],par4[10],par4[11], par4[12] )
+     
+#print("gauss2",fit_y2)
+      plt.plot(x_range,yplot4)
+      plt.xlim(max(x_range), min(x_range))
+      plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+      plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot4):.5f} ")
+     
+      #plt.ylim(bottom=0)
+#plt.xlim(0,4000)
+#fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
+#plt.plot(IR1[0],fit_y2[1])
+#plt.plot()
+#plt.xlim(0,4000)
+      plt.title(f'Sum of Four Gaussians {Humdities[b-1]}% humidity')
+     
+      plt.show()
+      plt.clf()
+      #print (max (gauss(x_range, par4[0], par4[1], par4[2], par4[3])))
+    # print (max (gauss(x_range, par4[0], par4[4], par4[5], par4[6])))
+    # print (max (gauss(x_range, par4[0], par4[7], par4[8], par4[9])))
+    # print (max (gauss(x_range, par4[0], par4[10], par4[11], par4[12])))
+
+#OneOf4_gauss = 
+
+     
+      peaks4s = ([par4[2], par4[5],par4[8],par4[11]])
+      indexL =[]
+      for peaky in sorted(peaks4s):
+          indexL.append(peaks4s.index(peaky))
+     
+      print(peaks4s)
+     
+                                 
+      gauss1 = gauss(x_range, par4[0], par4[1], par4[2], par4[3])
+      area1 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[1], par4[2], par4[3] ) )[0]
+      print("The area is " , area1)
+      gauss2 = gauss(x_range, par4[0], par4[4], par4[5], par4[6])
+      gauss3 = gauss(x_range, par4[0], par4[7], par4[8], par4[9])
+      gauss4 = gauss(x_range, par4[0], par4[10], par4[11], par4[12])
+      
+      area1 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[1], par4[2], par4[3] ) )[0]
+      area2 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[4], par4[5], par4[6] ) )[0]
+      area3 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[7], par4[8], par4[9] ) )[0]
+      area4 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[10], par4[11], par4[12] ) )[0]
+
+      gausses = [gauss1,gauss2,gauss3,gauss4]
+      plt.plot(x_range, gausses[indexL[0]])
+      plt.plot(x_range, gausses[indexL[1]])
+      plt.plot(x_range, gausses[indexL[2]])
+      plt.plot(x_range, gausses[indexL[3]])                            
          
-    #print("gauss2",fit_y2)
-         plt.plot(x_range,yplot4)
-         plt.xlim(max(x_range), min(x_range))
-         plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
-         plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot4):.5f} ")
+     
          
-         #plt.ylim(bottom=0)
-    #plt.xlim(0,4000)
-    #fit_y2 = (curve_fit(fourgauss,IR1[0],IR1[1]))[0]
-    #plt.plot(IR1[0],fit_y2[1])
-    #plt.plot()
-    #plt.xlim(0,4000)
-         plt.title(f'Sum of Four Gaussians {Humdities[b]}% humidity')
-         
-         plt.show()
-         plt.clf()
-         #print (max (gauss(x_range, par4[0], par4[1], par4[2], par4[3])))
-        # print (max (gauss(x_range, par4[0], par4[4], par4[5], par4[6])))
-        # print (max (gauss(x_range, par4[0], par4[7], par4[8], par4[9])))
-        # print (max (gauss(x_range, par4[0], par4[10], par4[11], par4[12])))
-    
-    #OneOf4_gauss = 
-    
-         
-         peaks4s = ([par4[2], par4[5],par4[8],par4[11]])
-         indexL =[]
-         for peaky in sorted(peaks4s):
-             indexL.append(peaks4s.index(peaky))
-         
-         print(peaks4s)
-                                     
-         gauss1 = gauss(x_range, par4[0], par4[1], par4[2], par4[3])
-         gauss2 = gauss(x_range, par4[0], par4[4], par4[5], par4[6])
-         gauss3 = gauss(x_range, par4[0], par4[7], par4[8], par4[9])
-         gauss4 = gauss(x_range, par4[0], par4[10], par4[11], par4[12])
-         gausses = [gauss1,gauss2,gauss3,gauss4]
-         plt.plot(x_range, gausses[indexL[0]])
-         plt.plot(x_range, gausses[indexL[1]])
-         plt.plot(x_range, gausses[indexL[2]])
-         plt.plot(x_range, gausses[indexL[3]])                            
-             
-         
-             
-         
-         plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f} {Humdities[b]}% humidity)")
-         #plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
-         plt.legend(["Gauss1", "Gauss2", "Gauss3", "Gauss4"])
-         plt.xlabel("cm^-1")
-         plt.xlim(max(x_range), min(x_range))
-         #plt.ylim(bottom=0)
-         plt.show()
-         plt.clf()
-         #IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
-         #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
-         print(f"Error: {ypendry(broadMan, yplot4):.5f}")
-    
-         IrPlotter( broadMan, 'Unstreated Spectra_Old_fit', ran1,ran2)  
-#IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)
+     
+      plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f} {Humdities[b-1]}% humidity)")
+      #plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
+      plt.legend([f"Gauss1 {area1:.4}", f"Gauss2 {area2:.4}", f"Gauss3 {area3:.4}", f"Gauss4 {area4:.4}"])
+      plt.xlabel("cm^-1")
+      plt.xlim(max(x_range), min(x_range))
+      #plt.ylim(bottom=0)
+      plt.show()
+      plt.clf()
+      #IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
+      #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
+      print(f"Error: {ypendry(broadMan, yplot4):.5f}")
+
+      IrPlotter( broadMan, 'Unstreated Spectra_Old_fit', ran1,ran2)  
+IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)

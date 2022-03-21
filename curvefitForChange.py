@@ -22,6 +22,7 @@ from scipy.signal import savgol_filter
 from scipy.signal import find_peaks,deconvolve, peak_widths
 from scipy.optimize import curve_fit
 import matplotlib.image as mpimg
+import warnings
 
 
 ran1 =1600
@@ -161,41 +162,12 @@ def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma
         ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
        (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
  
-    """ Performs gaussian broadening on IR spectrumimport matplotlib.image as mpimg
-    generates attribute self.IR - np.array with dimmension 4000/resolution consisting gaussian-boraden spectrum
-    
-    spectra should be in numpy format or list with frequencies in 0 index then intensities in index 1
-    :param broaden: (float) gaussian broadening in wn-1"""
-    """
-    :param resolution: (float) resolution of the spectrum (number of points for 1 wn) defaults is 1, needs to be fixed in plotting
-    """
-    IR = np.zeros(resolution*(int(ran2-ran1) + 1))
-    X = np.linspace(ran1,ran2, resolution*(int(ran2-ran1)+1))
-
-    #for f, i in zip(spectra[:,0]):
-      #  IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
-      #  IR=np.vstack((X, IR)).T #tspec
-   
-    freq = spectra[0]
-    inten = spectra[1]
-    if theory:
-        freq = spectra[:,0]*.965
-        inten = spectra[:,1]
-
-
-
-    #print(len(freq))
-    for f,i in zip(freq,inten):
-       IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
-        
-    
-    return IR
 b=1
 Humdities = [5,10,20,30,40,50,60,70,80,90,95]
-for n in range (10):
+for n in range (1):
       IRboy = fetchIr('MeOHSample.txt',b,ran1,ran2)
       broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-      print("Run", b)
+      print("Run", n, "\n\n\n\n\n")
       peak1 =  random.randrange(ran1,ran2,1) #1620
       peak2 =  random.randrange(ran1,ran2,1) #1645
       peak3 =   1660# # random.randrange(ran1,ran2,1)
@@ -255,8 +227,8 @@ for n in range (10):
      
       peaks4s = ([par4[2], par4[5],par4[8],par4[11]])
       indexL =[]
-      for peaky in sorted(peaks4s):
-          indexL.append(peaks4s.index(peaky))
+      peaks4s = sorted(peaks4s)
+    
      
       print(peaks4s)
      
@@ -272,22 +244,32 @@ for n in range (10):
       areaB = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[4], par4[5], par4[6] ) )[0]
       areaC = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[7], par4[8], par4[9] ) )[0]
       areaD = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[10], par4[11], par4[12] ) )[0]
-
-      gausses = [gaussA,gaussB,gaussC,gaussD]
       areas = [areaA,areaB,areaC,areaD]
-      np.max(gaussA)
+      
+      gausses = [gaussA,gaussB,gaussC,gaussD]
+      GaussOrder = np.argsort([par4[2],par4[5],par4[8],par4[11]])
+      
+      gausses =  [gausses[i] for i in GaussOrder]
+      areas =  [areas[i] for i in GaussOrder]
+      
+      #while len (gaussCopy>1):
+        #  maxList += gaussCopy.index(max(gaussCopy))
+          
+    
+                            
+
              
-      plt.plot(x_range, gausses[indexL[0]])
-      plt.plot(x_range, gausses[indexL[1]])
-      plt.plot(x_range, gausses[indexL[2]])
-      plt.plot(x_range, gausses[indexL[3]])                            
+      plt.plot(x_range, gausses[0])
+      plt.plot(x_range, gausses[1])
+      plt.plot(x_range, gausses[2])
+      plt.plot(x_range, gausses[3])                            
          
      
          
      
-      plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f} {Humdities[b-1]}% humidity)")
+      plt.title(f"Four Gaussians: ({peaks4s[0]:4.1f}, {peaks4s[1]:4.1f}, {peaks4s[2]:4.1f}, {peaks4s[3]:4.1f} {Humdities[b-1]}% humidity)")
       #plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
-      plt.legend([f"Gauss1 {area1:.4}", f"Gauss2 {area2:.4}", f"Gauss3 {area3:.4}", f"Gauss4 {area4:.4}"])
+      plt.legend([f"Gauss1 {areas[0]:.4}", f"Gauss2 {areas[1]:.4}", f"Gauss3 {areas[2]:.4}", f"Gauss4 {areas[3]:.4}"])
       plt.xlabel("cm^-1")
       plt.xlim(max(x_range), min(x_range))
       #plt.ylim(bottom=0)
@@ -296,3 +278,4 @@ for n in range (10):
       #IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
       #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
       print(f"Error: {ypendry(broadMan, yplot4):.5f}")
+      print ("Areas", areas, "\n\n\n\n")

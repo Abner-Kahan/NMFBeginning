@@ -162,10 +162,10 @@ def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma
         ( A_2 * np.exp(-(x - x0_2) ** 2 / ( sigma_2 ** 2)))   + \
        (A_3 * np.exp(-(x - x0_3) ** 2 / (sigma_3 ** 2)))
  
-b=1
+b=11
 Humdities = [5,10,20,30,40,50,60,70,80,90,95]
 for n in range (1):
-      IRboy = fetchIr('MeOHSample.txt',b,ran1,ran2)
+      IRboy = fetchIr('UntreatedSample.txt',b,ran1,ran2)
       broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
       print("Run", n, "\n\n\n\n\n")
       peak1 =  random.randrange(ran1,ran2,1) #1620

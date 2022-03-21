@@ -23,10 +23,10 @@ from scipy.signal import find_peaks,deconvolve, peak_widths
 from scipy.optimize import curve_fit
 
 
-ran1 =1600
-ran2 = 1700
+ran1 =1475
+ran2 = 1725
 broad = 15
-
+x_range = np.linspace(ran1,ran2,ran2-ran1+1)
 
 def ImaginaryEnergy(spectra):
     peaks, _ = find_peaks(spectra)
@@ -46,6 +46,8 @@ def ypendry(TheoSpec,ExperSpec):
     #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
     return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)), limit=100)[0]) / (
     scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec)), limit=100))[0])
+def gauss(x, h, A, x0, c):
+    return h + (A * np.exp (-1*((x - x0) ** 2 / ( c ** 2))))
 
 
 
@@ -158,8 +160,30 @@ def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
               
-            
-
-
+def gaussEight(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3, \
+                A_4, x0_4, sigma_4,  A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7):
+    return fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3) +  \
+            fourgauss(x, H_0, A_4, x0_4, sigma_4,  A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7)
+def fitTwo(selec):
+    IRboy = fetchIr('UntreatedSample.txt',selec,ran1,ran2)
+    peak1 =  1650 #1620
+    peak2 =  1550
+    guesses =[0] +[1,peak1,50]+[1,peak2,50]
+    constraints = ([-20,0,ran1,5,0,ran1,5],[20,np.inf,ran2,70,np.inf,ran2,70] )
+    fit_y2 = curve_fit(gaussTwo,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
+    par2 = fit_y2[0]
+    yplot2 =gaussTwo(x_range, par2[0],par2[1],par2[2],par2[3],par2[4],par2[5],par2[6] )
+    plt.plot(x_range, yplot2)#,markersize=1)import matplotlib.image as mpimg
+    plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+    plt.show()
+    plt.clf()
+    plt.plot(x_range, gauss(x_range, par2[0],par2[1],par2[2],par2[3]))
+    plt.plot(x_range, gauss(x_range, par2[0],par2[4],par2[5],par2[6]))
+    plt.legend(["Amide I", "Amide 2"])
+fitTwo(4)
+    #1645
+#IR1 = fetchIr('WA45Sample.txt',9,ran1,ran2)
+#IRBroad = gaussian_broadening(IR1,broad,ran1,ran2)
+#plt.plot(IR1[0],IR1[1])
         
     

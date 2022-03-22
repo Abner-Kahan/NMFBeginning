@@ -23,16 +23,16 @@ from scipy.signal import find_peaks,deconvolve, peak_widths
 from scipy.optimize import curve_fit
 
 
-ran1 =1500
-ran2 = 1700
+ran1 =1475
+ran2 = 1725
 
 
-amide2_ran1 =1500
+amide2_ran1 =1475
 amide2_ran2 =1600
 
 #1450, 1750
 amide1_ran1 =1600
-amide1_ran2 =1700
+amide1_ran2 =1725
 
 Humdities = [5,10,20,30,40,50,60,70,80,90,95]
 solvents = ["Untreated", "MeOH", "WA45"]
@@ -194,23 +194,23 @@ def fitTwo(selec):
     plt.legend(["Amide I", "Amide 2"])
 #fitTwo(1)
 
-def fitEight(selec,sol):
+def fitEightComp(selec,sol):
     IRboy = fetchIr(solvents[sol]+'Sample.txt',selec,ran1,ran2)
     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
     IrPlotter( broadMan, f'{solvents[sol]} Spectra_old_fit', ran1,ran2)
 
-    peak1 =  1520 #1620
-    peak2 =  1545
-    peak3 =  1560     # could be 1540
-    peak4 =  1578
+    peak1 =  1530 #1620
+    peak2 =  1554
+    peak3 =  1564     # could be 1540
+    peak4 =  1600
     peak5 =  1620
     peak6 =  1645
     peak7 =  1660   # could be 1640
     peak8 =  1678
     guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,10]+ [1,peak6,10]+ [1,peak7,10]+ [1,peak8,10]
-    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5,0,
+    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,1580,5,0,
                     amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5],
-                   [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,
+                   [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,1620,40,np.inf,
                     amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
     fit_y8 = curve_fit(gaussEight,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
     par8 = fit_y8[0]
@@ -265,7 +265,7 @@ def fitEight(selec,sol):
 
 
     #1620
-fitEight(1,0)
+fitEightComp(1,0)
 #IR1 = fetchIr('WA45Sample.txt',9,ran1,ran2)
 #IRBroad = gaussian_broadening(IR1,broad,ran1,ran2)
 #plt.plot(IR1[0],IR1[1])

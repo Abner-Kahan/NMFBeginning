@@ -23,8 +23,19 @@ from scipy.signal import find_peaks,deconvolve, peak_widths
 from scipy.optimize import curve_fit
 
 
-ran1 =1475
-ran2 = 1725
+ran1 =1500
+ran2 = 1700
+
+
+amide2_ran1 =1500
+amide2_ran2 =1600
+
+#1450, 1750
+amide1_ran1 =1600
+amide1_ran2 =1700
+
+Humdities = [5,10,20,30,40,50,60,70,80,90,95]
+solvents = ["Untreated", "MeOH", "WA45"]
 broad = 15
 x_range = np.linspace(ran1,ran2,ran2-ran1+1)
 
@@ -149,6 +160,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
     #print(len(freq))
     for f,i in zip(freq,inten):
        IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
+    return IR
        
 def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
@@ -180,8 +192,80 @@ def fitTwo(selec):
     plt.plot(x_range, gauss(x_range, par2[0],par2[1],par2[2],par2[3]))
     plt.plot(x_range, gauss(x_range, par2[0],par2[4],par2[5],par2[6]))
     plt.legend(["Amide I", "Amide 2"])
-fitTwo(4)
-    #1645
+#fitTwo(1)
+
+def fitEight(selec,sol):
+    IRboy = fetchIr(solvents[sol]+'Sample.txt',selec,ran1,ran2)
+    broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+    IrPlotter( broadMan, f'{solvents[sol]} Spectra_old_fit', ran1,ran2)
+
+    peak1 =  1520 #1620
+    peak2 =  1545
+    peak3 =  1560     # could be 1540
+    peak4 =  1578
+    peak5 =  1620
+    peak6 =  1645
+    peak7 =  1660   # could be 1640
+    peak8 =  1678
+    guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,10]+ [1,peak6,10]+ [1,peak7,10]+ [1,peak8,10]
+    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5,0,
+                    amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5],
+                   [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,
+                    amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
+    fit_y8 = curve_fit(gaussEight,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
+    par8 = fit_y8[0]
+    yplot8 =gaussEight(x_range, par8[0],par8[1],par8[2],par8[3],par8[4],par8[5],par8[6], 
+                       par8[7],par8[8],par8[9],par8[10],par8[11],par8[12],par8[13],par8[14],par8[15],
+                       par8[16],par8[17],par8[18],par8[19],par8[20],par8[21],par8[22],par8[23],par8[24])
+    plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
+    plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+    plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot8):.5f} ")
+    plt.xlim(max(x_range), min(x_range))
+    plt.title(f'Sum of Eight Gaussians {Humdities[selec-1]}% humidity Solvent: {solvents[sol]}')
+    plt.show()
+    plt.clf()
+    peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23] ])
+    indexL =[]
+    for peaky in sorted(peaks8s):
+        indexL.append(peaks8s.index(peaky))
+    amide2Colors = ['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#e6550d','#a63603']
+    amide1Colors = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f']
+    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[1],par8[2],par8[3], par8[4],par8[5],par8[6],
+                                 par8[7],par8[8],par8[9], par8[10],par8[11],par8[12])), color = amide2Colors[5])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[1],par8[2],par8[3]),color = amide2Colors[1])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[4],par8[5],par8[6]),color = amide2Colors[2])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[7],par8[8],par8[9]),color = amide2Colors[3])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[10],par8[11],par8[12]),color = amide2Colors[4])
+
+    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[13],par8[14],par8[15], par8[16],par8[17],par8[18],
+                                 par8[19],par8[20],par8[21], par8[22],par8[23],par8[24])),color = amide1Colors[5])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = amide1Colors[1])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[2])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[3])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[4])
+
+
+    plt.xlabel("cm^-1")
+    plt.xlim(max(x_range), min(x_range))
+    plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
+    plt.legend(["Amide II", "BS","RC","AH","BT","Amide I","BS","RC","AH","BT"])
+    
+                                 
+    plt.show()
+    plt.clf()
+    
+    peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23] ])
+    indexL =[]
+    for peaky in sorted(peaks8s):
+        indexL.append(peaks8s.index(peaky))
+     
+    for p in peaks8s:
+        print(round(p,1), end = " ")
+    
+
+
+    #1620
+fitEight(1,1)
 #IR1 = fetchIr('WA45Sample.txt',9,ran1,ran2)
 #IRBroad = gaussian_broadening(IR1,broad,ran1,ran2)
 #plt.plot(IR1[0],IR1[1])

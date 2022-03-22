@@ -341,7 +341,7 @@ Humdities = [5,10,20,30,40,50,60,70,80,90,95]
 #    plt.show()
 #    plt.clf()
 
-for n in range (10):
+for n in range (1):
       IRboy = fetchIr('Wa45Sample.txt',b,ran1,ran2)
       broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
       print("Run", b)

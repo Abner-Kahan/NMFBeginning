@@ -203,13 +203,13 @@ def fitEightComp(selec,sol):
     peak2 =  1554
     peak3 =  1564    
     peak4 = 1580# could be 1540
-    peak5 =  1600
+    peak5 =  1618
     peak6 =  1620
     peak7 =  1645
     peak8 =  1660   # could be 1640
     peak9 =  1678
     guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,10]+ [1,peak6,10]+ [1,peak7,10]+ [1,peak8,10] + [1,peak9,10]
-    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5, 0,1580,5,
+    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5, 0,1615,5,
                     0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5],
                    [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,1620,30,
                     np.inf,amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
@@ -288,45 +288,48 @@ def fitEightComp(selec,sol):
     print ("\n")
     print( f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]} \n")  
     print ("Areas", np.round(areas,3), "\n\n\n\n")
-    return areas
+    #return areas
+    return peaks8s
     #1620
-    
+fitEightComp(1,0)  
 #Peak finder    
-# =============================================================================
-# indices = []
-# for solv in solvents:
-#     for humi in Humdities:
-#         indices.append(str(solv)+": "+str(humi)+'%')
-# Peaks = pd.DataFrame(columns =["Am II -A","Am II -B", "Am II -C", "Am II -D", "Solvent", "Am I - BS" , 
-#                                "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
-# print(Peaks)
-# 
-# #range(len(solvents)
-# #range(len(Humdities)
-# model = 0
-# for sol in range(len(solvents)):
-#     for hum in range(len(Humdities)):
-#         
-#         Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)
-#         model+=1
-# 
-# Peaks.to_csv('AllSpectra2.csv')       
-#         
-# =============================================================================
-  
 indices = []
 for solv in solvents:
-     for humi in Humdities:
-         indices.append(str(solv)+": "+str(humi)+'%')
-Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+    for humi in Humdities:
+        indices.append(str(solv)+": "+str(humi)+'%')
+Peaks = pd.DataFrame(columns =["Am II -A","Am II -B", "Am II -C", "Am II -D", "Solvent", "Am I - BS" , 
+                               "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+print(Peaks)
+
+#range(len(solvents)
+#range(len(Humdities)
 model = 0
 for sol in range(len(solvents)):
-     for hum in range(len(Humdities)):
-         
-         Areas.loc[indices[model]] = fitEightComp(hum+1,sol)
-         model+=1
-# 
-Areas.to_csv('AllAreas2.csv')       
+    for hum in range(len(Humdities)):
+        
+        Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)
+        model+=1
+
+Peaks.to_csv('AllSpectra2.csv')       
+        
+# =============================================================================
+#   
+#area Finder
+# indices = []
+# for solv in solvents:
+#      for humi in Humdities:
+#          indices.append(str(solv)+": "+str(humi)+'%')
+# Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+# model = 0
+# for sol in range(len(solvents)):
+#      for hum in range(len(Humdities)):
+#          
+#          Areas.loc[indices[model]] = fitEightComp(hum+1,sol)
+#          model+=1
+# # 
+# print(Areas)
+# #Areas.to_csv('AllAreas2.csv')       
+# =============================================================================
                                            
          
 

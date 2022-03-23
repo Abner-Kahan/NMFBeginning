@@ -23,16 +23,16 @@ from scipy.signal import find_peaks,deconvolve, peak_widths
 from scipy.optimize import curve_fit
 
 
-ran1 =1500
-ran2 = 1700
+ran1 =1475
+ran2 = 1705
 
 
-amide2_ran1 =1500
+amide2_ran1 =1475
 amide2_ran2 =1600
 
 #1450, 1750
 amide1_ran1 =1600
-amide1_ran2 =1700
+amide1_ran2 =1710
 
 Humdities = [5,10,20,30,40,50,60,70,80,90,95]
 solvents = ["Untreated", "MeOH", "WA45"]

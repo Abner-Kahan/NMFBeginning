@@ -173,9 +173,9 @@ def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
               
 def gaussEight(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3, \
-                A_4, x0_4, sigma_4,  A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7):
-    return fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3) +  \
-            fourgauss(x, H_0, A_4, x0_4, sigma_4,  A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7)
+                A_4, x0_4, sigma_4,  A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7, A_8, x0_8, sigma_8):
+    return fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3) + gauss(x, H_0, A_4, x0_4, sigma_4) + \
+            fourgauss(x, H_0, A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7, A_8, x0_8, sigma_8)
 def fitTwo(selec):
     IRboy = fetchIr('UntreatedSample.txt',selec,ran1,ran2)
     peak1 =  1650 #1620
@@ -201,22 +201,23 @@ def fitEightComp(selec,sol):
 
     peak1 =  1530 #1620
     peak2 =  1554
-    peak3 =  1564     # could be 1540
-    peak4 =  1600
-    peak5 =  1620
-    peak6 =  1645
-    peak7 =  1660   # could be 1640
-    peak8 =  1678
-    guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,10]+ [1,peak6,10]+ [1,peak7,10]+ [1,peak8,10]
-    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,1580,5,0,
-                    amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5],
-                   [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,1620,40,np.inf,
-                    amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
+    peak3 =  1564    
+    peak4 = 1580# could be 1540
+    peak5 =  1600
+    peak6 =  1620
+    peak7 =  1645
+    peak8 =  1660   # could be 1640
+    peak9 =  1678
+    guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,10]+ [1,peak6,10]+ [1,peak7,10]+ [1,peak8,10] + [1,peak9,10]
+    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5, 0,1580,5,
+                    0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5],
+                   [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,1620,30,
+                    np.inf,amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
     fit_y8 = curve_fit(gaussEight,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
     par8 = fit_y8[0]
     yplot8 =gaussEight(x_range, par8[0],par8[1],par8[2],par8[3],par8[4],par8[5],par8[6], 
                        par8[7],par8[8],par8[9],par8[10],par8[11],par8[12],par8[13],par8[14],par8[15],
-                       par8[16],par8[17],par8[18],par8[19],par8[20],par8[21],par8[22],par8[23],par8[24])
+                       par8[16],par8[17],par8[18],par8[19],par8[20],par8[21],par8[22],par8[23],par8[24], par8[25],par8[26],par8[27])
     plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot8):.5f} ")
@@ -224,7 +225,7 @@ def fitEightComp(selec,sol):
     plt.title(f'Sum of Eight Gaussians {Humdities[selec-1]}% humidity Solvent: {solvents[sol]}')
     plt.show()
     plt.clf()
-    peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23] ])
+    peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23], par8[26] ])
     indexL =[]
     for peaky in sorted(peaks8s):
         indexL.append(peaks8s.index(peaky))
@@ -236,19 +237,20 @@ def fitEightComp(selec,sol):
     plt.plot(x_range, gauss(x_range, par8[0],par8[4],par8[5],par8[6]),color = amide2Colors[2])
     plt.plot(x_range, gauss(x_range, par8[0],par8[7],par8[8],par8[9]),color = amide2Colors[3])
     plt.plot(x_range, gauss(x_range, par8[0],par8[10],par8[11],par8[12]),color = amide2Colors[4])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = 'black')
+    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[16],par8[17],par8[18],
+                                 par8[19],par8[20],par8[21], par8[22],par8[23],par8[24],par8[25],par8[26],par8[27])),color = amide1Colors[5])
+    
 
-    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[13],par8[14],par8[15], par8[16],par8[17],par8[18],
-                                 par8[19],par8[20],par8[21], par8[22],par8[23],par8[24])),color = amide1Colors[5])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = amide1Colors[1])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[2])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[3])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[4])
-
+    plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[1])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[2])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[3])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[25],par8[26],par8[27]),color = amide1Colors[4])
 
     plt.xlabel("cm^-1")
     plt.xlim(max(x_range), min(x_range))
     plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
-    plt.legend(["Amide II", "BS","RC","AH","BT","Amide I","BS","RC","AH","BT"])
+    #plt.legend(["Amide II", "BS","RC","AH","BT","Amide I","BS","RC","AH","BT"])
     
                                  
     plt.show()
@@ -265,7 +267,7 @@ def fitEightComp(selec,sol):
 
 
     #1620
-fitEightComp(1,0)
+fitEightComp(1,2)
 #IR1 = fetchIr('WA45Sample.txt',9,ran1,ran2)
 #IRBroad = gaussian_broadening(IR1,broad,ran1,ran2)
 #plt.plot(IR1[0],IR1[1])

@@ -173,7 +173,7 @@ def fivegauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2,  \
 def fitFive(selec,sol):
     IRboy = fetchIr(solvents[sol]+'Sample.txt',selec,ran1,ran2)
     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-    IrPlotter( broadMan, f'{solvents[sol]} Spectra_old_fit', ran1,ran2)
+    #IrPlotter( broadMan, f'{solvents[sol]} Spectra_old_fit', ran1,ran2)
     peak1 =  1620 #1620  
     peak2 =  1645#1645
     peak3 =   1660 #random.randrange(ran1,ran2,1)# # random.randrange(ran1,ran2,1)
@@ -235,8 +235,10 @@ def fitFive(selec,sol):
     plt.show()
     plt.clf()
     return peaks5s
-    
-    
+
+for sol in range(3):
+    for hum in range(11):
+        fitFive(hum,sol)
     
 #fitFive(1,0)    
 #fitFive(11,0)    
@@ -244,11 +246,11 @@ def fitFive(selec,sol):
 #fitFive(11,1)
 #fitFive(1,2)
 #fitFive(11,2)
-indices = []
-for solv in solvents:
-    for humi in Humdities:
-        indices.append(str(solv)+": "+str(humi)+'%')
-        
+#indices = []
+#for solv in solvents:
+ #   for humi in Humdities:
+   #     indices.append(str(solv)+": "+str(humi)+'%')
+ #       
 # =============================================================================
 # Peaks = pd.DataFrame(columns =["Spacer", "Am I - BS","Am I -RC","Am I -AH","Am I -BT/Solvent" ], index = indices)
 # 
@@ -271,13 +273,13 @@ for solv in solvents:
 # for solv in solvents:
 #      for humi in Humdities:
 #          indices.append(str(solv)+": "+str(humi)+'%')
-Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
-model = 0
-for sol in range(len(solvents)):
-      for hum in range(len(Humdities)):          
-         Areas.loc[indices[model]] = fitFive(hum+1,sol)
-         model+=1
+#Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+#model = 0
+#for sol in range(len(solvents)):
+ #     for hum in range(len(Humdities)):          
+  #       Areas.loc[indices[model]] = fitFive(hum+1,sol)
+   #      model+=1
 # # 
 # print(Areas)
-Areas.to_csv('Areasof5A.csv')       
+#Areas.to_csv('Areasof5A.csv')       
 # =============================================================================

@@ -197,19 +197,19 @@ def fitTwo(selec):
 def fitEightComp(selec,sol):
     IRboy = fetchIr(solvents[sol]+'Sample.txt',selec,ran1,ran2)
     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-    IrPlotter( broadMan, f'{solvents[sol]} Spectra_old_fit', ran1,ran2)
+    #IrPlotter( broadMan, f'{solvents[sol]} Spectra_old_fit', ran1,ran2)
 
     peak1 =  1530 #1620
     peak2 =  1554
     peak3 =  1564    
     peak4 = 1580# could be 1540
-    peak5 =  1618
+    peak5 =  1600
     peak6 =  1620
     peak7 =  1645
     peak8 =  1660   # could be 1640
     peak9 =  1678
     guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]+ [1,peak5,10]+ [1,peak6,10]+ [1,peak7,10]+ [1,peak8,10] + [1,peak9,10]
-    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5, 0,1615,5,
+    constraints = ([-20,0,amide2_ran1, 5,0,amide2_ran1,5,0,amide2_ran1,5,0,amide2_ran1,5, 0,1580,5,
                     0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5,0,amide1_ran1,5],
                    [20,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,amide2_ran2,15,np.inf,1620,30,
                     np.inf,amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
@@ -218,42 +218,43 @@ def fitEightComp(selec,sol):
     yplot8 =gaussEight(x_range, par8[0],par8[1],par8[2],par8[3],par8[4],par8[5],par8[6], 
                        par8[7],par8[8],par8[9],par8[10],par8[11],par8[12],par8[13],par8[14],par8[15],
                        par8[16],par8[17],par8[18],par8[19],par8[20],par8[21],par8[22],par8[23],par8[24], par8[25],par8[26],par8[27])
-    plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
-    plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
-    plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot8):.5f} ")
-    plt.xlim(max(x_range), min(x_range))
-    plt.title(f'Sum of Eight Gaussians {Humdities[selec-1]}% humidity Solvent: {solvents[sol]}')
-    plt.show()
-    plt.clf()
+    # plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
+    # plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+    # plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot8):.5f} ")
+    # plt.xlim(max(x_range), min(x_range))
+    # plt.title(f'Sum of Eight Gaussians {Humdities[selec-1]}% humidity Solvent: {solvents[sol]}')
+    # plt.savefig(f'Sum8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png')
+    # plt.show()
+    # plt.clf()
     peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23], par8[26] ])
     indexL =[]
     
-    amide2Colors = ['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#e6550d','#a63603']
-    amide1Colors = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f']
-    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[1],par8[2],par8[3], par8[4],par8[5],par8[6],
-                                 par8[7],par8[8],par8[9], par8[10],par8[11],par8[12])), color = amide2Colors[5])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[1],par8[2],par8[3]),color = amide2Colors[1])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[4],par8[5],par8[6]),color = amide2Colors[2])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[7],par8[8],par8[9]),color = amide2Colors[3])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[10],par8[11],par8[12]),color = amide2Colors[4])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = 'black')
-    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[16],par8[17],par8[18],
-                                 par8[19],par8[20],par8[21], par8[22],par8[23],par8[24],par8[25],par8[26],par8[27])),color = amide1Colors[5])
+    # amide2Colors = ['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#e6550d','#a63603']
+    # amide1Colors = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f']
+    # plt.plot(x_range, (fourgauss(x_range,par8[0],par8[1],par8[2],par8[3], par8[4],par8[5],par8[6],
+    #                              par8[7],par8[8],par8[9], par8[10],par8[11],par8[12])), color = amide2Colors[5])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[1],par8[2],par8[3]),color = amide2Colors[1])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[4],par8[5],par8[6]),color = amide2Colors[2])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[7],par8[8],par8[9]),color = amide2Colors[3])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[10],par8[11],par8[12]),color = amide2Colors[4])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = 'black')
+    # plt.plot(x_range, (fourgauss(x_range,par8[0],par8[16],par8[17],par8[18],
+    #                              par8[19],par8[20],par8[21], par8[22],par8[23],par8[24],par8[25],par8[26],par8[27])),color = amide1Colors[5])
     
 
-    plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[1])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[2])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[3])
-    plt.plot(x_range, gauss(x_range, par8[0],par8[25],par8[26],par8[27]),color = amide1Colors[4])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[1])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[2])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[3])
+    # plt.plot(x_range, gauss(x_range, par8[0],par8[25],par8[26],par8[27]),color = amide1Colors[4])
 
-    plt.xlabel("cm^-1")
-    plt.xlim(max(x_range), min(x_range))
-    plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
-    plt.legend(["Amide II", "BT","RC","BS","AH","Correction", "Amide I","BS","RC","AH","BT"])
+    # plt.xlabel("cm^-1")
+    # plt.xlim(max(x_range), min(x_range))
+    # plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
+    # plt.legend(["Amide II", "BT","RC","BS","AH","Correction", "Amide I","BS","RC","AH","BT"])
     
-                                 
-    plt.show()
-    plt.clf()
+    # plt.savefig(f"8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png")
+    # plt.show()
+    # plt.clf()
     
     #peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23] ])
     
@@ -288,8 +289,8 @@ def fitEightComp(selec,sol):
     print ("\n")
     print( f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]} \n")  
     print ("Areas", np.round(areas,3), "\n\n\n\n")
-    #return areas
-    return peaks8s
+    return areas
+    #return peaks8s
     #1620
 fitEightComp(1,0)  
 #Peak finder    
@@ -303,33 +304,31 @@ print(Peaks)
 
 #range(len(solvents)
 #range(len(Humdities)
-model = 0
-for sol in range(len(solvents)):
-    for hum in range(len(Humdities)):
-        
-        Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)
-        model+=1
-
-Peaks.to_csv('AllSpectra2.csv')       
-        
-# =============================================================================
-#   
-#area Finder
-# indices = []
-# for solv in solvents:
-#      for humi in Humdities:
-#          indices.append(str(solv)+": "+str(humi)+'%')
-# Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
 # model = 0
 # for sol in range(len(solvents)):
-#      for hum in range(len(Humdities)):
-#          
-#          Areas.loc[indices[model]] = fitEightComp(hum+1,sol)
-#          model+=1
-# # 
-# print(Areas)
-# #Areas.to_csv('AllAreas2.csv')       
-# =============================================================================
+#     for hum in range(len(Humdities)):
+        
+#         Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)
+#         model+=1
+
+# Peaks.to_csv('AllSpectraNEW.csv')       
+        
+  
+#rea Finder
+indices = []
+for solv in solvents:
+     for humi in Humdities:
+         indices.append(str(solv)+": "+str(humi)+'%')
+Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+model = 0
+for sol in range(len(solvents)):
+     for hum in range(len(Humdities)):
+         
+         Areas.loc[indices[model]] = fitEightComp(hum+1,sol)
+         model+=1
+# 
+print(Areas)
+Areas.to_csv('AllAreasNEW.csv')       
                                            
          
 

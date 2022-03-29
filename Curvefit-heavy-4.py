@@ -218,69 +218,78 @@ def fitEightComp(selec,sol):
     yplot8 =gaussEight(x_range, par8[0],par8[1],par8[2],par8[3],par8[4],par8[5],par8[6], 
                        par8[7],par8[8],par8[9],par8[10],par8[11],par8[12],par8[13],par8[14],par8[15],
                        par8[16],par8[17],par8[18],par8[19],par8[20],par8[21],par8[22],par8[23],par8[24], par8[25],par8[26],par8[27])
-    # plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
-    # plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
-    # plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot8):.5f} ")
-    # plt.xlim(max(x_range), min(x_range))
-    # plt.title(f'Sum of Eight Gaussians {Humdities[selec-1]}% humidity Solvent: {solvents[sol]}')
-    # plt.savefig(f'Sum8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png')
-    # plt.show()
-    # plt.clf()
+    plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
+    plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+    plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, yplot8):.5f} ")
+    plt.xlim(max(x_range), min(x_range))
+    plt.title(f'Sum of Eight Gaussians {Humdities[selec-1]}% humidity Solvent: {solvents[sol]}')
+    plt.savefig(f'Sum8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png')
+    plt.show()
+    plt.clf()
     peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23], par8[26] ])
     indexL =[]
     
-    # amide2Colors = ['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#e6550d','#a63603']
-    # amide1Colors = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f']
-    # plt.plot(x_range, (fourgauss(x_range,par8[0],par8[1],par8[2],par8[3], par8[4],par8[5],par8[6],
-    #                              par8[7],par8[8],par8[9], par8[10],par8[11],par8[12])), color = amide2Colors[5])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[1],par8[2],par8[3]),color = amide2Colors[1])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[4],par8[5],par8[6]),color = amide2Colors[2])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[7],par8[8],par8[9]),color = amide2Colors[3])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[10],par8[11],par8[12]),color = amide2Colors[4])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = 'black')
-    # plt.plot(x_range, (fourgauss(x_range,par8[0],par8[16],par8[17],par8[18],
-    #                              par8[19],par8[20],par8[21], par8[22],par8[23],par8[24],par8[25],par8[26],par8[27])),color = amide1Colors[5])
+    amide2Colors = ['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#e6550d','#a63603']
+    amide1Colors = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f']
+    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[1],par8[2],par8[3], par8[4],par8[5],par8[6],
+                                  par8[7],par8[8],par8[9], par8[10],par8[11],par8[12])), color = amide2Colors[5])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[1],par8[2],par8[3]),color = amide2Colors[1])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[4],par8[5],par8[6]),color = amide2Colors[2])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[7],par8[8],par8[9]),color = amide2Colors[3])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[10],par8[11],par8[12]),color = amide2Colors[4])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = 'black')
+    plt.plot(x_range, (fourgauss(x_range,par8[0],par8[16],par8[17],par8[18],
+                                  par8[19],par8[20],par8[21], par8[22],par8[23],par8[24],par8[25],par8[26],par8[27])),color = amide1Colors[5])
     
 
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[1])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[2])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[3])
-    # plt.plot(x_range, gauss(x_range, par8[0],par8[25],par8[26],par8[27]),color = amide1Colors[4])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[1])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[2])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[22],par8[23],par8[24]),color = amide1Colors[3])
+    plt.plot(x_range, gauss(x_range, par8[0],par8[25],par8[26],par8[27]),color = amide1Colors[4])
 
-    # plt.xlabel("cm^-1")
-    # plt.xlim(max(x_range), min(x_range))
-    # plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
-    # plt.legend(["Amide II", "BT","RC","BS","AH","Correction", "Amide I","BS","RC","AH","BT"])
+    plt.xlabel("cm^-1")
+    plt.xlim(max(x_range), min(x_range))
+    plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
+    plt.legend(["Amide II", "BT","RC","BS","AH","Correction", "Amide I","BS","RC","AH","BT"])
     
-    # plt.savefig(f"8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png")
-    # plt.show()
-    # plt.clf()
+    plt.savefig(f"8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png")
+    plt.show()
+    plt.clf()
     
-    #peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23] ])
-    
-    indexL =[]
-    for peaky in sorted(peaks8s):
-        indexL.append(peaks8s.index(peaky))
+    peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23],par8[26]  ])
+    GaussOrder = np.argsort([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23],par8[26] ])
+    #indexL =[]
+    #for peaky in sorted(peaks8s):
+    #    indexL.append(peaks8s.index(peaky))
      
-    for p in peaks8s:
-        print(round(p,1), end = " ")
+  #  for p in peaks8s:
+       # print(round(p,1), end = " ")
     gaussA = gauss(x_range, par8[0], par8[1], par8[2], par8[3])
       #area1 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[1], par4[2], par4[3] ) )[0]
       
     gaussB = gauss(x_range, par8[0], par8[4], par8[5], par8[6])
     gaussC = gauss(x_range, par8[0], par8[7], par8[8], par8[9])
     gaussD = gauss(x_range, par8[0], par8[10], par8[11], par8[12])
+   
     areaA = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[1], par8[2], par8[3] ) )[0]
     areaB = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[4], par8[5], par8[6] ) )[0]
     areaC = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[7], par8[8], par8[9] ) )[0]
     areaD = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[10], par8[11], par8[12] ) )[0]
-    areas = [areaA,areaB,areaC,areaD]
+    
+    areaE = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[13], par8[14], par8[15] ) )[0]
+    areaF = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[16], par8[17], par8[18] ) )[0]
+    areaG = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[19], par8[20], par8[21] ) )[0]
+    areaH = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[22], par8[23], par8[24] ) )[0]
+    areaI = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[25], par8[26], par8[27] ) )[0]
+    
+    areas = [areaA,areaB,areaC,areaD,areaE, areaF, areaG, areaH,areaI ]
       
-    gausses = [gaussA,gaussB,gaussC,gaussD]
-    GaussOrder = np.argsort([par8[2],par8[5],par8[8],par8[11]])
+    #gausses = [gaussA,gaussB,gaussC,gaussD]
+   
       
-    gausses =  [gausses[i] for i in GaussOrder]
+    #gausses =  [gausses[i] for i in GaussOrder]
     areas =  [areas[i] for i in GaussOrder]
+    peaks8s = [peaks8s[i] for i in GaussOrder]
     ind = 0
     summa =sum(areas)
     for area in areas:
@@ -289,18 +298,18 @@ def fitEightComp(selec,sol):
     print ("\n")
     print( f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]} \n")  
     print ("Areas", np.round(areas,3), "\n\n\n\n")
-    return areas
+    return peaks8s, areas
     #return peaks8s
     #1620
 fitEightComp(1,0)  
 #Peak finder    
-indices = []
-for solv in solvents:
-    for humi in Humdities:
-        indices.append(str(solv)+": "+str(humi)+'%')
-Peaks = pd.DataFrame(columns =["Am II -A","Am II -B", "Am II -C", "Am II -D", "Solvent", "Am I - BS" , 
-                               "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
-print(Peaks)
+#indices = []
+#for solv in solvents:
+ #   for humi in Humdities:
+  #      indices.append(str(solv)+": "+str(humi)+'%')
+#Peaks = pd.DataFrame(columns =["Am II -A","Am II -B", "Am II -C", "Am II -D", "Solvent", "Am I - BS" , 
+              #                 "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+#print(Peaks)
 
 #range(len(solvents)
 #range(len(Humdities)
@@ -317,18 +326,38 @@ print(Peaks)
 #rea Finder
 indices = []
 for solv in solvents:
-     for humi in Humdities:
-         indices.append(str(solv)+": "+str(humi)+'%')
-Areas = pd.DataFrame(columns =[" Am I - BS" , "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
+    for humi in Humdities:
+        indices.append(str(solv)+": "+str(humi)+'%')
+ #       
+Peaks = pd.DataFrame(columns =["BT II","RC II","BS II","AH II","Correction", "BS I","RC I","AH I","BT I"], index = indices)
+
+
+
 model = 0
 for sol in range(len(solvents)):
-     for hum in range(len(Humdities)):
-         
-         Areas.loc[indices[model]] = fitEightComp(hum+1,sol)
+    for hum in range(len(Humdities)):
+        
+        Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)[0]
+        model+=1
+
+Peaks.to_csv('PeaksOf8A.csv')       
+        
+# =============================================================================
+#   
+#area Finder
+indices = []
+for solv in solvents:
+      for humi in Humdities:
+          indices.append(str(solv)+": "+str(humi)+'%')
+Areas = pd.DataFrame(columns =["BT II","RC II","BS II","AH II","Correction", "BS I","RC I","AH I","BT I"], index = indices)
+model = 0
+for sol in range(len(solvents)):
+      for hum in range(len(Humdities)):          
+         Areas.loc[indices[model]] = fitEightComp(hum+1,sol)[1]
          model+=1
 # 
 print(Areas)
-Areas.to_csv('AllAreasNEW.csv')       
+Areas.to_csv('Areasof8A.csv')       
                                            
          
 

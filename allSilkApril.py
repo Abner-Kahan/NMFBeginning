@@ -133,7 +133,7 @@ def peakPlotter(W,numPeaks,ran1,ran2,col):
     plt.clf()
 
 
-
+sumsol  = np.load('sumsol.npy')
 def nmf2TesterMixB(ran1,ran2,broad):
     #pdb.set_trace()
 
@@ -153,14 +153,16 @@ def nmf2TesterMixB(ran1,ran2,broad):
     for spec in IRF[:11,:]:
         plt.plot(x_range, spec)
     plt.title('UntreatedSample')
+    plt.xlabel("cm-1")
     plt.legend(Humdities)
     plt.show()
     plt.clf()
     
-    for spec in IRF[11:22,:]:
+    for spec in IRF[11:22,:]:   
         plt.plot(x_range, spec)
     
     plt.title('MeOHSample')
+    plt.xlabel("cm-1")
     plt.legend(Humdities)
     plt.show()
     plt.clf()
@@ -168,6 +170,7 @@ def nmf2TesterMixB(ran1,ran2,broad):
     for spec in IRF[22:33,:]:
         plt.plot(x_range, spec)
     plt.title('WA45ample')
+    plt.xlabel("cm-1")
     plt.legend(Humdities)
     plt.show()
     plt.clf()
@@ -184,17 +187,18 @@ def nmf2TesterMixB(ran1,ran2,broad):
    # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
     IRF= np.transpose(IRF)
     
-    model = NMF(n_components=4, max_iter=500, tol= 1*10**-10, solver= 'mu', init='random', beta_loss= 'kullback-leibler')#, alpha = .3  )
+    model = NMF(n_components=4, max_iter=1000, tol= 1*10**-10, solver= 'mu', init='random', beta_loss= 'kullback-leibler')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
     
     print ("W-size",W.shape)
     #print("mean", np.mean(W), np.mean(IRF[:,0]))
-    numPeaks0 = (find_peaks(W[:,0])[0])+amide1_ran1
+    numPeaks0 = (find_peaks(W[:,0],'prominence' == .1)[0])+amide1_ran1
     
-    numPeaks1 = (find_peaks(W[:,1])[0])+amide1_ran1
-    numPeaks2 = (find_peaks(W[:,2])[0]) +amide1_ran1
-    numPeaks3 = (find_peaks(W[:,3])[0]) +amide1_ran1
+    numPeaks1 = (find_peaks(W[:,1],'prominence' == .1)[0])+amide1_ran1
+    numPeaks2 = (find_peaks(W[:,2],'prominence' == .1)[0]) +amide1_ran1
+    numPeaks3 = (find_peaks(W[:,3],'prominence' == .1)[0]) +amide1_ran1
+    #numPeaks4 = (find_peaks(W[:,4],'prominence' == .1)[0]) +amide1_ran1
     
 # =============================================================================
 #     peakPlotter(W,numPeaks0,amide1_ran1,amide1_ran2,0)
@@ -211,20 +215,68 @@ def nmf2TesterMixB(ran1,ran2,broad):
     K1= np.mean([W]) /  np.mean(IRF[:,1])
     K2= np.mean([W]) /  np.mean(IRF[:,2])
     K3= np.mean([W]) /  np.mean(IRF[:,3])
-    K4= np.mean([W]) /  np.mean(IRF[:,4])
+    #K4= np.mean([W]) /  np.mean(IRF[:,4])
    
      
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
     
-    IrPlotter(W[:,0], "Calculated 1",amide1_ran1,amide1_ran2)
-    IrPlotter(W[:,1], "Calculated 2",amide1_ran1,amide1_ran2)
-    IrPlotter(W[:,2], "Calculated 3",amide1_ran1,amide1_ran2)
-    IrPlotter(W[:,3], "Calculated 4",amide1_ran1,amide1_ran2)
-    #IrPlotter(W[:,4], "Calculated 5",amide1_ran1,amide1_ran2)
+    #IrPlotter(W[:,ordPeaks[0]], "NMF Calculated 1",amide1_ran1,amide1_ran2)
+    #IrPlotter(W[:,ordPeaks[1]], "NMF Calculated 2",amide1_ran1,amide1_ran2)
+    #IrPlotter(W[:,ordPeaks[2]], "NMF Calculated 3",amide1_ran1,amide1_ran2)
+    #IrPlotter(W[:,ordPeaks[3]], "NMF Calculated 4",amide1_ran1,amide1_ran2)
+    #IrPlotter(W[:,4], "NMF Calculated 5",amide1_ran1,amide1_ran2)
     
     #IrPlotter(W[:,4], "Calculated Spectra 5",ran1,ran2)
+    SingPeaks =[]
+    SingPeaks += [np.argmax(W[:,0])]
+    SingPeaks += [np.argmax(W[:,1])]
+    SingPeaks += [np.argmax(W[:,2])]
+    SingPeaks += [np.argmax(W[:,3])]
+    print(SingPeaks, "\n\n\n\n\n----\n\n---")
+    sorter =np.argsort(SingPeaks)
     
+    W_test = W
+    plt.plot(x_range, W_test[:,sorter[0]])
+    meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
+
+    plt.plot(x_range, sumsol[0]*meany)
+    plt.title("NMF Calculated 1")
+    plt.xlabel("cm-1")
+    plt.legend(["NMF", "Gaussian"])
+    plt.show()
+    plt.clf()
     
+    plt.plot(x_range, W_test[:,sorter[1]])
+    meany = np.mean(W_test[:,sorter[1]]/sumsol[1])
+
+    plt.plot(x_range, sumsol[1]*meany)
+    plt.title("NMF Calculated 2")
+    plt.xlabel("cm-1")
+    plt.legend(["NMF", "Gaussian"])
+    plt.show()
+    plt.clf()
+    
+    plt.plot(x_range, W_test[:,sorter[2]])
+    meany = np.mean(W_test[:,sorter[2]]/sumsol[2])
+
+    plt.plot(x_range, sumsol[2]*meany)
+    plt.title("NMF Calculated 3")
+    plt.xlabel("cm-1")
+    plt.legend(["NMF", "Gaussian"])
+    plt.show()
+    plt.clf()
+    
+    plt.plot(x_range, W_test[:,sorter[3]])
+    meany = np.mean(W_test[:,sorter[3]]/sumsol[3])
+
+    plt.plot(x_range, sumsol[3]*meany)
+    plt.title("NMF Calculated 4")
+    plt.xlabel("cm-1")
+    plt.legend(["NMF", "Gaussian"])
+    plt.show()
+    plt.clf()
+    #IrPlotter(sumsol[0], "Gaussian",amide1_ran1,amide1_ran2) 
+
     
     
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1]*K1 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
@@ -234,11 +286,74 @@ def nmf2TesterMixB(ran1,ran2,broad):
     #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
    # IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3] ],'4Spectra',["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra"], True)
     H = model.components_
-    Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    for n in range(10): 
+    #Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
+    for n in range(11): 
         plt.plot(np.dot(W,H[:,n]))
-    np.save("H.npy",H)
-    np.save("Hnorm.npy",Hnorm)
+        #plt.plot(np.dot(W,H[1,n]))
+        #plt.plot(np.dot(W,H[2,n]))
+       # plt.plot(np.dot(W,H[3,n]))
+        
+    plt.title('NMF Rebuilt Untreated Sample')
+    plt.xlabel("cm-1")
+    plt.legend(Humdities)
+    plt.show()
+    plt.clf()
+    
+    for n in range(11,22): 
+        plt.plot(np.dot(W,H[:,n]))
+    plt.title('NMF Rebuilt MeOH Sample')
+    plt.xlabel("cm-1")
+    plt.legend(Humdities)
+    plt.show()
+    plt.clf()
+    
+    for n in range(22,33): 
+        plt.plot(np.dot(W,H[:,n]))
+    plt.title('NMF Rebuilt WA45 Sample')
+    plt.xlabel("cm-1")
+    plt.legend(Humdities)
+    plt.show()
+    plt.clf()
+    #np.save("H.npy",H)
+    #np.save("Hnorm.npy",Hnorm)
+    Hnorm = np.apply_along_axis(lambda l : l/np.sum(l),0,H)
+    plt.plot(Humdities, Hnorm[sorter[0], :11], label = numPeaks0)
+    plt.plot(Humdities, Hnorm[sorter[1], :11], label = numPeaks1)
+    plt.plot(Humdities, Hnorm[sorter[2], :11], label = numPeaks2)
+    plt.plot(Humdities, Hnorm[sorter[3], :11], label = numPeaks3)
+   # plt.plot(Humdities, Hnorm[4, :11], label = numPeaks4)
+    plt.xlabel("%humidity")
+    plt.legend()
+    plt.title('Untreated Sample')
+    plt.show()
+    plt.clf()
+    
+    plt.plot(Humdities, Hnorm[sorter[0], 11:22], label = numPeaks0)
+    plt.plot(Humdities, Hnorm[sorter[1], 11:22], label = numPeaks1)
+    plt.plot(Humdities, Hnorm[sorter[2], 11:22], label = numPeaks2)
+    plt.plot(Humdities, Hnorm[sorter[3], 11:22], label = numPeaks3)
+   # plt.plot(Humdities, Hnorm[4, 11:22], label = numPeaks4)
 
+    plt.xlabel("%humidity")
+    plt.legend()
+    plt.title('MeOH Fractions')
+    plt.show()
+    plt.clf()    
+    
+    plt.plot(Humdities, Hnorm[sorter[0], 22:33], label = numPeaks0)
+    plt.plot(Humdities, Hnorm[sorter[1], 22:33], label = numPeaks1)
+    plt.plot(Humdities, Hnorm[sorter[2], 22:33], label = numPeaks2)
+    plt.plot(Humdities, Hnorm[sorter[3], 22:33], label = numPeaks3)
+   # plt.plot(Humdities, Hnorm[4, 22:33], label = numPeaks4)
 
-nmf2TesterMixB(amide1_ran1,amide1_ran2,15)  
+    plt.xlabel("%humidity")
+    plt.legend()
+    plt.title('WA45 Fractions')
+    plt.show()
+    plt.clf()
+    
+    
+    
+    return H
+
+H = nmf2TesterMixB(amide1_ran1,amide1_ran2,15)  

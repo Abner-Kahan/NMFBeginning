@@ -25,8 +25,9 @@ import matplotlib.image as mpimg
 
 
 ran1 =1600
-ran2 = 1700
+ran2 = 1715
 broad = 15
+x_range = np.linspace(ran1,ran2,ran2-ran1+1)
 
 
 def ImaginaryEnergy(spectra):
@@ -85,7 +86,7 @@ def fetchIr(path,column,ran1,ran2):
     #print(mask)
     
     IrArray2 = IrArray[:,mask]
-    #print(IrArray2.shape)
+    #print(IrArray2.shape)11
     #plt.scatter(IrArray2[0],IrArray2[1])
     #print(IrArray)
     
@@ -162,29 +163,31 @@ IR2 = fetchIr('UntreatedSample.txt',5,ran1,ran2)
 IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
 
 # =============================================================================
-for n in range(0,1):
-     IRboy = fetchIr('UntreatedSample.txt',n,ran1,ran2)
-     fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
-     
-     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
-#print("fit1", fit_y)
-#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
-     x_range = np.linspace(ran1,ran2,ran2-ran1+1)
-     y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
-    
-#for x in IR1[0]:
- #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
-#plt.plot(IR1[0],y_out)
-
-     plt.plot(x_range, y_out)#,markersize=1)
-     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
-     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
-     plt.xlim(max(x_range), min(x_range))
-#plt.xlim(0,4000)
-     plt.title("One Guassian" + " untreated " + str(n))
-     plt.show()
-     plt.clf()
+# =============================================================================
+# for n in range(0,1):
+#      IRboy = fetchIr('UntreatedSample.txt',n,ran1,ran2)
+#      fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
+#      
+#      broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+# #fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
+# #print("fit1", fit_y)
+# #fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
+#      x_range = np.linspace(ran1,ran2,ran2-ran1+1)
+#      y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
+#     
+# #for x in IR1[0]:
+#  #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
+# #plt.plot(IR1[0],y_out)
+# 
+#      plt.plot(x_range, y_out)#,markersize=1)
+#      plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+#      plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
+#      plt.xlim(max(x_range), min(x_range))
+# #plt.xlim(0,4000)
+#      plt.title("One Guassian" + " untreated " + str(n))
+#      plt.show()
+#      plt.clf()
+# =============================================================================
      #plt.plot(IRboy[0], IRboy[1])
      #plt.title("untreated" + str(n))
      #plt.show()
@@ -192,29 +195,31 @@ for n in range(0,1):
 # =============================================================================
     
 # =============================================================================
-for n in range(0):
-     IRboy = fetchIr('MeOHSample.txt',n,ran1,ran2)
-     fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
-     broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-#fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
-#print("fit1", fit_y)
-#fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
-     x_range = np.linspace(ran1,ran2,ran2-ran1+1)
-     y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
-   
-#for x in IR1[0]:
- #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
-#plt.plot(IR1[0],y_out)
-
-     plt.plot(x_range, y_out)#,markersize=1)
-     plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
-     plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
-     plt.xlim(max(x_range), min(x_range))
-#plt.xlim(0,4000)
-     plt.title("One Guassian" + " MeOH " + str(n))
-     plt.show()
-     plt.clf()
-     #plt.plot(IRboy[0], IRboy[1])
+# =============================================================================
+# for n in range(0):
+#      IRboy = fetchIr('MeOHSample.txt',n,ran1,ran2)
+#      fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
+#      broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
+# #fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
+# #print("fit1", fit_y)
+# #fit_y =gauss(IR1[0], fit_y[0],fit_y[1],fit_y[2],fit_y[3])\
+#      x_range = np.linspace(ran1,ran2,ran2-ran1+1)
+#      y_out = gauss (x_range, fit_y[0][0], fit_y[0][1],fit_y[0][2], fit_y[0][3] )
+#    
+# #for x in IR1[0]:
+#  #   y_out.append(gauss(x,fit_y[0],fit_y[1],fit_y[2],fit_y[3]))
+# #plt.plot(IR1[0],y_out)
+# 
+#      plt.plot(x_range, y_out)#,markersize=1)
+#      plt.scatter(IRboy[0],IRboy[1],color='red')#, linewidth = .001 )
+#      plt.xlabel(f"cm^-1  / Error: {ypendry(broadMan, y_out):.5f} ")
+#      plt.xlim(max(x_range), min(x_range))
+# #plt.xlim(0,4000)
+#      plt.title("One Guassian" + " MeOH " + str(n))
+#      plt.show()
+#      plt.clf()
+#      #plt.plot(IRboy[0], IRboy[1])
+# =============================================================================
      #plt.title("untreated" + str(n))
      #plt.show()
      #plt.clf()
@@ -222,7 +227,7 @@ for n in range(0):
 #print(np.max(IR1))
 
 for n in range(0):
-     IRboy = fetchIr('Wa45Sample.txt',n,ran1,ran2)
+     IRboy = fetchIr('WA45Sample.txt',n,ran1,ran2)
      fit_y = curve_fit(gauss,IRboy[0],IRboy[1],[1,1,1650,1] )
      broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
 #fit_y3 = curve_fit(gaussTwo,IR1[0],IR1[1],p0 = [1,1,1650,1,1,1650,1])
@@ -334,22 +339,24 @@ def fitFive(selec):
 #for n in range(15):
 #fitFive (1)
 b = 11
-print(f"{ypendry(IRF [0,:], y_out):.5f}")
+#print(f"{ypendry(IRF [0,:], y_out):.5f}")
 Humdities = [5,10,20,30,40,50,60,70,80,90,95]
 #for b in range(1):
 #    plt.imshow([[1,1,1],[1,1,1],[1,1,1]] )
 #    plt.show()
 #    plt.clf()
-
-for n in range (1):
-      IRboy = fetchIr('Wa45Sample.txt',b,ran1,ran2)
+solvents = ["Untreated", "MeOH", "WA45"]
+sumsol = np.zeros((4,116))
+for sol in range(len(solvents)):
+     for hum in range(len(Humdities)):    
+      IRboy = fetchIr(f'{solvents[sol]}Sample.txt',hum+1,ran1,ran2)
       broadMan = gaussian_broadening(IRboy,broad,ran1,ran2)
-      print("Run", b)
-      peak1 =  random.randrange(ran1,ran2,1) #1620
-      peak2 =  random.randrange(ran1,ran2,1) #1645
+      #print("Run", b)
+      peak1 =  1620
+      peak2 =  1645
       peak3 =   1660# # random.randrange(ran1,ran2,1)
-      peak4 =  random.randrange(ran1,ran2,1) #1678
-      print('The peaks are',peak1, peak2,peak3,peak4)
+      peak4 =  1678
+     # print('The peaks are',peak1, peak2,peak3,peak4)
       guesses =[1] +[1,peak1,10]+[1,peak2,10]+[1,peak3,10]+[1,peak4,10]
       constraints = ([-20,0,ran1,5,0,ran1,5,0,ran1,5,0,ran1,5],[20,np.inf,ran2,15,np.inf,ran2,15,np
                                                                 .inf,ran2,15,np.inf,ran2,15] )
@@ -390,7 +397,7 @@ for n in range (1):
 #plt.plot(IR1[0],fit_y2[1])
 #plt.plot()
 #plt.xlim(0,4000)
-      plt.title(f'Sum of Four Gaussians {Humdities[b-1]}% humidity')
+      plt.title(f'Sum of Four Gaussians {solvents[sol]} {Humdities[hum]}% humidity')
      
       plt.show()
       plt.clf()
@@ -409,7 +416,7 @@ for n in range (1):
      
       print(peaks4s)
      
-                                 
+      GaussOrder = np.argsort([par4[2], par4[5],par4[8],par4[11]]    )                      
       gauss1 = gauss(x_range, par4[0], par4[1], par4[2], par4[3])
       area1 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[1], par4[2], par4[3] ) )[0]
       print("The area is " , area1)
@@ -423,22 +430,27 @@ for n in range (1):
       area4 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[10], par4[11], par4[12] ) )[0]
 
       gausses = [gauss1,gauss2,gauss3,gauss4]
-      plt.plot(x_range, gausses[indexL[0]])
-      plt.plot(x_range, gausses[indexL[1]])
-      plt.plot(x_range, gausses[indexL[2]])
-      plt.plot(x_range, gausses[indexL[3]])                            
-         
+      gausses = [gausses[i] for i in GaussOrder]
+      #plt.plot(x_range, gausses[0])
+     # plt.plot(x_range, gausses[1])
+     # plt.plot(x_range, gausses[2])
+      #plt.plot(x_range, gausses[3])                            
+      sumsol [0,:] += gausses[0]
+      sumsol [1,:] += gausses[1]
+      sumsol [2,:] += gausses[2]
+      sumsol [3,:] += gausses[3]
+
      
          
      
-      plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f} {Humdities[b-1]}% humidity)")
+     # plt.title(f"Four Gaussians: ({peaks4s[indexL[0]]:4.1f}, {peaks4s[indexL[1]]:4.1f}, {peaks4s[indexL[2]]:4.1f}, {peaks4s[indexL[3]]:4.1f} {Humdities[b-1]}% humidity)")
       #plt.legend(["Beta Sheet", "Random Coil","Alpha Helix","Beta Turn"])
-      plt.legend([f"Gauss1 {area1:.4}", f"Gauss2 {area2:.4}", f"Gauss3 {area3:.4}", f"Gauss4 {area4:.4}"])
-      plt.xlabel("cm^-1")
+     # plt.legend([f"Gauss1 {area1:.4}", f"Gauss2 {area2:.4}", f"Gauss3 {area3:.4}", f"Gauss4 {area4:.4}"])
+      #plt.xlabel("cm^-1")
       plt.xlim(max(x_range), min(x_range))
       #plt.ylim(bottom=0)
-      plt.show()
-      plt.clf()
+      #plt.show()
+     # plt.clf()
       #IRF [0,:] = gaussian_broadening(IR1,broad,ran1,ran2)
       #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)   
       print(f"Error: {ypendry(broadMan, yplot4):.5f}")

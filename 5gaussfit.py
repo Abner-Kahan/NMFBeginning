@@ -27,7 +27,7 @@ import matplotlib.image as mpimg
 
 
 ran1 =1600
-ran2 = 1730
+ran2 = 1715
 
 
 amide2_ran1 =1475
@@ -234,11 +234,13 @@ def fitFive(selec,sol):
      #plt.ylim(bottom=0)
     plt.show()
     plt.clf()
-    return peaks5s
+    return gausses
 
-for sol in range(3):
-    for hum in range(11):
-        fitFive(hum,sol)
+for sol in range(1):
+    for hum in range(1):
+        
+        print(len(fitFive(hum,sol)[0]))
+        
     
 #fitFive(1,0)    
 #fitFive(11,0)    
@@ -269,7 +271,7 @@ for sol in range(3):
 # =============================================================================
 #   
 #area Finder
-# indices = []
+# indices = []11
 # for solv in solvents:
 #      for humi in Humdities:
 #          indices.append(str(solv)+": "+str(humi)+'%')

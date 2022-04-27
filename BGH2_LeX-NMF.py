@@ -69,13 +69,13 @@ def IrPlotter(item,title,ran1,ran2, leg = [], multiple = False):
     plt.clf() 
 
 #plt.zeros(4000)
-
+scal = np.average(fetchIr('BGH2c_h.dat')[:,1]) / np.average(fetchIr('BGH2h_h.dat')[:,1])
 plt.plot(fetchIr('BGH2c_h.dat')[:,0],fetchIr('BGH2c_h.dat')[:,1])
-plt.plot(fetchIr('BGH2h_h.dat')[:,0],fetchIr('BGH2h_h.dat')[:,1])
+plt.plot(fetchIr('BGH2h_h.dat')[:,0],fetchIr('BGH2h_h.dat')[:,1]*scal)
 plt.xlabel("cm^-1")    
 plt.ylim(0,1.1)
 plt.xlim(1575,1750)
-plt.title('BGH2 HighFreq')
+plt.title('Scaled BGH2 HighFreq')
 
 
 plt.legend(["cold", "hot"])
@@ -127,16 +127,81 @@ HotGuess = np.interp(x2,x1,y1)
 
 diff =   HotGuess - fetchIr('BGH2h_h.dat')[:,1]
 HotGuessSpec = np.stack((x2,diff),axis =-1)
-plt.plot(HotGuessSpec[:,0],HotGuessSpec[:,1])
+#plt.plot(HotGuessSpec[:,0],HotGuessSpec[:,1])
+#plt.plot(x1,y1)
 plt.xlabel("cm^-1")   
 plt.ylim(0,1.1)
 plt.xlim(1575,1750)
 
+newX = []
+indo = 0
+for i in x1:
+    if i < min(x2) or i > max(x2):
+        newX.append([i,y1[indo]])
+    indo+=1
+
+newX = np.array(newX)
+DifPlot = np.concatenate((newX,HotGuessSpec),axis=0 )
+Difss = [tuple(x) for x in DifPlot]
+Difss = sorted(Difss)
+#DifPlot = sorted(DifPlot)
+DiffList = []
+for t in Difss:
+    DiffList.append(t)
+DiffList = np.array(DiffList)
+np.savetxt("HighFreqDiff.csv", DiffList, delimiter=",")
+
+plt.plot(DiffList[:,0],DiffList[:,1] )
 plt.title("High Frequency Difference")
 plt.show()
 plt.clf()
 print(HotGuessSpec)
 
+
+
+
+x3 = fetchIr('BGH2c_l.dat')[:,0]
+x4 = fetchIr('BGH2h_l.dat')[:,0]
+#y2=  fetchIr('BGH2h_h.dat')[:,1]
+y3= fetchIr('BGH2c_l.dat')[:,1]
+fetchIr('BGH2h_l.dat')[:,1]
+
+
+HotGuess2 = np.interp(x4,x3,y3)
+#HotGuessSpec = np.stack((x2,HotGuess),axis =-1)
+
+diff2 =   HotGuess2 - fetchIr('BGH2h_l.dat')[:,1]
+HotGuessSpec2 = np.stack((x4,diff2),axis =-1)
+plt.plot(HotGuessSpec2[:,0],HotGuessSpec2[:,1])
+plt.xlabel("cm^-1")   
+plt.ylim(-1,1.1)
+plt.xlim(1000,1200)
+
+
+newX = []
+indo = 0
+for i in x3:
+    if i < min(x4) or i > max(x4):
+        newX.append([i,y3[indo]])
+    indo+=1
+
+newX = np.array(newX)
+DifPlot = np.concatenate((newX,HotGuessSpec2),axis=0 )
+Difss = [tuple(x) for x in DifPlot]
+Difss = sorted(Difss)
+#DifPlot = sorted(DifPlot)
+DiffList = []
+for t in Difss:
+    DiffList.append(t)
+DiffList = np.array(DiffList)
+
+plt.plot(DiffList[:,0],DiffList[:,1] )
+np.savetxt("LowFreqDiff.csv", DiffList, delimiter=",")
+
+plt.title("Low Frequency Difference")
+plt.show()
+plt.clf()
+print(HotGuessSpec)
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 # def gaussian_broadening(spectra, broaden, experiment =False, resolution=1):
  

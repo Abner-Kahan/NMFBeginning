@@ -193,11 +193,11 @@ def nmf2TesterMixB(ran1,ran2,broad):
     
     print ("W-size",W.shape)
     #print("mean", np.mean(W), np.mean(IRF[:,0]))
-    numPeaks0 = (find_peaks(W[:,0],'prominence' == .1)[0])+amide1_ran1
+    numPeaks0 = (find_peaks(W[:,0],'prominence' == 1)[0])+amide1_ran1
     
-    numPeaks1 = (find_peaks(W[:,1],'prominence' == .1)[0])+amide1_ran1
-    numPeaks2 = (find_peaks(W[:,2],'prominence' == .1)[0]) +amide1_ran1
-    numPeaks3 = (find_peaks(W[:,3],'prominence' == .1)[0]) +amide1_ran1
+    numPeaks1 = (find_peaks(W[:,1],'prominence' == 1)[0])+amide1_ran1
+    numPeaks2 = (find_peaks(W[:,2],'prominence' == 1)[0]) +amide1_ran1
+    numPeaks3 = (find_peaks(W[:,3],'prominence' == 1)[0]) +amide1_ran1
     #numPeaks4 = (find_peaks(W[:,4],'prominence' == .1)[0]) +amide1_ran1
     
 # =============================================================================
@@ -236,6 +236,7 @@ def nmf2TesterMixB(ran1,ran2,broad):
     sorter =np.argsort(SingPeaks)
     
     W_test = W
+    print('\n\n\n\n' ,W, '')
     plt.plot(x_range, W_test[:,sorter[0]])
     meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
 
@@ -288,7 +289,7 @@ def nmf2TesterMixB(ran1,ran2,broad):
     H = model.components_
     #Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     for n in range(11): 
-        plt.plot(np.dot(W,H[:,n]))
+        plt.plot(np.dot(W,H[0,n]))
         #plt.plot(np.dot(W,H[1,n]))
         #plt.plot(np.dot(W,H[2,n]))
        # plt.plot(np.dot(W,H[3,n]))
@@ -300,7 +301,7 @@ def nmf2TesterMixB(ran1,ran2,broad):
     plt.clf()
     
     for n in range(11,22): 
-        plt.plot(np.dot(W,H[:,n]))
+        plt.plot(np.dot(W,H[0,n]))
     plt.title('NMF Rebuilt MeOH Sample')
     plt.xlabel("cm-1")
     plt.legend(Humdities)
@@ -308,7 +309,7 @@ def nmf2TesterMixB(ran1,ran2,broad):
     plt.clf()
     
     for n in range(22,33): 
-        plt.plot(np.dot(W,H[:,n]))
+        plt.plot(np.dot(W,H[0,n]))
     plt.title('NMF Rebuilt WA45 Sample')
     plt.xlabel("cm-1")
     plt.legend(Humdities)

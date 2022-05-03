@@ -167,27 +167,69 @@ def peakPlotter(W,numPeaks,ran1,ran2,col):
     plt.title(f"peaks Calculated Spectra{col}")
     plt.show()
     plt.clf()
-
-def nmf2TesterMixB(specA, specB):
-    spec1 = fetchIr(specA)
-    print(spec1)
-    spec2 = fetchIr(specB)
-    coldX= spec1[:,1]
-    hotX = spec2[:,1]
+def SortNp(npArray):
+    Difss = [tuple(x) for x in npArray]
+    Difss = sorted(Difss)
+#DifPlot = sorted(DifPlot)
+    DiffList = []
+    for t in Difss:
+        DiffList.append(t)
+    DiffList = np.array(DiffList)
+    return DiffList
+def nmf2TesterMixB(coldSpec, HotSpec):
+    coldSpec = fetchIr(coldSpec)
     
-    #plt.plot(specFull[:,0], specFull[:,1])
-
-    IRF = np.array(spec1,spec2)
+    HotSpec = fetchIr(HotSpec)
+    coldX= coldSpec[:,0]
+    hotX = HotSpec[:,0]
+    coldY = coldSpec[:,1]
+    hotY = HotSpec[:,1]
+    HotYguess = np.interp(hotX,coldX,coldY)
+    #HotYguess is the predicted values of the cold spectra at the Hot's X Values
+    ColdYguess = np.interp(coldX,hotX,hotY)
+     #ColdYguess is the predicted values of the hot spectra at the Cold's X Values
+    print("Hot prediction lenghth", len(HotYguess), "Cold Pediction length", len(ColdYguess),
+          "Cold", len(coldY), "Hot", len(hotY))
+    HotGuess = np.stack((hotX,HotYguess),axis=-1)
+    #print(HotGuess)
+   
     
-    IRF= np.transpose(IRF)
+    ColdGuess = np.stack((coldX,ColdYguess),axis=-1)
+    HotWhole=np.concatenate((HotSpec, ColdGuess), axis = 0)
+    ColdWhole=np.concatenate((coldSpec, HotGuess), axis =0)
+    print(HotWhole.shape, ColdWhole.shape)
+    ColdWhole = SortNp(ColdWhole)
+    HotWhole = SortNp(HotWhole)
+    
+    plt.plot(ColdWhole[:,0],ColdWhole[:,1])
+    plt.plot(HotWhole[:,0],HotWhole[:,1])
+    
+    
+    plt.title("Input plots")
+    plt.legend(["Cold", "Hot"])
+    plt.show()
+    plt.clf()
+    IRF = np.stack((HotWhole[:,0],HotWhole[:,1],ColdWhole[:,1]),axis=-1)
+    #IRF = np.((HotWhole, ColdWhole), axis = -1)
     print(IRF.shape)
-    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, solver= 'mu', init='random', beta_loss= 'kullback-leibler')#, alpha = .3  )
+    #plt.plot(specFull[:,0], specFull[:,1])
+    
+    # = np.array(spec1,spec2)
+    
+    #IRF= np.transpose(IRF)
+    # print(IRF.shape)
+    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, solver= 'mu',  beta_loss= 'kullback-leibler')#, alpha = .3  )
     W = model.fit_transform(IRF)
     H = model.components_
-    #plt.vlines(W[0], W[1])
-    print(H , '\n\n')
-    print(W, '\n\n')
-    print(len(np.matmul(W,H)[0]))
-    plt.plot(np.matmul(W,H)[0],  np.matmul(W,H)[1] )
-nmf2TesterMixB('BGH2c_l.dat', 'BGH2h_l.dat')
+    Reoncs = (np.matmul(W,H).shape)
+    
+    plt.plot(W[:,0], W[:,1])
+    print(H.shape)
+    print(W.shape)
+    # #plt.vlines(W[0], W[1])
+    # print(H , '\n\n')
+    # print(W, '\n\n')
+    # print(len(np.matmul(W,H)[0]))
+    # plt.plot(np.matmul(W,H)[0],  np.matmul(W,H)[1] )
+nmf2TesterMixB('BGH2c_h.dat', 'BGH2h_h.dat')
 #sumsol  = np.load('sumsol.npy')

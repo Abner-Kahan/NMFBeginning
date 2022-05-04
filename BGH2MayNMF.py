@@ -184,22 +184,24 @@ def nmf2TesterMixB(coldSpec, HotSpec):
     hotX = HotSpec[:,0]
     coldY = coldSpec[:,1]
     hotY = HotSpec[:,1]
-    HotYguess = np.interp(np.linspace(amide1_ran1,amide1_ran2,116),coldX,coldY)
+    #HotYguess = np.interp(np.linspace(amide1_ran1,amide1_ran2,116),coldX,coldY)
+    HotYguess = np.interp(hotX,coldX,coldY)
     #HotYguess is the predicted values of the cold spectra at the Hot's X Values
-    ColdYguess = np.interp(np.linspace(amide1_ran1,amide1_ran2,116),hotX,hotY)
+    #ColdYguess = np.interp(np.linspace(amide1_ran1,amide1_ran2,116),hotX,hotY)
+    ColdYguess = np.interp(coldX,hotX,hotY)
      #ColdYguess is the predicted values of the hot spectra at the Cold's X Values
     print("Hot prediction lenghth", len(HotYguess), "Cold Pediction length", len(ColdYguess),
           "Cold", len(coldY), "Hot", len(hotY))
-    #HotGuess = np.stack((hotX,HotYguess),axis=-1)
+    HotGuess = np.stack((hotX,HotYguess),axis=-1)
     #print(HotGuess)
    
     
-    #ColdGuess = np.stack((coldX,ColdYguess),axis=-1)
-    #HotWhole=np.concatenate((HotSpec, ColdGuess), axis = 0)
-    #ColdWhole=np.concatenate((coldSpec, HotGuess), axis =0)
+    ColdGuess = np.stack((coldX,ColdYguess),axis=-1)
+    HotWhole=np.concatenate((HotSpec, ColdGuess), axis = 0)
+    ColdWhole=np.concatenate((coldSpec, HotGuess), axis = 0)
     #print(HotWhole.shape, ColdWhole.shape)
-    #ColdWhole = SortNp(ColdWhole)
-    #HotWhole = SortNp(HotWhole)
+    ColdWhole = SortNp(ColdWhole)
+    HotWhole = SortNp(HotWhole)
     #
     #plt.plot(ColdWhole[:,0],ColdWhole[:,1])
     #plt.plot(HotWhole[:,0],HotWhole[:,1])
@@ -209,10 +211,10 @@ def nmf2TesterMixB(coldSpec, HotSpec):
     #plt.legend(["Cold", "Hot"])
     #plt.xlabel("cm^-1")    
 #
-    plt.show()
-    plt.clf()
-    IRF = np.stack((HotYguess,ColdYguess),axis=-1)
-    #IRF = np.((HotWhole, ColdWhole), axis = -1)
+    #plt.show()
+    #plt.clf()
+    #IRF = np.stack((HotYguess,ColdYguess),axis=-1)
+    IRF = np.stack((HotWhole[:,1], ColdWhole[:,1]), axis = -1)
     print(IRF.shape)
     #plt.plot(specFull[:,0], specFull[:,1])
     
@@ -220,33 +222,35 @@ def nmf2TesterMixB(coldSpec, HotSpec):
     
     #IRF= np.transpose(IRF)
     # print(IRF.shape)
-    model = NMF(n_components=4, max_iter=1000, tol= 1*10**-10, solver= 'mu',  beta_loss= 'kullback-leibler', init= 'random')#, alpha = .3  )
+    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, solver= 'mu',  beta_loss= 'kullback-leibler', init= 'random')#, alpha = .3  )
     W = model.fit_transform(IRF)
+    np.savetxt("NMFHi.csv", W, delimiter=",")
     H = model.components_
     Reoncs = (np.matmul(W,H).shape)
     
-    plt.plot(np.linspace(amide1_ran1,amide1_ran2,116),W[:,0])
-    plt.xlabel("cm^-1")    
-    plt.title("NMF highFreq Output plots 1/4 Low")
-    plt.show()
-    plt.clf()
-    plt.plot(np.linspace(amide1_ran1,amide1_ran2,116),W[:,1])
-    plt.xlabel("cm^-1")    
-    plt.title("NMF highFreq Output plots 2/4 Low")
-    plt.show()
-    plt.clf()
-    plt.plot(np.linspace(amide1_ran1,amide1_ran2,116),W[:,2])
-    plt.xlabel("cm^-1")    
-    plt.title("NMF highFreq Output plots 3/4 Low")
-    plt.show()
-    plt.clf()
-    plt.plot(np.linspace(amide1_ran1,amide1_ran2,116),W[:,3])
-
-    plt.xlabel("cm^-1")    
-    plt.title("NMF highFreq Output plots 4/4 Low")
     
+    plt.plot(W[:,0])
+    plt.xlabel("cm^-1")    
+    plt.title("NMF highFreq Output plots 1/2 ")
     plt.show()
     plt.clf()
+    plt.plot(W[:,1])
+    plt.xlabel("cm^-1")    
+    plt.title("NMF highFreq Output plots 2/2 ")
+    plt.show()
+    plt.clf()
+    # plt.plot(np.linspace(amide1_ran1,amide1_ran2,116),W[:,2])
+    # plt.xlabel("cm^-1")    
+    # plt.title("NMF highFreq Output plots 3/4 Low")
+    # plt.show()
+    # plt.clf()
+    # plt.plot(np.linspace(amide1_ran1,amide1_ran2,116),W[:,3])
+
+    # plt.xlabel("cm^-1")    
+    # plt.title("NMF highFreq Output plots 4/4 Low")
+    
+    # plt.show()
+    # plt.clf()
     print(H.shape)
     print(W.shape)
     # #plt.vlines(W[0], W[1])

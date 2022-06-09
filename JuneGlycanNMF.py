@@ -17,7 +17,7 @@ from sklearn.decomposition import NMF
 from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
 
-def contactReader(mapo,residu):
+def contactReader(mapo,residu,fra):
     mapGL2 =  open(mapo, 'r')
     maptext = mapGL2.read()  
 #print(maptext)
@@ -28,8 +28,8 @@ def contactReader(mapo,residu):
 #print(maptext.count('\n'))
     contactList = maptext.split("{")
     contactList = contactList[1:]
-#print(len(contactList))
-    contactNP = np.zeros((residu ** 2,1000))
+    print(len(contactList))
+    contactNP = np.zeros((residu ** 2,fra))
     nineTimer = 0
     contactNPi = 0
     numList = []
@@ -49,22 +49,28 @@ def contactReader(mapo,residu):
             numList.append(int(num))
         nineTimer += 1
     contactNP2 = contactNP.transpose()
-    model = NMF(n_components=3, max_iter=500, tol= 1*10**-10, solver= 'mu',init = 'random',  beta_loss= 'kullback-leibler', alpha = .1 )#, alpha = .3  )
+    model = NMF(n_components=4, max_iter=500, tol= 1*10**-10, solver= 'mu',init = 'random',  beta_loss= 'kullback-leibler', alpha = .1 )#, alpha = .3  )
     W = model.fit_transform(contactNP2)
     H = model.components_
-    
+    print(H.size, "H")
+    for n in range (4):
+        plt.plot(H[n,:])
+    plt.title('Protein components')
+    plt.show()
+    plt.clf()
+
     print ("W-size",W.shape)
     #plt.plot(W)
     #H = H.transpose()
-    for indy in range(3):
+    for indy in range(4):
          plt.plot(W[:,indy])
-         plt.title('G2 Component ' + str(indy))
+         plt.title('S2 Component ' + str(indy))
          plt.xlabel("Frame")
          plt.show()
          plt.clf()
 
     
-contactReader(mapo,residu)
+contactReader('vmd/S2-10.txt',11,1001)
 
 #print(len(contactNP[:,568]))    
     

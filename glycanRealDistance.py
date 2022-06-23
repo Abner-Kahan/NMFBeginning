@@ -32,7 +32,7 @@ def positionmap(file, residues):
         position += 1
     return contactNP 
 
-g2 = positionmap('vmd/g2-center.txt', 9)        
+#g2 = positionmap('vmd/g2-center.txt', 9)        
 #for  n in range(9): 
  #   plt.plot(positionmap('vmd/g2-center.txt', 9)[2, n, ::100])
 def distancemap(positionmap):
@@ -50,15 +50,15 @@ def distancemap(positionmap):
     return distanceNP
 #print(distanceNP[:,:20])
             
-def nmfMap(distancemap):   
-    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, solver= 'mu', beta_loss= 'kullback-leibler')
+def nmfMap(distancemap,compons):   
+    model = NMF(n_components = compons, max_iter=1000, tol= 1*10**-10, solver= 'mu', beta_loss= 'kullback-leibler')
     W = model.fit_transform(distancemap)
     H = model.components_
     print(H.shape, "H")
     print(W.shape, "H")
-    for n in range (2):
+    for n in range (compons):
         plt.plot(W[:,n])
-    plt.legend(["Component 1","Component 2"])
+    plt.legend(["Component 1","Component 2", "Component 3", "Component 4"])
     plt.xlim(0,W.shape[0])
     for i in range(0, W.shape[0],int(np.sqrt(W.shape[0])) ):
                    plt.vlines(i, 0, 30, colors='Grey')
@@ -66,13 +66,13 @@ def nmfMap(distancemap):
     
     plt.show()
     plt.clf()
-    for indy in range(2):
+    for indy in range(compons):
          plt.plot(H[indy,:])
-         plt.title('S2 Component ' + str(indy +1))
+         plt.title('N2 Component ' + str(indy +1))
          plt.xlabel("Frame")
          plt.show()
          plt.clf()
 
-nmfMap(distancemap(positionmap('vmd/g2-center.txt', 9)  ))
+nmfMap(distancemap(positionmap('vmd/n2f-center.txt', 8)  ), 4)
      
 

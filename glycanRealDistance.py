@@ -58,7 +58,7 @@ def nmfMap(distancemap,compons):
     print(W.shape, "H")
     for n in range (compons):
         plt.plot(W[:,n])
-    plt.legend(["Component 1","Component 2", "Component 3", "Component 4"])
+    plt.legend(["Component 1","Component 2"])
     plt.xlim(0,W.shape[0])
     for i in range(0, W.shape[0],int(np.sqrt(W.shape[0])) ):
                    plt.vlines(i, 0, 30, colors='Grey')
@@ -68,11 +68,11 @@ def nmfMap(distancemap,compons):
     plt.clf()
     for indy in range(compons):
          plt.plot(H[indy,:])
-         plt.title('N2 Component ' + str(indy +1))
+         plt.title('S2 Component ' + str(indy +1))
          plt.xlabel("Frame")
          plt.show()
          plt.clf()
-
-nmfMap(distancemap(positionmap('vmd/n2f-center.txt', 8)  ), 4)
+    np.save('tempCompons.npy', H)
+nmfMap(distancemap(positionmap('vmd/S2-center.txt', 11)  ), 2)
      
 

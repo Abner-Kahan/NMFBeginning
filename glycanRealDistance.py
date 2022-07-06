@@ -73,6 +73,6 @@ def nmfMap(distancemap,compons):
          plt.show()
          plt.clf()
     np.save('tempCompons.npy', H)
-nmfMap(distancemap(positionmap('vmd/S2-center.txt', 11)  ), 2)
+nmfMap(distancemap(positionmap('vmd/m9-center.txt', 11)  ), 2)
      
 

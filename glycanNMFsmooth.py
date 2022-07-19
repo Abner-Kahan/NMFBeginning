@@ -49,11 +49,11 @@ def distancemap(positionmap):
                
                 distanceNP[position,frame] = distEu(positionmap[:, resid2, frame], positionmap[:, resid1, frame])
                 position += 1
-    distanceNP2 = np.zeros((dims[1]**2, dims[2]-49))
-    for point in range (dims[1]**2):
+  #  distanceNP2 = np.zeros((dims[1]**2, dims[2]-119))
+   # for point in range (dims[1]**2):
         
-        distanceNP2[point,:] = moveAverage(distanceNP[point,:], 50)
-    return distanceNP2
+     #   distanceNP2[point,:] = moveAverage(distanceNP[point,:], 120)
+    return distanceNP
 #print(distancemap(positionmap('vmd/m9-center.txt', 11))[:,30])
             
 def nmfMap(distancemap,compons):   
@@ -72,8 +72,11 @@ def nmfMap(distancemap,compons):
     
     plt.show()
     plt.clf()
+    H2 = np.zeros((2, H.shape[1]-49))
+    for entry in range(2):
+        H2[entry,:] = moveAverage(H[entry,:], 50)
     for indy in range(compons):
-         plt.plot(H[indy,:])
+         plt.plot(H2[indy,:])
          plt.title('G2 Component ' + str(indy +1))
          plt.xlabel("Frame")
          plt.show()

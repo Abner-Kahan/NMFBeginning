@@ -48,7 +48,7 @@ def distancemap(positionmap):
                 distanceNP[position,frame] = distEu(positionmap[:, resid2, frame], positionmap[:, resid1, frame])
                 position += 1
     return distanceNP
-#print(distanceNP[:,:20])
+print(distancemap(positionmap('vmd/m9-center.txt', 11))[:,30])
             
 def nmfMap(distancemap,compons):   
     model = NMF(n_components = compons, max_iter=1000, tol= 1*10**-10, solver= 'mu', beta_loss= 'kullback-leibler')
@@ -73,6 +73,6 @@ def nmfMap(distancemap,compons):
          plt.show()
          plt.clf()
     np.save('tempCompons.npy', H)
-nmfMap(distancemap(positionmap('vmd/m9-center.txt', 11)  ), 2)
+nmfMap(distancemap(positionmap('vmd/n2-center.txt', 7)  ), 2)
      
 

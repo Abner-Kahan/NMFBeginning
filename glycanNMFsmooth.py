@@ -61,7 +61,7 @@ def nmfMap(distancemap,compons):
     W = model.fit_transform(distancemap)
     H = model.components_
     print(H.shape, "H")
-    print(W.shape, "H")
+    print(W.shape, "W")
     for n in range (compons):
         plt.plot(W[:,n])
     plt.legend(["Component 1","Component 2"])
@@ -72,16 +72,14 @@ def nmfMap(distancemap,compons):
     
     plt.show()
     plt.clf()
-    H2 = np.zeros((2, H.shape[1]-49))
-    for entry in range(2):
-        H2[entry,:] = moveAverage(H[entry,:], 50)
     for indy in range(compons):
-         plt.plot(H2[indy,:])
+         plt.plot(H[indy,:])
          plt.title('G2 Component ' + str(indy +1))
          plt.xlabel("Frame")
          plt.show()
          plt.clf()
     np.save('tempCompons.npy', H)
-nmfMap(distancemap(positionmap('vmd/g2-center.txt', 9)  ), 2)
+    np.save('ProCompons.npy', W)
+nmfMap(distancemap(positionmap('vmd/S2-center.txt', 11)  ), 2)
      
 

@@ -9,13 +9,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 
+numNMF =1
 def moveAverage(L,n):
     return np.convolve(L, np.ones(n), 'valid') / n
 print("bob")
 H = np.load('tempCompons.npy')
 W = np.load('ProCompons.npy')
-H2 = np.zeros((1, H.shape[1]-499))
-for entry in range(1):
+H2 = np.zeros((numNMF, H.shape[1]-499))
+for entry in range(numNMF):
     H2[entry,:] = moveAverage(H[entry,:], 500)
 #print(np.argmin(H2, 1))
 #H_sort = np.sort(H2, 1)
@@ -38,14 +39,15 @@ for entry in range(1):
  #   if abs (i  - preVal) > 1000:
  #       uniqList.append(i)
  #       preVal = i
-Hpeaks =  find_peaks(H2[0,:], prominence=.005)
+Hpeaks =  find_peaks(H2[0,:], prominence=.1)
 
-print(Hpeaks)
+print(Hpeaks[0])
 print ("----------------\n")
-print (find_peaks(H2[0,:]*-1, prominence=.005))
+Hmins = find_peaks(H2[0,:]*-1, prominence=.1)
+print(Hmins[0])
 
 print ("----------------\n")
-peaks = find_peaks(W[:,0], height = .7)
+peaks = find_peaks(W[:,0], height = .1)
 #print(peaks)
 
 
@@ -54,29 +56,33 @@ peaks = find_peaks(W[:,0], height = .7)
 
 tupleList = []
 for n in peaks[0]:
-     tupleList += [ tuple( [ (n // 11) + 1, (n % 11) + 1 ])]
+     print(n)
+     tupleList += [ tuple( [ (n // 9) + 1, (n % 9) + 1 ])]
 index = 0
 for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
         label = tupleList[index]
+
        #  if index %2 == 0:
        #      y = y + .5
        #      x = x -5
        # # else:
        #  #    x = x +4
-        if index == 1:
-             x = x-2
+       #  if index == 1:
+       #       x = x-2
        #  if label == (4,2):
-       #      x = x -3
+       # #      x = x -3
+        if index  == 2:
+           x+=1
         if index ==3:
-            x-=1
-        if index == 4 :
-             x+=4
-        if index == 5:
-             x+=1
-        if index == 6 :
-             y+=0
-        if index == 7 :
-             x+=6
+           x-=5
+       #  if index == 4 :
+       #       x+=4
+       #  if index == 5:
+       #       x+=1
+       #  if index == 6 :
+       #       y+=0
+       #  if index == 7 :
+       #       x+=6
 
        #  if index == 8:
        #      x+=5
@@ -94,28 +100,32 @@ for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
                  xytext=(0,3), # distance from text to points (x,y)
                  ha='center', color= "green") # horizontal alignment can be left, right or center
         index += 1
-# peaks2 = find_peaks(W[:,1], height = 0.5)
-# #print(peaks2)
-# tupleList2 = []
-# for n in peaks2[0]:
-#       tupleList2 += [ tuple( [ (n // 11) + 1, (n % 11) + 1 ])]
-# index = 0
-# for (x,y) in zip(peaks2[0], peaks2[1]['peak_heights']) :
-#         label = tupleList2[index]
-#         if index == 3:
-#             x = x +4
-        
-#         plt.annotate(label, # this is the text
-#               (x,y), # these are the coordinates to position the label
-#                   textcoords="offset points", # how to position the text
-#                   xytext=(0,1), # distance from text to points (x,y)
-#                   ha='center', color= "red") # horizontal alignment can be left, right or center
-        
-#         index += 1
+
+#print(peaks2)
+if numNMF == 2:
+    peaks2 = find_peaks(W[:,1], height = 0.5)
+    tupleList2 = []
+    for n in peaks2[0]:
+          tupleList2 += [ tuple( [ (n // 7) + 1, (n % 7) + 1 ])]
+    index = 0
+    for (x,y) in zip(peaks2[0], peaks2[1]['peak_heights']) :
+            label = tupleList2[index]
+            if index == 3:
+                x = x +4
+            
+            plt.annotate(label, # this is the text
+                  (x,y), # these are the coordinates to position the label
+                      textcoords="offset points", # how to position the text
+                      xytext=(0,1), # distance from text to points (x,y)
+                      ha='center', color= "red") # horizontal alignment can be left, right or center
+            
+            index += 1
+    plt.plot(W[:,1], color='red')
         
 
 plt.plot(W[:,0], color='green')
-#plt.plot(W[:,1], color='red')
+#plt.ylim(0,1)
+
 #plt.plot(W[:,1], color ='red')
 #plt.ylim(0,10)
 
@@ -134,14 +144,14 @@ plt.clf()
 #search= 
 #    print(H[0, search], search)
 #print(search)
-for n in range(1):
+for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:])
-    plt.title("S2 Component "+ str(n))
+    plt.title("G2 Component "+ str(n))
     plt.show()
     plt.clf()
 
-for n in range(1):
+for n in range(numNMF):
     plt.plot(np.linspace(0, len(H[n,:]), len(H[n,:])), H[n,:])
-    plt.title("S2 Component "+ str(n))
+    plt.title("G2 Component "+ str(n))
     plt.show()
     plt.clf()

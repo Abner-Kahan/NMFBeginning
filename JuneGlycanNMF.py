@@ -49,7 +49,7 @@ def contactReader(mapo,residu,fra):
             numList.append(int(num))
         nineTimer += 1
     contactNP2 = contactNP.transpose()
-    model = NMF(n_components=4, max_iter=500, tol= 1*10**-10, solver= 'mu',init = 'random',  beta_loss= 'kullback-leibler', alpha = .1 )#, alpha = .3  )
+    model = NMF(n_components=4, max_iter=500, tol= 1*10**-10, solver= 'mu',init = 'random',  beta_loss= 'kullback-leibler' )#, alpha = .3  )
     W = model.fit_transform(contactNP2)
     H = model.components_
     print(H.size, "H")

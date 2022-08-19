@@ -57,7 +57,7 @@ def distancemap(positionmap):
 #print(distancemap(positionmap('vmd/m9-center.txt', 11))[:,30])
             
 def nmfMap(distancemap,compons):   
-    model = NMF(n_components = compons, max_iter=1000, tol= 1*10**-3, solver= 'mu', beta_loss= 'kullback-leibler' )
+    model = NMF(n_components = compons, max_iter=1000, tol= 1*10**-3, solver= 'mu', beta_loss= 'kullback-leibler',  )
     W = model.fit_transform(distancemap)
     H = model.components_
     print(H.shape, "H")
@@ -80,6 +80,6 @@ def nmfMap(distancemap,compons):
          plt.clf()
     np.save('tempCompons.npy', H)
     np.save('ProCompons.npy', W)
-nmfMap(distancemap(positionmap('vmd/S2-center.txt', 11)  ), 2)
+nmfMap(distancemap(positionmap('vmd/G2-center.txt', 9)  ), 2)
      
 

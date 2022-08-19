@@ -13,6 +13,9 @@ from scipy.spatial.distance import cdist
 
 numNMF =1
 
+    
+    
+
 def positionmap(file, residues):
     distancefile = open(file)
     reader =  distancefile.read()
@@ -56,14 +59,21 @@ def positionmap(file, residues):
     zerolist =[]
     for i in range(residues):
         zerolist.append(i*residues+i)
+        
     G2bonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7) ,(7,8)]
     G2bondsB = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7) ,(7,8), (1,6), (2,4), (1,3), (2,7)]
     G2fbonds = [(0,1), (0,2), (2,3), (3,4), (4,5), (5,6), (3,7),  (7,8), (8,9)  ]
+    G2fbondsB = [(0,1), (0,2), (2,3), (3,4), (4,5), (5,6), (3,7),  (7,8), (8,9), (1,2), (2,4), (3,8), (3,5), (2,7)  ]
     M9bonds = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5)]
+    M9bondsC = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5), (1,3), (3,5),  (8,10), (2,6), (1,8), (3,7), (2,9), (2,10) ]
     M9bondsB = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5), (1,3),(3,5), (8, 10), (2,6), (1,8), (3,7), (2,9), (2,4) ]
     N2bonds = [(0,1), (1,2), (2,3), (3,4), (2,5), (5,6)]
+    N2bondsB = [(0,1), (1,2), (2,3), (3,4), (2,5), (5,6),(1,5), (2,4), (2,6), (1,3)]
     N2fbonds = [(0,1), (0,2), (2,3), (3,6), (6,7), (3,4), (4,5)   ]
+    N2fbondsB = [(0,1), (0,2), (2,3), (3,6), (6,7), (3,4), (4,5), (1,2), (3,7), (2,6) , (2,4), (3,5)  ]
     S2bonds = [(0,1), (1,2), (2,3), (3,4),(4,5), (5,6), (2,7), (7,8), (8,9), (9,10)  ]
+    S2bondsB = [(0,1), (1,2), (2,3), (3,4),(4,5), (5,6), (2,7), (7,8), (8,9), (9,10), (1,7), (8,10), (4,6), (2,4), (2,8), (1,3)  ]
+    
     for bond in G2bondsB:
         zerolist.append((bond[0]*residues)+bond[1])
         zerolist.append((bond[1]*residues)+bond[0])
@@ -82,14 +92,14 @@ def positionmap(file, residues):
     print(noZero/ total)    
             
 
-    customH = np.full((numNMF,frames),.30)        
+    customH = np.full((numNMF,frames),.3)        
 
 
     
     return contactNP, customH, customW
 
 def nmfMap(distancemap, customH, customW):   
-    model = NMF(n_components = numNMF, max_iter=1200, tol= 1*10**-10, solver= 'mu', beta_loss= 'kullback-leibler', init ='custom' )
+    model = NMF(n_components = numNMF, max_iter=1200, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='custom' )
     W = model.fit_transform(distancemap,  W = customW, H  = customH)
     H = model.components_
     for n in range (numNMF):
@@ -102,7 +112,7 @@ def nmfMap(distancemap, customH, customW):
     plt.clf()
     for indy in range(numNMF):
          plt.plot(H[indy,:], linewidth=.3)
-         plt.title('S2 Component ' + str(indy +1))
+         plt.title('N2f Component ' + str(indy +1))
          plt.xlabel("Frame")
          plt.show()
          plt.clf()  

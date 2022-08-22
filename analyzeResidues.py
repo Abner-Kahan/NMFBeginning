@@ -15,9 +15,9 @@ def moveAverage(L,n):
 print("bob")
 H = np.load('tempCompons.npy')
 W = np.load('ProCompons.npy')
-H2 = np.zeros((numNMF, H.shape[1]-9))
+H2 = np.zeros((numNMF, H.shape[1]-499))
 for entry in range(numNMF):
-    H2[entry,:] = moveAverage(H[entry,:], 10)
+    H2[entry,:] = moveAverage(H[entry,:], 500)
 #print(np.argmin(H2, 1))
 #H_sort = np.sort(H2, 1)
 
@@ -39,7 +39,7 @@ for entry in range(numNMF):
  #   if abs (i  - preVal) > 1000:
  #       uniqList.append(i)
  #       preVal = i
-Hpeaks =  find_peaks(H2[0,:], prominence=.8)
+Hpeaks =  find_peaks(H2[0,:], prominence=.05)
 
 print(Hpeaks[0])
 for (p,z) in zip (Hpeaks[0], Hpeaks[1]['prominences']):
@@ -50,7 +50,7 @@ print(Hmins[0])
 for (p,z) in zip (Hmins[0], Hmins[1]['prominences']):
     print (p,z)
 print ("----------------\n")
-peaks = find_peaks(W[:,0], height = .3)
+peaks = find_peaks(W[:,0], height = .2)
 #print(peaks)
 
 
@@ -111,7 +111,7 @@ if numNMF == 2:
     for n in peaks2[0]:
           tupleList2 += [ tuple( [ (n // 7) + 1, (n % 7) + 1 ])]
     index = 0
-    for (x,y) in zip(peaks2[0], peaks2[1]['peak_heights']) :
+    for (x,y) in zip(peaks2[0], peaks2[1]['peak_heights']):
             label = tupleList2[index]
             if index == 3:
                 x = x +4

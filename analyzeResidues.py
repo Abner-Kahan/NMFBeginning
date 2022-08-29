@@ -15,9 +15,9 @@ def moveAverage(L,n):
 print("bob")
 H = np.load('tempCompons.npy')
 W = np.load('ProCompons.npy')
-H2 = np.zeros((numNMF, H.shape[1]-499))
+H2 = np.zeros((numNMF, H.shape[1]-2499))
 for entry in range(numNMF):
-    H2[entry,:] = moveAverage(H[entry,:], 500)
+    H2[entry,:] = moveAverage(H[entry,:], 2500)
 #print(np.argmin(H2, 1))
 #H_sort = np.sort(H2, 1)
 
@@ -41,15 +41,15 @@ for entry in range(numNMF):
  #       preVal = i
 Hpeaks =  find_peaks(H2[0,:], prominence=.05)
 
-print(Hpeaks[0])
-for (p,z) in zip (Hpeaks[0], Hpeaks[1]['prominences']):
-    print (p,z)
-print ("----------------\n")
-Hmins = find_peaks(H2[0,:]*-1, prominence=1.3)
-print(Hmins[0])
-for (p,z) in zip (Hmins[0], Hmins[1]['prominences']):
-    print (p,z)
-print ("----------------\n")
+#print(Hpeaks[0])
+#for (p,z) in zip (Hpeaks[0], Hpeaks[1]['prominences']):
+#    print (p,z)
+#print ("----------------\n")
+#Hmins = find_peaks(H2[0,:]*-1, prominence=1.3)
+#print(Hmins[0])
+#for (p,z) in zip (Hmins[0], Hmins[1]['prominences']):
+ #   print (p,z)
+#print ("----------------\n")
 peaks = find_peaks(W[:,0], height = .2)
 #print(peaks)
 
@@ -60,7 +60,7 @@ peaks = find_peaks(W[:,0], height = .2)
 tupleList = []
 for n in peaks[0]:
      print(n)
-     tupleList += [ tuple( [ (n // 9) + 1, (n % 9) + 1 ])]
+     tupleList += [ tuple( [ (n // 11) + 1, (n % 11) + 1 ])]
 index = 0
 for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
         label = tupleList[index]
@@ -74,8 +74,8 @@ for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
           #   x = x-4
        #  if label == (4,2):
        # #      x = x -3
-       # if index  == 2:
-        #   x+=1
+        if index  == 0:
+           x-=4
        # if index ==3:
        #    x-=5
        #  if index == 4 :
@@ -132,7 +132,7 @@ plt.plot(W[:,0], color='green')
 #plt.plot(W[:,1], color ='red')
 #plt.ylim(0,10)
 
-plt.title("N2f Binary Components - Component 0")
+plt.title("G1M3 Binary Components - Component 0")
 plt.xlabel("First residue in contact with second residue")
 #plt.legend(['Comp 1'])
 
@@ -150,12 +150,13 @@ plt.clf()
 #print(search)
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:], linewidth=.8)
-    plt.title("S2 Component "+ str(n))
+    plt.title("G1M3 Component "+ str(n))
+    plt.xlabel("Frame")
     plt.show()
     plt.clf()
 
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H[n,:]), len(H[n,:])), H[n,:])
-    plt.title("S2 Component "+ str(n))
+    plt.title("G1M3 Component "+ str(n))
     plt.show()
     plt.clf()

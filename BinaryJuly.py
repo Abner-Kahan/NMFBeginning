@@ -73,9 +73,9 @@ def positionmap(file, residues):
     # N2fbondsB = [(0,1), (0,2), (2,3), (3,6), (6,7), (3,4), (4,5), (1,2), (3,7), (2,6) , (2,4), (3,5)  ]
     # S2bonds = [(0,1), (1,2), (2,3), (3,4),(4,5), (5,6), (2,7), (7,8), (8,9), (9,10)  ]
     # S2bondsB = [(0,1), (1,2), (2,3), (3,4),(4,5), (5,6), (2,7), (7,8), (8,9), (9,10), (1,7), (8,10), (4,6), (2,4), (2,8), (1,3)  ]
-   
-    G1M5bonds =  [ (0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (7,8), (6,9), (9,10)  ]
-    for bond in G1M5bonds:
+    #G1M3bonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (6,8),(2,4), (1,6), (2,8), (1,3), (2,7) , (1,8) , (1,7), (4,6) ]
+    G1M5bondsA =  [ (0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (7,8), (6,9), (9,10), (6,8), (6,10), (2,9), (2,4), (2,7), (1,3), (1,6), (4,10) ]
+    for bond in G1M5bondsA:
         zerolist.append((bond[0]*residues)+bond[1])
         zerolist.append((bond[1]*residues)+bond[0])
     print(zerolist)
@@ -93,7 +93,7 @@ def positionmap(file, residues):
     print(noZero/ total)    
             
 
-    customH = np.full((numNMF,frames),.3)        
+    customH = np.full((numNMF,frames),.25)        
 
 
     
@@ -113,7 +113,7 @@ def nmfMap(distancemap, customH, customW):
     plt.clf()
     for indy in range(numNMF):
          plt.plot(H[indy,:], linewidth=.3)
-         plt.title('N2f Component ' + str(indy +1))
+         plt.title('G1M3 Component ' + str(indy +1))
          plt.xlabel("Frame")
          plt.show()
          plt.clf()  

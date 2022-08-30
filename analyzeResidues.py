@@ -132,7 +132,7 @@ plt.plot(W[:,0], color='green')
 #plt.plot(W[:,1], color ='red')
 #plt.ylim(0,10)
 
-plt.title("G1M3 Binary Components - Component 0")
+plt.title("G1M5 Binary Components - Component 0")
 plt.xlabel("First residue in contact with second residue")
 #plt.legend(['Comp 1'])
 
@@ -150,13 +150,20 @@ plt.clf()
 #print(search)
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:], linewidth=.8)
-    plt.title("G1M3 Component "+ str(n))
+    plt.title("G1M5 Component "+ str(n))
     plt.xlabel("Frame")
     plt.show()
     plt.clf()
 
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H[n,:]), len(H[n,:])), H[n,:])
-    plt.title("G1M3 Component "+ str(n))
+    plt.title("G1M5 Component "+ str(n))
     plt.show()
     plt.clf()
+    
+    
+#for n in range (50):
+ #   print(.02+n/100, np.where(abs(H - .02-n/100) <.01))
+ 
+ 
+ #np.where(abs(H[0,20000:]-.38)<.01)

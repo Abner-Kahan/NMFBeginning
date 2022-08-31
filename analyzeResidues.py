@@ -40,7 +40,6 @@ for entry in range(numNMF):
  #       uniqList.append(i)
  #       preVal = i
 Hpeaks =  find_peaks(H2[0,:], prominence=.05)
-
 #print(Hpeaks[0])
 #for (p,z) in zip (Hpeaks[0], Hpeaks[1]['prominences']):
 #    print (p,z)
@@ -76,7 +75,7 @@ for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
        # #      x = x -3
         if index  == 0:
            x-=4
-       # if index ==3:
+       # if index ==3:list)
        #    x-=5
        #  if index == 4 :
        #       x+=4
@@ -85,7 +84,7 @@ for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
        #  if index == 6 :
        #       y+=0
        #  if index == 7 :
-       #       x+=6
+       #       x+=6list)
 
        #  if index == 8:
        #      x+=5
@@ -132,7 +131,7 @@ plt.plot(W[:,0], color='green')
 #plt.plot(W[:,1], color ='red')
 #plt.ylim(0,10)
 
-plt.title("G1M5 Binary Components - Component 0")
+plt.title("G2FB Binary Components - Component 0")
 plt.xlabel("First residue in contact with second residue")
 #plt.legend(['Comp 1'])
 
@@ -150,14 +149,14 @@ plt.clf()
 #print(search)
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:], linewidth=.8)
-    plt.title("G1M5 Component "+ str(n))
+    plt.title("G2FB Component "+ str(n))
     plt.xlabel("Frame")
     plt.show()
     plt.clf()
 
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H[n,:]), len(H[n,:])), H[n,:])
-    plt.title("G1M5 Component "+ str(n))
+    plt.title("G2FB Component "+ str(n))
     plt.show()
     plt.clf()
     

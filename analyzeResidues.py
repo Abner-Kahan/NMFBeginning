@@ -125,7 +125,7 @@ if numNMF == 2:
     plt.plot(W[:,1], color='red')
         
 
-plt.plot(W[:,0], color='green')
+plt.plot(np.linspace(0,11**2,121), W, color='green')
 #plt.ylim(0,1)
 
 #plt.plot(W[:,1], color ='red')

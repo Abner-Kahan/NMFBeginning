@@ -97,7 +97,7 @@ def positionmap(file, residues):
     print(noZero/ total)    
             
 
-    customH = np.full((numNMF,frames),.53)        
+    customH = np.full((numNMF,frames),1.0)        
 
 
     
@@ -107,8 +107,7 @@ def nmfMap(distancemap, customH, customW):
     model = NMF(n_components = numNMF, max_iter=1200, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='custom' )
     W = model.fit_transform(distancemap,  W = customW, H  = customH)
     H = model.components_
-    for n in range (numNMF):
-        plt.plot(W[:,n])
+    plt.plot(W)
     plt.title("Protein Binary Components")
     #plt.legend(["Component 1"])
     #plt.legend(["Component 1"]) #G1M3bonds =  [ (0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (6,8), (1,3), (2,4),(1,6), (7,8), (2,7)    ]

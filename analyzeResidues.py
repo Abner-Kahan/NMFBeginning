@@ -59,7 +59,7 @@ peaks = find_peaks(W[:,0], height = .2)
 tupleList = []
 for n in peaks[0]:
      print(n)
-     tupleList += [ tuple( [ (n // 11) + 1, (n % 11) + 1 ])]
+     tupleList += [ tuple( [ (n // 12) + 1, (n % 12) + 1 ])]
 index = 0
 for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
         label = tupleList[index]
@@ -108,7 +108,7 @@ if numNMF == 2:
     peaks2 = find_peaks(W[:,1], height = 0.5)
     tupleList2 = []
     for n in peaks2[0]:
-          tupleList2 += [ tuple( [ (n // 7) + 1, (n % 7) + 1 ])]
+          tupleList2 += [ tuple( [ (n // 12) + 1, (n % 12) + 1 ])]
     index = 0
     for (x,y) in zip(peaks2[0], peaks2[1]['peak_heights']):
             label = tupleList2[index]
@@ -125,13 +125,13 @@ if numNMF == 2:
     plt.plot(W[:,1], color='red')
         
 
-plt.plot(np.linspace(0,11**2,121), W, color='green')
+plt.plot(np.linspace(0,12**2,144), W, color='green')
 #plt.ylim(0,1)
 
 #plt.plot(W[:,1], color ='red')
 #plt.ylim(0,10)
 
-plt.title("G2FB Binary Components - Component 0")
+plt.title("G3F Binary Components - Component 0")
 plt.xlabel("First residue in contact with second residue")
 #plt.legend(['Comp 1'])
 
@@ -149,14 +149,14 @@ plt.clf()
 #print(search)
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:], linewidth=.8)
-    plt.title("G2FB Component "+ str(n))
+    plt.title("G3F Component "+ str(n))
     plt.xlabel("Frame")
     plt.show()
     plt.clf()
 
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H[n,:]), len(H[n,:])), H[n,:])
-    plt.title("G2FB Component "+ str(n))
+    plt.title("G3F Component "+ str(n))
     plt.show()
     plt.clf()
     
@@ -166,3 +166,11 @@ for n in range(numNMF):
  
  
  #np.where(abs(H[0,20000:]-.38)<.01)
+counts = []
+for n in range (int(np.ceil(np.max(H))*10)+1):
+    counts.append(np.count_nonzero(np.logical_and (H[0] <= n/10, H[0] > (n-1)/10 )))
+print(counts)
+plt.bar(np.linspace(0,3, 31), counts, log = True)
+plt.xlabel('value')
+plt.ylabel('Frequency')
+     

@@ -19,18 +19,20 @@ numNMF =1
 def positionmap(file, residues):
     distancefile = open(file)
     reader =  distancefile.read()
+   
+    if reader[0] == '{':
+        superlist = reader.split ('} {')
     
-    superlist = reader.split ('} {')
-    #print(superlist [-50:])
     #print("\n\n\n")
-    superlist [0] = superlist[0].replace('{', '')
-    superlist [-1] = superlist[-1].replace('}', '')
-    superlist [-1] = superlist[-1][:-1]
-    #print(superlist [-50:])
-    #print(len(superlist))
-    #print(superlist[-9:])
-    distancefile.close()
-     
+        superlist [0] = superlist[0].replace('{', '')
+        superlist [-1] = superlist[-1].replace('}', '')
+        superlist [-1] = superlist[-1][:-1]
+        #print(superlist [-50:])
+        #print(len(superlist))
+        #print(superlist[-9:]
+    else:
+        superlist = reader.split('\n')
+    print(len(superlist))
     frames = int(len(superlist)/residues)
     contactNP = np.zeros((residues ** 2, frames ))
     reset  =  residues ** 2                  
@@ -78,8 +80,9 @@ def positionmap(file, residues):
     #B looks at 5-11, 6-11 motion
     #G1M5bondsA =  [ (0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (7,8), (6,9), (9,10), (6,8), (6,10), (2,9), (2,4), (2,7), (1,3), (1,6), (4,10), (5,10), (4,9), (2,10) ]
     #G1M5bondsB =  [ (0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (7,8), (6,9), (9,10), (6,8), (6,10), (2,9), (2,4), (2,7), (1,3), (1,6), (2,8), (1,7), (3,8) ]
-    G2FBbonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (2,7), (7,8), (8,9), (0,10), (1,3), (2,8), (1,7), (1,10), (6,7), (1,8), (1,9), (8,10), (9,10) ]
-    for bond in G2FBbonds:
+    #G2FBbonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (2,7), (7,8), (8,9), (0,10), (1,3), (2,8), (1,7), (1,10), (6,7), (1,8), (1,9), (8,10), (9,10) ]
+    G3Fbonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (3,6),(6,7), (2,8), (8,9), (9,10), (0,11), (1,11), (1,8), (2,4), (2,9), (1,3), (4,6), (2,6)  ]
+    for bond in G3Fbonds:
         zerolist.append((bond[0]*residues)+bond[1])
         zerolist.append((bond[1]*residues)+bond[0])
     print(zerolist)
@@ -97,7 +100,7 @@ def positionmap(file, residues):
     print(noZero/ total)    
             
 
-    customH = np.full((numNMF,frames),1.0)        
+    customH = np.full((numNMF,frames),.42)        
 
 
     
@@ -127,5 +130,5 @@ def nmfMap(distancemap, customH, customW):
     np.save('ProCompons.npy', W)
     
         
-pm =positionmap('vmd/g2fb-45d.txt',11 )
+pm =positionmap('vmd/g3f-45d.txt',12 )
 nmfMap(pm[0], pm[1], pm[2])

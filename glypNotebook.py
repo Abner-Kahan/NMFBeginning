@@ -158,16 +158,18 @@ def nmf2TesterMixB():
     print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}.')
     
     #Creating Two Spectra
-    IR0 =random.choice(fileList)
-    IR0 = file2Spectra(IR0)
+    IR0Name =random.choice(fileList)
+    print(IR0Name)
+    IR0 = file2Spectra(IR0Name)
     IR0 = gaussian_broadening(IR0,25,1)
-    IrPlotter(IR0,"First Spectra")
+    IrPlotter(IR0,f"Spectra of {IR0Name[9:-10]}")
 
     
-    IR1 =random.choice(fileList)
-    IR1 = file2Spectra(IR1)
+    IR1Name =random.choice(fileList)
+    print(IR1Name)
+    IR1 = file2Spectra(IR1Name)
     IR1 = gaussian_broadening(IR1,25,1)
-    IrPlotter(IR1,"Second Spectra")
+    IrPlotter(IR1,f"Spectra of {IR1Name[9:-10]}")
    # print(IR1.shape)
     print("Correlation between Functions", ypendry(IR0,IR1))
     IRF = np.zeros((2,4001))
@@ -186,14 +188,14 @@ def nmf2TesterMixB():
     product = np.matmul(W,H)
     matchTable = nmfMatcher (IRF, product)
     IrOrgs = [IR0,IR1]
-    IrPlotter([IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]],"First Calculated Spectra", ['Original Ir', 'NMF Generated IR'],True)
-    IrPlotter([IrOrgs[matchTable[1,0]] ,product[:,matchTable[1,1]]],"Second Calculated Spectra", ['Original Ir', 'NMF Generated IR'], True)      
+    IrPlotter([IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]],"First Calculated Spectra", [IR0Name[9:-10], 'NMF Generated IR'],True)
+    IrPlotter([IrOrgs[matchTable[1,0]] ,product[:,matchTable[1,1]]],"Second Calculated Spectra", [IR1Name[9:-10], 'NMF Generated IR'], True)      
    # IrPlotter([IROrgs[matchTable[0][0]],product
                #[W[matchTable[0][1],:]]], "First Matched Spectra", True)
     
     print(matchTable)
-    print(ypendry(IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]))
-    print(ypendry(IrOrgs[matchTable[1,0]], product[:,matchTable[1,1]]))
+  #  print(ypendry(IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]))
+   # print(ypendry(IrOrgs[matchTable[1,0]], product[:,matchTable[1,1]]))
    # print("Matrix product size", product.shape)
     ##print("Variable matrix", H)
    # print("Product Sizes", W.shape, IRF.shape)

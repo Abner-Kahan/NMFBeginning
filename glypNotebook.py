@@ -152,7 +152,7 @@ def ypendry(TheoSpec,ExperSpec):
     scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec))))[0])
 def nmf2TesterMixB():
     #pdb.set_trace()
-
+    fig, axs = plt.subplots(6)
     fraction1 = random.random()
     fraction2 = random.random()
     print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}.')
@@ -162,21 +162,27 @@ def nmf2TesterMixB():
     print(IR0Name)
     IR0 = file2Spectra(IR0Name)
     IR0 = gaussian_broadening(IR0,25,1)
-    IrPlotter(IR0,f"Spectra of {IR0Name[9:-10]}")
+    axs[0].plot(IR0, color= 'blue')
+    axs[0].set_title(f"{IR0Name[9:-10]}", x=.5, y= .4)
+
 
     
     IR1Name =random.choice(fileList)
     print(IR1Name)
     IR1 = file2Spectra(IR1Name)
     IR1 = gaussian_broadening(IR1,25,1)
-    IrPlotter(IR1,f"Spectra of {IR1Name[9:-10]}")
+    axs[1].plot(IR1, color= 'red')
+    axs[1].set_title(f"{IR1Name[9:-10]}", x=.5, y= .4)
    # print(IR1.shape)
     print("Correlation between Functions", ypendry(IR0,IR1))
     IRF = np.zeros((2,4001))
     IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
     IRF[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
-    IrPlotter(IRF[0,:],"fractional Spectra 1")
-    IrPlotter(IRF[1,:],"fractional Spectra 2")
+    axs[2].plot(IRF[0,:], color='purple')
+    axs[2].set_title("Mixture 1", x=.5, y= .4)
+    axs[3].plot(IRF[1,:], color = 'purple')
+    axs[3].set_title("Mixture 2", x=.5, y= .4)
+
     IRF= np.transpose(IRF)
     
     model = NMF(n_components=2, max_iter=4000, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
@@ -186,13 +192,36 @@ def nmf2TesterMixB():
     print("H", H)
     print("H_Norm", Hnorm)
     product = np.matmul(W,H)
-    matchTable = nmfMatcher (IRF, product)
+    matchTable = nmfMatcher (IRF, W)
     IrOrgs = [IR0,IR1]
-    IrPlotter([IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]],"First Calculated Spectra", [IR0Name[9:-10], 'NMF Generated IR'],True)
-    IrPlotter([IrOrgs[matchTable[1,0]] ,product[:,matchTable[1,1]]],"Second Calculated Spectra", [IR1Name[9:-10], 'NMF Generated IR'], True)      
+    #axs[4].plot(product[:,matchTable[0,1]])
+    
+
+    
+    
+    scale1  = np.mean(IR0)/np.mean(W[:,0])
+    scale2  = np.mean(IR1)/np.mean(W[:,0])
+    #difference between first input and first NMF
+    difA = np.sum(abs(IR0 - scale1 * W[:,0] ))
+    difB = np.sum(abs(IR1 - scale2 * W[:,0] ))
+    if difA < difB:
+
+        axs[4].plot(W[:,0], color= 'lightblue')
+        
+        axs[5].plot(W[:,1], color = 'pink')
+    else:
+        axs[4].plot(W[:,1], color= 'lightblue' )
+        
+        axs[5].plot(W[:,0], color = 'pink')  
+    axs[4].set_title(f"NMF 1 - {IR0Name[-14:-10]}", x=.5, y= .4)
+    axs[5].set_title(f"NMF 2 - {IR1Name[-14:-10]}", x=.5, y= .4)
+    #IrPlotter([IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]],"First Calculated Spectra", [IR0Name[9:-10], 'NMF Generated IR'],True)
+    #IrPlotter([IrOrgs[matchTable[1,0]] ,product[:,matchTable[1,1]]],"Second Calculated Spectra", [IR1Name[9:-10], 'NMF Generated IR'], True)      
    # IrPlotter([IROrgs[matchTable[0][0]],product
                #[W[matchTable[0][1],:]]], "First Matched Spectra", True)
-    
+    fig.suptitle("NMF Decomposition of Two Glycans")
+    plt.show()
+    plt.clf()
     print(matchTable)
   #  print(ypendry(IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]))
    # print(ypendry(IrOrgs[matchTable[1,0]], product[:,matchTable[1,1]]))

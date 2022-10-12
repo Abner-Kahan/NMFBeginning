@@ -141,19 +141,20 @@ sumsol  = np.load('sumsol.npy')
 
 def nmf2TesterMixB(broad):
     #pdb.set_trace()
-    IRF = np.zeros((33,(amide1_ran2-amide1_ran1+1)))
+    IRF = np.zeros((22,(amide1_ran2-amide1_ran1+1)))
     for n in range(11):
            IRF [n,:]= gaussian_broadening(fetchIr('UntreatedSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
            
-           IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
-           IRF[n+22,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           #IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           IRF[n+11,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
 
     Humdities = [5,10,20,30,40,50,60,70,80,90,95]
-    fig, axs = plt.subplots(4)
+    fig, axs = plt.subplots(3)
     
     figB, axsB = plt.subplots(nrows=1, ncols=2)
  
     for spec in IRF[:11,:]:
+        spec =spec/np.max(IRF[:11,:])
         axs[0].plot(x_range,spec)
         
     axs[0].set_title("Untreated Sample", x=.5, y= .2)
@@ -161,21 +162,19 @@ def nmf2TesterMixB(broad):
     #axs[0].legend(Humdities)
 
     
-    for spec in IRF[11:22,:]:   
-        axs[1].plot(x_range, spec)
-    
-    axs[1].set_title("MeOH Sample", x=.5, y= .2)
+
     
     #axs[1].legend(Humdities)
 
-    for spec in IRF[22:33,:]:   
-        axs[2].plot(x_range, spec)
+    for spec in IRF[11:22,:]: 
+        spec =spec/np.max(IRF[11:22,:])
+        axs[1].plot(x_range, spec)
     
-    axs[2].set_title("WA45ample Sample", x=.5, y= .2)
+    axs[1].set_title("WA45ample Sample", x=.5, y= .2)
     
     #axs[2].legend(Humdities)
-    randSpec = random.choice(list(range(11))+list( range(22,33)))
-    axsB[0].plot(IRF[randSpec,:])
+    randSpec = random.choice(list(range(22)))
+    
 
     
     #IrPlotter( IRF [:11,:], 'Unstreated Spectra', amide1_ran1,amide1_ran2, ['5','10','20','30','40','50','60','70','80','90','95']
@@ -190,7 +189,7 @@ def nmf2TesterMixB(broad):
    # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
     IRF= np.transpose(IRF)
     
-    model = NMF(n_components=4, max_iter=1000, tol= 1*10**-10, solver= 'mu', init='random', beta_loss= 'kullback-leibler')#, alpha = .3  )
+    model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'mu', init= "random", beta_loss= 'kullback-leibler')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
     
@@ -203,6 +202,7 @@ def nmf2TesterMixB(broad):
     numPeaks3 = (find_peaks(W[:,3],'prominence' == 1)[0]) +amide1_ran1
     #numPeaks4 = (find_peaks(W[:,4],'prominence' == .1)[0]) +amide1_ran1
     
+    
 # =============================================================================
 #     peakPlotter(W,numPeaks0,amide1_ran1,amide1_ran2,0)
 #     peakPlotter(W,numPeaks1,amide1_ran1,amide1_ran2,1)
@@ -210,8 +210,8 @@ def nmf2TesterMixB(broad):
 #     peakPlotter(W,numPeaks3,amide1_ran1,amide1_ran2,3)
 # =============================================================================
     
-    axs[3].legend(["NMF Calculated 1", "NMF Calculated 2", "NMF Calculated 3", "NMF Calculated 4"])
-    axs[3].set_title("NMF Decomposition",  x=.5, y= .05)
+    axs[2].legend(["NMF Calculated 1", "NMF Calculated 2", "NMF Calculated 3", "NMF Calculated 4"])
+    axs[2].set_title("NMF Decomposition",  x=.5, y= .05)
     print ("Peaks",numPeaks0,numPeaks1,numPeaks2,numPeaks3 )
     print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
     K0= np.mean([W]) /  np.mean(IRF[:,0])
@@ -238,44 +238,56 @@ def nmf2TesterMixB(broad):
     print(SingPeaks, "\n\n\n\n\n----\n\n---")
     sorter =np.argsort(SingPeaks)
     
-    W_test = W
+    W_test = W/np.max(W)
     print('\n\n\n\n' ,W, '')
-    axs[3].plot(x_range, W_test[:,sorter[0]])
+    
+    axs[2].plot(x_range, W_test[:,sorter[0]])
     #meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
 
     #plt.plot(x_range, sumsol[0]*meany)
 
     
-    axs[3].plot(x_range, W_test[:,sorter[1]])
+    axs[2].plot(x_range, W_test[:,sorter[1]])
     #meany = np.mean(W_test[:,sorter[1]]/sumsol[1])
 
     #plt.plot(x_range, sumsol[1]*meany)
 
     
-    axs[3].plot(x_range, W_test[:,sorter[2]])
+    axs[2].plot(x_range, W_test[:,sorter[2]])
    # meany = np.mean(W_test[:,sorter[2]]/sumsol[2])
 
    # plt.plot(x_range, sumsol[2]*meany)
 
     
-    axs[3].plot(x_range, W_test[:,sorter[3]])
+    axs[2].plot(x_range, W_test[:,sorter[3]])
    # meany = np.mean(W_test[:,sorter[3]]/sumsol[3])
     axs[0].set_xticklabels(())
     axs[1].set_xticklabels(())
-    axs[2].set_xticklabels(())
+    #axs[2].set_xticklabels(())
     #axs[0].set(xticks=None)
     #axs[1].set(xticks=None)
     #axs[2].set(xticks=None)
    # plt.plot(x_range, sumsol[3]*meany)
-    axs[3].set(xlabel='cm$^-1$')
-    fig.suptitle("NMF Decomposition of Amide II of Silk")
+    axs[2].set(xlabel='cm$^-1$')
+    print (np.shape(IRF[randSpec,:]))
+    #axs[2].set(xticks = np.arange(amide1_ran1, amide1_ran2, 10))
+    #fig.suptitle("NMF Decomposition of Amide II of Silk")
     #plt.legend(["NMF", "Gaussian"])
 
     #IrPlotter(sumsol[0], "Gaussian",amide1_ran1,amide1_ran2) 
-    axsB[0].plot(W_test[:,sorter[0]])
-    axsB[0].plot(W_test[:,sorter[1]])
-    axsB[0].plot(W_test[:,sorter[2]])
-    axsB[0].plot(W_test[:,sorter[3]])
+    axsB[0].plot(IRF[:,randSpec]/np.max(IRF[:,randSpec]))
+    WB = model.transform(np.transpose(np.tile(IRF[:,randSpec], (22, 1))))
+    print (np.size(IRF[:,randSpec]))
+    #WB = model.fit_transform([x_range,IRF[randSpec,:]])
+    WB = WB/ np.max(WB)
+    axsB[1].plot(x_range, WB)
+    axsB[1].plot(x_range, WB)
+    axsB[1].plot(x_range, WB)
+    axsB[1].plot(x_range, WB)
+    #axsB[0].plot(W_test[:,sorter[0]])
+    #axsB[0].plot(W_test[:,sorter[1]])
+    #axsB[0].plot(W_test[:,sorter[2]])
+   # axsB[0].plot(W_test[:,sorter[3]])
     
     
     

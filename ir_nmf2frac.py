@@ -40,7 +40,7 @@ def addIRS(peakNum,PointNum):
        #start = xloc - thickness
         #print("start", start)
         #print("end", end)
-        #start = int(start)
+        #start = int(start)    axs[0,1].set(xticks = [])
         #end = int(end)
         #Ir[start:end]= np.random.normal((end-start)/2,thickness,end-start)
         #Ir[start:end] = stats.norm.pdf(np.linspace(start,end,end-start),(end+start)/2,thickness)*peakHeight
@@ -76,7 +76,8 @@ def addIRS(peakNum,PointNum):
 
 def nmfMatcher(OG_spectra,Calc_spectra):
  
-    
+
+
     #print(len(OG_spectra))
     errorTable = np.zeros((OG_spectra.shape[1], Calc_spectra.shape[1]))
     for n in range (OG_spectra.shape[0]):
@@ -101,26 +102,34 @@ def IrPlotter(item,title):
     plt.title(title)
     plt.xlabel("cm^-1")
     plt.show()
-    plt.clf()
+    plt.clf() 
     
     
-def nmf2TesterMix(fraction1,numPoints):
+def nmf2TesterMix(numPoints):
+    fraction1 = random.random()
+    fraction2 = random.random()
+    print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}.')
+    fig, axs = plt.subplots(3,2)
     IRF = np.zeros((2,numPoints))
     IR0 = addIRS(8,numPoints)
-    IrPlotter(IR0,"FirstPlot")
+    axs[0,0].plot(IR0/np.max(IR0), color= 'goldenrod')
+    axs[0,0].set_title("Glycan 1", x=.5, y= .75)
+    #IrPlotter(IR0,"FirstPlot")
     IR1 = addIRS(8,numPoints)
-    IrPlotter(IR1,"SecondPlot")
+    axs[0,1].plot(IR1/np.max(IR1), color= 'dodgerblue')
+    axs[0,1].set_title("Glycan 2", x=.5, y= .75)
     IRF[0,:] = IR0
     IRF[1,:] = IR1
     IRF= np.transpose(IRF)
     
-    IrMix = np.zeros((3,numPoints))
-    IrMix[0,:]=IR0
-    IrMix[1,:]=IR1
-    IrMix[2,:] = IR0*fraction1 + IR1*(1-fraction1) 
+    IrMix = np.zeros((2,numPoints))
+    IrMix[0,:] = IR0*fraction1 + IR1*(1-fraction1) 
+    IrMix[1,:] = IR0*fraction2 + IR1*(1-fraction2) 
     #IrMix[3,:] = IR0*(1-fraction2)  + IR1*fraction1
-    IrPlotter( IrMix[0,:],"FirstMix")
-    IrPlotter(IrMix[1,:],"SecondMix")
+    axs[1,0].plot(IrMix[0,:]/np.max(IrMix[0,:]), color= 'springgreen')
+    axs[1,0].set_title("Mixture 1", x=.5, y= .75)
+    axs[1,1].plot(IrMix[1,:]/np.max(IrMix[1,:]), color= 'springgreen')
+    axs[1,1].set_title("Mixture 2", x=.5, y= .75)
     IrMix= np.transpose(IrMix)
     model = NMF(n_components=2, init='nndsvd',  max_iter=15000, tol= 1*10**-7)
     #it seems that mu gives more close results
@@ -131,109 +140,46 @@ def nmf2TesterMix(fraction1,numPoints):
     print(H)
     H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     #print(H)
-    IrPlotter(W[:,0], "First Calc Spectra")
-    IrPlotter(W[:,1], "Second Calc Spectra")
+    axs[2,0].plot(W[:,0]/np.max(W[:,0]), color= 'goldenrod')
+    axs[2,0].set_title("NMF Glycan 1 ", x=.5, y= .75)
+    axs[2,1].plot(W[:,1]/np.max(W[:,1]), color= 'dodgerblue')
+    axs[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
+    axs[0,0].set(xticks = [])
+    axs[1,0].set(xticks = [])
+    axs[0,1].set(xticks = [])
+    axs[1,1].set(xticks = [])
+    axs[2,0].set(xlabel='cm$^-1$')
+    axs[2,1].set(xlabel='cm$^-1$')
+    axs[2,0].set(xticks = [np.linspace(0, numPoints, 11).all()])
+    axs[2,1].set(xticks = [np.linspace(0, numPoints, 11).all()])
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
 # =============================================================================
-    for entri in nmfMatcher(IRF,W):
+    # for entri in nmfMatcher(IRF,W):
         
-         plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
-         if H[0,0]>.01:
-             print("The fraction of the first is", H[0,2])
-             print("The fraction of the second is", H[1,2])
+    #      plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
+    #      if H[0,0]>.01:
+    #          print("The fraction of the first is", H[0,2])
+    #          print("The fraction of the second is", H[1,2])
 
              
-         else:
-             print("The fraction of the first is", H[1,2])
-             print("The fraction of the second is", H[0,2])
-         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
-        # print("full", (max(HO[entri[0][0]])))
+    #      else:
+    #          print("The fraction of the first is", H[1,2])
+    #          print("The fraction of the second is", H[0,2])
+    #      plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
+    #     # print("full", (max(HO[entri[0][0]])))
         
 
 
-         plt.gca().invert_yaxis()
-         plt.legend(["Original", "Calculated"])
-         plt.title(str(entri[0][0])+ " Both Spectra")
-         plt.xlabel("cm^-1")
-         plt.show()
-         plt.clf()
+    #      plt.gca().invert_yaxis()
+    #      plt.legend(["Original", "Calculated"])
+    #      plt.title(str(entri[0][0])+ " Both Spectra")
+    #      plt.xlabel("cm^-1")
+    #      plt.show()
+    #      plt.clf()
 # =============================================================================
 
-def nmfTesterMix(fracList,numPoints):
-    IRF = np.zeros((2,numPoints))
-    IR0 = addIRS(8,numPoints)
-    IrPlotter(IR0,"Plot A")
-    IR1 = addIRS(8,numPoints)
-    IrPlotter(IR1,"Plot B")
-    IRF[0,:] = IR0
-    IRF[1,:] = IR1
-    IRF= np.transpose(IRF)
-    
-    IrMix = np.zeros((len(fracList),numPoints))
-    ind = 0
-    for frac in fracList:
-        IrMix[ind] = IR0*frac + IR1*(1-frac) 
-       #IrPlotter( IrMix[ind,:], "Mix Number "+ str(ind)+ "  "+ str(frac*100)+ "% A "+ str((1-frac)*100) + "% B")
-        IrPlotter( IrMix[ind,:], f'Mix Number {ind} {frac*100:,.1f}% A {(1-frac)*100:,.1f}% B')
-        ind+=1
-        
-       
-
-    IrMix= np.transpose(IrMix)
-    model = NMF(n_components=2, init='nndsvd',  max_iter=15000, tol= 1*10**-7)
-    #it seems that mu gives more close results
-    #must analyze errors and create plots
-    W = model.fit_transform(IrMix)
-    H = model.components_
-    HO = H.copy()
-    #print(H)
-    H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    strin = 'The percentages of A are: '
-    for n in H[0]:
-        strin += str(np.round(n*100,1))
-        strin +='%, '
-    print(strin) 
-    strin2 = 'The percentages of B are: '
-    for n in H[1]:
-        strin2 += str(np.round(n*100,1))
-        strin2 +='%, '
-    print(strin2)    
-    
-            
-            
-      #  print 
-    #print("real one")
-    #print(f'The percentages of A are {H[0]:.2%f}')
-    #print(H)
-    IrPlotter(W[:,0], "First Calc Spectra")
-    IrPlotter(W[:,1], "Second Calc Spectra")
-    #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
-    #print(model.fit(IrMix))
-# =============================================================================
-    for entri in nmfMatcher(IRF,W):
-        
-         plt.plot(np.linspace(0,1000,numPoints),IRF[:,entri[0][0]],color="red")
-        # if H[0,0]>.01:
-            # print("The fraction of the first is", H[0,2])
-             #print("The fraction of the second is", H[1,2])
-
-             
-        # else:
-             #print("The fraction of the first is", H[1,2])
-             #print("The fraction of the second is", H[0,2])
-         plt.plot(np.linspace(0,1000,numPoints),(W[:,entri[1][0]]*(max(HO[entri[1][0]]))))
-        # print("full", (max(HO[entri[0][0]])))
-        
-
-
-         plt.gca().invert_yaxis()
-         plt.legend(["Original", "Calculated"])
-         plt.title(str(entri[0][0])+ " Both Spectra")
-         plt.xlabel("cm^-1")
-         plt.show()
-         plt.clf()
 
 #nmfTesterMix([1,.5,.25,0,.8,.3],10000)
 # =============================================================================
-nmf2TesterMix(.32,10000)
+nmf2TesterMix(10000)

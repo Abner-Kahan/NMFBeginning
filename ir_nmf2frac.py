@@ -126,32 +126,48 @@ def nmf2TesterMix(numPoints):
     IrMix[0,:] = IR0*fraction1 + IR1*(1-fraction1) 
     IrMix[1,:] = IR0*fraction2 + IR1*(1-fraction2) 
     #IrMix[3,:] = IR0*(1-fraction2)  + IR1*fraction1
-    axs[1,0].plot(IrMix[0,:]/np.max(IrMix[0,:]), color= 'springgreen')
+    axs[1,0].plot(IrMix[0,:]/np.max(IrMix[0,:]), color= 'olivedrab')
     axs[1,0].set_title("Mixture 1", x=.5, y= .75)
-    axs[1,1].plot(IrMix[1,:]/np.max(IrMix[1,:]), color= 'springgreen')
+    axs[1,1].plot(IrMix[1,:]/np.max(IrMix[1,:]), color= 'olivedrab')
     axs[1,1].set_title("Mixture 2", x=.5, y= .75)
     IrMix= np.transpose(IrMix)
-    model = NMF(n_components=2, init='nndsvd',  max_iter=15000, tol= 1*10**-7)
+   # model = NMF(n_components=2, init='nndsvd',  max_iter=15000, tol= 1*10**-7)
+    model = NMF(n_components=2, max_iter=10000, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
+
     #it seems that mu gives more close results
     #must analyze errors and create plots
     W = model.fit_transform(IrMix)
     H = model.components_
-    HO = H.copy()
     print(H)
-    H = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
+    H0 = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     #print(H)
-    axs[2,0].plot(W[:,0]/np.max(W[:,0]), color= 'goldenrod')
+    scale1  = np.mean(IR0)/np.mean(W[:,0])
+    scale2  = np.mean(IR1)/np.mean(W[:,0])
+    #difference between first input and first NMF
+    difA = np.sum(abs(IR0 - scale1 * W[:,0] ))
+    difB = np.sum(abs(IR1 - scale2 * W[:,0] ))
+    if difA < difB:
+
+        axs[2,0].plot(np.linspace(0,1000,10000), W[:,0]/np.max(W[:,0]), color= 'goldenrod')
+        axs[2,1].plot(np.linspace(0,1000,10000), W[:,1]/np.max(W[:,1]), color= 'dodgerblue')
+ 
+    else:
+        axs[2,0].plot(np.linspace(0,1000,10000), W[:,1]/np.max(W[:,1]), color= 'goldenrod')
+        axs[2,1].plot(np.linspace(0,1000,10000), W[:,0]/np.max(W[:,0]), color= 'dodgerblue')
+    
     axs[2,0].set_title("NMF Glycan 1 ", x=.5, y= .75)
-    axs[2,1].plot(W[:,1]/np.max(W[:,1]), color= 'dodgerblue')
     axs[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
+    
+    
     axs[0,0].set(xticks = [])
     axs[1,0].set(xticks = [])
     axs[0,1].set(xticks = [])
     axs[1,1].set(xticks = [])
     axs[2,0].set(xlabel='cm$^-1$')
     axs[2,1].set(xlabel='cm$^-1$')
-    axs[2,0].set(xticks = [np.linspace(0, numPoints, 11).all()])
-    axs[2,1].set(xticks = [np.linspace(0, numPoints, 11).all()])
+    return H
+    #axs[2,0].set(xticks = [np.linspace(0, numPoints, 11).all()])
+   # axs[2,1].set(xticks = [np.linspace(0, numPoints, 11).all()])
     #print (np.mean(np.where(W[:,1]>0))/np.mean((np.where(W[:,0]>0)))
     #print(model.fit(IrMix))
 # =============================================================================
@@ -182,4 +198,4 @@ def nmf2TesterMix(numPoints):
 
 #nmfTesterMix([1,.5,.25,0,.8,.3],10000)
 # =============================================================================
-nmf2TesterMix(10000)
+H = nmf2TesterMix(10000)

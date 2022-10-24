@@ -17,7 +17,7 @@ from sklearn.decomposition import NMF
 from scipy.signal import chirp, find_peaks, peak_widths
 import scipy
 
-
+nndsvd
 
 def file2Spectra(path):
     #Open and read file

@@ -106,8 +106,6 @@ def IrPlotter(item,title):
     
     
 def nmf2TesterMix(numPoints):
-    customW = np.full((numPoints,2), 1.0)
-    customH = np.array([[.75,.25],[.25,.75]]  )  
     fraction1 = random.random()
     fraction2 = random.random()
     print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}.')
@@ -134,10 +132,11 @@ def nmf2TesterMix(numPoints):
     IRF[1,:] = IR1
     IRF= np.transpose(IRF)
     
-    IrMix = np.zeros((2,numPoints))
+    IrMix = np.zeros((4,numPoints))
     IrMix[0,:] = IR0*fraction1 + IR1*(1-fraction1) 
     IrMix[1,:] = IR0*fraction2 + IR1*(1-fraction2) 
-    
+    IrMix[2,:] = IR0
+    IrMix[3,:] = IR1  
     #normalized
     IrMixN = np.zeros((2,numPoints))
     IrMixN[0,:] = IR0/np.max(IR0)*fraction1 + IR1/np.max(IR1)*(1-fraction1) 
@@ -210,13 +209,13 @@ def nmf2TesterMix(numPoints):
         
         
         
-
-        print ("Norm")           
-        print(H[0,1]/(H[0,1]+H[1,1]))
-        print (H[0,0]/(H[0,0]+H[1,0]))
         print ("Regular")        
         print(H[1,0]/np.sum(IR0)/(H[1,1]/np.sum(IR1)+H[1,0]/np.sum(IR0)))
-        print (H[0,0]/np.sum(IR0)/(H[0,1]/np.sum(IR1)+H[0,0]/np.sum(IR0)))      
+        print (H[0,0]/np.sum(IR0)/(H[0,1]/np.sum(IR1)+H[0,0]/np.sum(IR0)))
+        print ("Norm")           
+        print(H[1,0]/(H[1,1]+H[1,0]))
+        print (H[0,0]/(H[0,1]+H[0,0]))
+        
         print ("Norm NMF")
         print(HN[1,0]/(HN[1,1]+HN[1,0]))
         print (HN[0,0]/(HN[0,1]+HN[0,0]))
@@ -238,20 +237,20 @@ def nmf2TesterMix(numPoints):
     
     
     
-    axsUS[2,0].set_title("NMF Glycan 1 ", x=.5, y= .75)
-    axsUS[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
+    # axsUS[2,0].set_title("NMF Glycan 1 ", x=.5, y= .75)
+    # axsUS[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
     
     
     
     
-    axsUS[0,0].set(xticks = [])
-    axsUS[1,0].set(xticks = [])
-    axsUS[0,1].set(xticks = [])
-    axsUS[1,1].set(xticks = [])
-    axsUS[2,0].set(xlabel='cm$^-1$')
-    axsUS[2,1].set(xlabel='cm$^-1$')
+    # axsUS[0,0].set(xticks = [])
+    # axsUS[1,0].set(xticks = [])
+    # axsUS[0,1].set(xticks = [])
+    # axsUS[1,1].set(xticks = [])
+    # axsUS[2,0].set(xlabel='cm$^-1$')
+    # axsUS[2,1].set(xlabel='cm$^-1$')
     plt.show(fig)
-    plt.show(figUS)
+    #plt.show(figUS)
     return H
     #axs[2,0].set(xticks = [np.linspace(0, numPoints, 11).all()])
    # axs[2,1].set(xticks = [np.linspace(0, numPoints, 11).all()])

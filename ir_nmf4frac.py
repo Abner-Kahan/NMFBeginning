@@ -17,6 +17,13 @@ from sklearn.decomposition import NMF
 
 #np.set_printoptions(precision=3)
 
+
+
+def getFrac(aray):
+    k = (aray[1,0]/aray[1,1] - 1 )/    \
+    ( aray[0,1] * aray[1,0] / ( aray[0,0] * aray[1,1] ) - 1)
+    j = (1- aray[1,0]/aray[1,1]) / (aray[0,0]/aray[0,1] - aray[1,0]/aray[1,1])
+    return k,j
 def addIRS(peakNum,PointNum):
     IR = np.zeros((PointNum,))
     X =  np.linspace(0, PointNum, PointNum)
@@ -42,13 +49,13 @@ def nmf2TesterMix(numPoints):
     IRF = np.zeros((2,numPoints))
     IR0 = addIRS(8,numPoints)
     axs[0,0].plot(IR0/np.max(IR0), color= 'goldenrod')
-    axs[0,0].set_title("Glycan 1", x=.5, y= .75)
+    axs[0,0].set_title("RS 1", x=.5, y= .75)
     
   
     #IrPlotter(IR0,"FirstPlot")
     IR1 = addIRS(8,numPoints)
     axs[0,1].plot(IR1/np.max(IR1), color= 'dodgerblue')
-    axs[0,1].set_title("Glycan 2", x=.5, y= .75)
+    axs[0,1].set_title("RS 2", x=.5, y= .75)
 
     
     IRF[0,:] = IR0
@@ -91,16 +98,29 @@ def nmf2TesterMix(numPoints):
     
 
     print(H)
-    print("bob")
+   # print("bob")
     H0 = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    print(H0)
-    print("bob2")
-    print(H_ld) 
+   # print(H0)
+    #print("bob2")
+    #print(H_ld) 
     scale1  = np.mean(IR0)/np.mean(W_ld[:,0])
-    scale2  = np.mean(IR1)/np.mean(W_ld[:,0])
+    scale2  = np.mean(IR0)/np.mean(W_ld[:,1])
     #difference between first input and first NMF
     difA = np.sum(abs(IR0 - scale1 * W_ld[:,0] ))
-    difB = np.sum(abs(IR1 - scale2 * W_ld[:,0] ))
+    difB = np.sum(abs(IR0 - scale2 * W_ld[:,1] ))
+    
+    
+    
+    
+    Realscale1  = np.mean(IR0)/np.mean(W[:,0])
+    Realscale2  = np.mean(IR0)/np.mean(W[:,1])
+    #difference between first input and first NMF
+    RealdifA = np.sum(abs(IR0 - scale1 * W[:,0] ))
+    RealdifB = np.sum(abs(IR0 - scale2 * W[:,1] ))
+    
+   # print (difA, difB)
+   # print (RealdifA, RealdifB)
+    
     if difA < difB:
 
         axs[2,0].plot(np.linspace(0,1000,10000), W_ld[:,0]/np.max(W_ld[:,0]), color= 'goldenrod')
@@ -114,21 +134,34 @@ def nmf2TesterMix(numPoints):
         # print ("Norm")
         # print (H[0,0]/np.sum(IR0)/(H[0,1]/np.sum(IR1)+H[0,0]/np.sum(IR0)))
         # print(H[1,0]/np.sum(IR0)/(H[1,1]/np.sum(IR1)+H[1,0]/np.sum(IR0)))
-
+        
 
         
  
     else:
-        print("flip\n\n\n\n")
+        print("flip\n\n")
         axs[2,0].plot(np.linspace(0,1000,10000), W_ld[:,1]/np.max(W_ld[:,1]), color= 'goldenrod')
         axs[2,1].plot(np.linspace(0,1000,10000), W_ld[:,0]/np.max(W_ld[:,0]), color= 'dodgerblue')
-                
-    
+        H_ld[[0, 1]] = H_ld[[1, 0]]  
         
-        
+    print (f"The expected fractions from the mixture are {getFrac(H_ld)[0]:.6} and {getFrac(H_ld)[1]:.6}")    
+    print (f"Percent error is {(getFrac(H_ld)[0]-fraction1)/fraction1 *100}  \
+           and {(getFrac(H_ld)[1]-fraction2)/fraction2 *100}")
+           
+    if RealdifA > RealdifB: 
+        H[[0, 1]] = H[[1, 0]] 
+        print ("Real Flip \n\n")
     print (f"The expected fractions are {H[0,0]/np.max(H[0]):.6} and {H[0,1]/np.max(H[0]):.6}")
-    print (f"The expected fractions are {H_ld[0,0]/np.sum(H_ld[0]):.6} and {H_ld[1,0]/np.sum(H_ld[1]):.6}")
-    print (f"The expected fractions are {H_ld[0,0]/(H_ld[0,0] + H_ld[1,0] ):.6} and {H_ld[0,1]/(H_ld[1,1] + H_ld[0,1] ):.6}")
+        
+    print ((f"The percent error is  {(H[0,0]/np.max(H[0]) -fraction1 )/fraction1*100:.6} and  \
+                {(H[0,1]/np.max(H[0]) -fraction2)/fraction2*100:.6}"))
+   
+    
+    
+    
+    
+  #  print (f"The expected fractions are {H_ld[0,0]/np.sum(H_ld[0]):.6} and {H_ld[1,0]/np.sum(H_ld[1]):.6}")
+   # print (f"The expected fractions are {H_ld[0,0]/(H_ld[0,0] + H_ld[1,0] ):.6} and {H_ld[0,1]/(H_ld[1,1] + H_ld[0,1] ):.6}")
           
         # print ("Regular")        
         # print(H[1,0]/np.sum(IR0)/(H[1,1]/np.sum(IR1)+H[1,0]/np.sum(IR0)))
@@ -142,8 +175,8 @@ def nmf2TesterMix(numPoints):
         
 
     
-    axs[2,0].set_title("NMF Glycan 1 ", x=.5, y= .75)
-    axs[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
+    axs[2,0].set_title("NMF RS 1 ", x=.5, y= .75)
+    axs[2,1].set_title("NMF RS 2", x=.5, y= .75)
     
     
     

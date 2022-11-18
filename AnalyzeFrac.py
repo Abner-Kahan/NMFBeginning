@@ -14,12 +14,14 @@ import random
 from sklearn.decomposition import NMF
 
 BigTable = np.load('BigIterFractions.npy')
+print(BigTable)
+#print(np.mean (np.absolute((BigTable[0]))))
 #print (np.mean(BigTable, axis= 0))
-print(np.mean(BigTable[: , 5:12:2], axis=0))
-print(np.mean(BigTable[: , 13:20:2], axis=0))
+#print(np.mean(BigTable[: , 5:12:2], axis=0))
+#print(np.mean(BigTable[: , 13:20:2], axis=0))
 #print(BigTable[: , 13:20:2])
 print("Stop \n\n\n")
-print(np.mean (np.mean(np.absolute(BigTable[: , 5:12:2]), axis=0)))
-print(np.mean(np.mean(np.absolute(BigTable[: , 13:20:2]), axis=0)))
+#print(np.mean (np.mean(np.absolute(BigTable[: , 5:12:2]), axis=0)))
+#print(np.mean(np.mean(np.absolute(BigTable[: , 13:20:2]), axis=0)))
 #print(BigTable[11])
 #print (np.mean(BigTable[: , 13:20:2]))

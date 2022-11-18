@@ -14,7 +14,21 @@ import random
 from sklearn.decomposition import NMF
 
 BigTable = np.load('BigIterFractions.npy')
-print(BigTable)
+BigTable2 = BigTable[~np.isnan(BigTable).any(axis=1), :]
+
+print(BigTable2)
+print ("\n\n\n\n\n\n\n")
+print(len(BigTable2))
+print(np.mean(abs(BigTable2[:,0])))
+
+print(np.mean(abs(BigTable2[:,1])))
+print(np.mean(abs(BigTable2[:,2])))
+print(np.mean(BigTable2[:,3]))
+
+#print(np.mean(BigTable[:,2:4],axis=1))
+#print(np.mean(BigTable[:,4:],axis =1))
+#plt.scatter(np.mean(BigTable[:,2:4],axis=1), np.mean(BigTable[:,4:],axis =1))
+#plt.plot(BigTable[:,2],BigTable[:,3] )
 #print(np.mean (np.absolute((BigTable[0]))))
 #print (np.mean(BigTable, axis= 0))
 #print(np.mean(BigTable[: , 5:12:2], axis=0))

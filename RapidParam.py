@@ -5,7 +5,9 @@ Created on Sun Nov 13 17:25:09 2022
 
 @author: abnerkahansmack
 """
-
+import time
+import warnings
+#warnings.filterwarnings("ignore", message="/home/abnerkahan/anaconda3/lib/python3.9/site-packages/sklearn/decomposition/_nmf.py:1637: ConvergenceWarning:e")
 #!/usr/bin/python3
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,8 +35,8 @@ def denom(wavelength, TheoSpec,ExperSpec,V_oi):
 
 def ypendry(TheoSpec,ExperSpec):
     #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
-    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)))[0]) / (
-    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec))))[0])
+    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)),limit =100)[0]) / (
+    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec)),limit =100))[0])
 def percentError(Original, NMF):
     return 100*(NMF-Original)/Original
 def getFrac(aray):
@@ -80,7 +82,7 @@ def nmf2TesterMix(numPoints):
     IrMixLD = np.transpose(IrMixLD)
   #  IrMix= np.transpose(IrMix)
     
-    model = NMF(n_components=2, max_iter=800, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
+    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, solver= 'cd', init ='nndsvdar', beta_loss= 'frobenius' )
  #   W = model.fit_transform(IrMix)
   #  H = model.components_
     W_ld = model.fit_transform(IrMixLD)
@@ -98,7 +100,10 @@ def nmf2TesterMix(numPoints):
     #difference between first input and first NMF
    # RealdifA = np.sum(abs(IR0 - scale1 * W[:,0] ))
    # RealdifB = np.sum(abs(IR0 - scale2 * W[:,1] ))
-    
+    plt.plot(W_ld[:,0])
+    plt.plot(W_ld[:,1])
+    plt.show()
+    plt.clf()
     if difB < difA:
         H_ld[[0, 1]] = H_ld[[1, 0]]
         
@@ -107,7 +112,7 @@ def nmf2TesterMix(numPoints):
     NewFrac2 = getFrac(H_ld)[1]
     product = np.matmul(W_ld,H_ld)
     penError1 = ypendry(IrMixLD[:,0],product[:,0])
-    penError2 = ypendry(IrMixLD[:,1],product[:,1])
+    penError2 =  ypendry(IrMixLD[:,1],product[:,1])
     
  #   RealFrac1 = H[0,0]/np.max(H[0])
  #   RealFrac2 = H[0,1]/np.max(H[0])
@@ -115,7 +120,9 @@ def nmf2TesterMix(numPoints):
    #     print("flip")
    #     RealFrac1 = 1 -RealFrac1
     #    RealFrac2 = 1- RealFrac2
-        
+   # wassertein1 = scipy.stats.wasserstein_distance(IrMixLD[:,0],product[:,0])
+    #wassertein2 = scipy.stats.wasserstein_distance(IrMixLD[:,1],product[:,1])
+
     FractionError =    (percentError(fraction1,NewFrac1 ) + percentError(1 - fraction1,1- NewFrac1 ) +  \
         percentError(fraction2, NewFrac2) + percentError(1- fraction2, 1 - NewFrac2)  )/4                   
     
@@ -135,9 +142,23 @@ def nmf2TesterMix(numPoints):
     
 iters = 10
 ResultsTable = np.zeros((iters,4))
-for n in range(iters):
-    ResultsTable[n] =  nmf2TesterMix(1000)
+timeA = time.perf_counter_ns()
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    for n in range(iters):
+        ResultsTable[n] =  nmf2TesterMix(1000)
     
-np.save('BigIterFractions.npy',ResultsTable)
+
+timeB = time.perf_counter_ns()
+print((timeB-timeA)/10**9)
+print(ResultsTable)
+BigTable2 = ResultsTable[~np.isnan(ResultsTable).any(axis=1), :]
+print(np.mean(abs(BigTable2[:,0])))
+
+print(np.mean(abs(BigTable2[:,1])))
+print(np.mean(BigTable2[:,2]))
+
+print(np.mean(BigTable2[:,3]))
+#np.save('BigIterFractions.npy',ResultsTable)
 
     

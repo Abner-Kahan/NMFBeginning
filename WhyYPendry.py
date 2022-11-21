@@ -21,28 +21,50 @@ from scipy.signal import chirp, find_peaks, peak_widths
 import scipy
 import re
 
+timeA = time.perf_counter_ns()
 def ImaginaryEnergy(spectra):
     peaks, _ = find_peaks(spectra)
     results_half = peak_widths(spectra, peaks, rel_height=0.5)
     ImaginaryEnergy = np.average (results_half[0])/2
-    print(ImaginaryEnergy)
+    #print(ImaginaryEnergy)
     return ImaginaryEnergy
 
 def Y(wavelength, spectra,V_oi):
     L = scipy.misc.derivative (lambda x:(spectra[int(x)]), wavelength)/spectra[int(wavelength)]
-    #print(L)
+    #if L == 0:
+        #print(str(wavelength))
     return (L**-1)/(L**-2 + V_oi**2)
-
+def newY(wavelength, spectra,V_oi):
+    L = (spectra[wavelength+1]-spectra[wavelength])/spectra[wavelength]
+    return (L**-1)/(L**-2 + V_oi**2)
 def num(wavelength, TheoSpec,ExperSpec,V_oi):
     return (Y(wavelength, TheoSpec,V_oi) - Y(wavelength, ExperSpec,V_oi))**2
 def denom(wavelength, TheoSpec,ExperSpec,V_oi):
     return (Y(wavelength, TheoSpec,V_oi)**2) + (Y(wavelength, ExperSpec,V_oi)**2)
 
 def ypendry(TheoSpec,ExperSpec):
+    eTheo = ImaginaryEnergy(TheoSpec)
+    #eExper = ImaginaryEnergy(ExperSpec)
     #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
-    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)),limit =100)[0]) / (
-    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec)),limit =100))[0])
-
+    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, eTheo),limit =100)[0]) / (
+    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,eTheo),limit =100))[0])
+def ypendrySub(TheoSpec,ExperSpec):
+    eTheo = ImaginaryEnergy(TheoSpec)
+    #eExper = ImaginaryEnergy(ExperSpec)
+    #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
+    sumPendry = 0
+    
+    for n in range(len(TheoSpec)-1):
+       sumPendry+=num(n,TheoSpec,ExperSpec,eTheo )/denom(n,TheoSpec,ExperSpec,eTheo)
+        
+    return sumPendry/4000
+def Ypendry3(TheoSpec,ExperSpec):
+    eTheo = ImaginaryEnergy(TheoSpec)
+    sumPendry =0
+    for wavelength in range(len(TheoSpec)-1):
+       sumPendry+=(newY(wavelength, TheoSpec,eTheo) - newY(wavelength, ExperSpec,eTheo))**2 \
+       / ((newY(wavelength, TheoSpec,eTheo)**2) + (newY(wavelength, ExperSpec,eTheo)**2))
+    return sumPendry/4000
 def file2Spectra(path):
     #Open and read file
     logfile =  open(path, 'r')
@@ -85,13 +107,24 @@ fileList = glob.glob('Tri_A1*/Tri_A1*/input.log')
 IR0Name =random.choice(fileList)
 IR0 = file2Spectra(IR0Name)
 IRBroad = gaussian_broadening(IR0,25,1)
-
+Energy0 = ImaginaryEnergy(IRBroad)
 IR1Name =random.choice(fileList)
 IR1 = file2Spectra(IR1Name)
 IRBroad1 = gaussian_broadening(IR1,25,1)
-Y_n =[]
+plt.plot(IRBroad, color= 'red')
+plt.plot(IRBroad1, color= 'green')
+Energy1 = ImaginaryEnergy(IRBroad1)
+numJ =np.zeros(4000)
+denomJ = np.zeros(4000)
 for n in range(4000):
-    Y_n.append(Y(n,IRBroad, ImaginaryEnergy(IRBroad)))
+    numJ[n]= num(n,IRBroad, IRBroad1,Energy0 )
+    denomJ[n] =num(n,IRBroad, IRBroad1,Energy0 )
 #print(scipy.stats.wasserstein_distance(IRBroad,IRBroad/2))
-plt.plot(Y_n)
+#print(np.sum(numJ)-np.sum(denomJ))
+
+print(ypendry(IRBroad, IRBroad1))
+print(ypendrySub(IRBroad, IRBroad1))
+print(Ypendry3(IRBroad, IRBroad))
+timeB = time.perf_counter_ns()
+#print((timeB-timeA)/10**9)
 #print(ypendry(IRBroad,IRBroad+1))

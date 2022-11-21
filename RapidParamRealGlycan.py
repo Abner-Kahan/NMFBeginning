@@ -41,14 +41,30 @@ def ypendry(TheoSpec,ExperSpec):
     return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)),limit =100)[0]) / (
     scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec)),limit =100))[0])
 def percentError(Original, NMF):
-    return 100*(NMF-Original)/Original
+    return 100.0*(NMF-Original)/Original
 def getFrac(aray):
-    k = (aray[1,0]/aray[1,1] - 1 )/    \
-    ( aray[0,1] * aray[1,0] / ( aray[0,0] * aray[1,1] ) - 1)
-    j = (1- aray[1,0]/aray[1,1]) / (aray[0,0]/aray[0,1] - aray[1,0]/aray[1,1])
+    aray[aray == 0.0] = 10**-16
+    k = (aray[1,0]/aray[1,1] - 1.0 )/    \
+    ( aray[0,1] * aray[1,0] / ( aray[0,0] * aray[1,1] ) - 1.0)
+    j = ( aray[1,0]/aray[1,1] -1) / ( aray[1,0]/aray[1,1]- aray[0,0]/aray[0,1] )
+    
+    #print(k,j)
+    if np.isnan(k):
+        return getFrac(aray)
     return k,j
+def newY(wavelength, spectra,V_oi):
+    if spectra[wavelength] == 0:
+        spectra[wavelength] = 10**-16
+    L = (spectra[wavelength+1]-spectra[wavelength])/spectra[wavelength]
 
-
+    return (L**-1)/(L**-2 + V_oi**2)
+def Ypendry3(TheoSpec,ExperSpec):
+    eTheo = ImaginaryEnergy(TheoSpec)
+    sumPendry =0
+    for wavelength in range(len(TheoSpec)-1):
+       sumPendry+=(newY(wavelength, TheoSpec,eTheo) - newY(wavelength, ExperSpec,eTheo))**2 \
+       / ((newY(wavelength, TheoSpec,eTheo)**2) + (newY(wavelength, ExperSpec,eTheo)**2))
+    return sumPendry/4000
 
 def file2Spectra(path):
     #Open and read file
@@ -94,12 +110,12 @@ def nmf2TesterMix(numPoints):
     fraction1 = random.random()
     fraction2 = random.random()
     IR0Name =random.choice(fileList)
-    print(IR0Name)
+   # print(IR0Name)
     IR0 = file2Spectra(IR0Name)
     IR0 = gaussian_broadening(IR0,25,1)
 
     IR1Name =random.choice(fileList)
-    print(IR1Name)
+   # print(IR1Name)
     IR1 = file2Spectra(IR1Name)
     IR1 = gaussian_broadening(IR1,25,1)
 
@@ -110,10 +126,10 @@ def nmf2TesterMix(numPoints):
     # IrMix[2,:] = IR0
     # IrMix[3,:] = IR1  
     
-    plt.plot(IR0)
-    plt.plot(IR1)
-    plt.show()
-    plt.clf()
+    #plt.plot(IR0)
+   # plt.plot(IR1)
+   # plt.show()
+    #plt.clf()
     IrMixLD = np.zeros((2,numPoints))
     IrMixLD[0,:] = IR0*fraction1 + IR1*(1-fraction1) 
     IrMixLD[1,:] = IR0*fraction2 + IR1*(1-fraction2) 
@@ -139,19 +155,19 @@ def nmf2TesterMix(numPoints):
     #difference between first input and first NMF
    # RealdifA = np.sum(abs(IR0 - scale1 * W[:,0] ))
    # RealdifB = np.sum(abs(IR0 - scale2 * W[:,1] ))
-    plt.plot(W_ld[:,0])
-    plt.plot(W_ld[:,1])
-    plt.show()
-    plt.clf()
+   # plt.plot(W_ld[:,0])
+   # plt.plot(W_ld[:,1])
+   # plt.show()
+   # plt.clf()
     if difB < difA:
         H_ld[[0, 1]] = H_ld[[1, 0]]
         
 
-    NewFrac1 = getFrac(H_ld)[0]
-    NewFrac2 = getFrac(H_ld)[1]
+    NewFrac1 =  getFrac(H_ld)[0]
+    NewFrac2 =  getFrac(H_ld)[1]
     product = np.matmul(W_ld,H_ld)
-    penError1 = ypendry(IrMixLD[:,0],product[:,0])
-    penError2 =  ypendry(IrMixLD[:,1],product[:,1])
+    penError1 = Ypendry3(IrMixLD[:,0],product[:,0])
+    penError2 =  Ypendry3(IrMixLD[:,1],product[:,1])
     
  #   RealFrac1 = H[0,0]/np.max(H[0])
  #   RealFrac2 = H[0,1]/np.max(H[0])
@@ -179,11 +195,11 @@ def nmf2TesterMix(numPoints):
 # Frac1 -NMF Real, % error, 1-Frac1 NMF Real, %error,
 # Frac2 -NMF Real, % error, 1-Frac2 NMF Real, %error  ]    
     
-iters = 10
+iters = 30
 ResultsTable = np.zeros((iters,4))
 timeA = time.perf_counter_ns()
 with warnings.catch_warnings():
-    warnings.simplefilter("default")
+    warnings.simplefilter("ignore")
     for n in range(iters):
         ResultsTable[n] =  nmf2TesterMix(4001)
     
@@ -193,6 +209,8 @@ print((timeB-timeA)/10**9)
 #print(ResultsTable)
 BigTable2 = ResultsTable[~np.isnan(ResultsTable).any(axis=1), :]
 print ("Shape", BigTable2.shape)
+print(ResultsTable)
+print(BigTable2)
 print(np.mean(abs(BigTable2[:,0])))
 
 print(np.mean(abs(BigTable2[:,1])))

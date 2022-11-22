@@ -106,7 +106,7 @@ def gaussian_broadening(spectra, broaden, resolution=1):
     return IR
 fileList = glob.glob('Tri_A1*/Tri_A1*/input.log')
 
-def nmf2TesterMix(numPoints):
+def nmf2TesterMix(numPoints):IR0,W[:,0]
     fraction1 = random.random()
     fraction2 = random.random()
     IR0Name =random.choice(fileList)

@@ -26,6 +26,30 @@ def getFrac(aray):
     ( aray[0,1] * aray[1,0] / ( aray[0,0] * aray[1,1] ) - 1.0)
     j = ( aray[1,0]/aray[1,1] -1) / ( aray[1,0]/aray[1,1]- aray[0,0]/aray[0,1] )
     return k,j
+
+def ImaginaryEnergy(spectra):
+    peaks, _ = find_peaks(spectra)
+    results_half = peak_widths(spectra, peaks, rel_height=0.5)
+    ImaginaryEnergy = np.average (results_half[0])/2.0
+    return ImaginaryEnergy
+
+
+def newY(wavelength, spectra,V_oi):
+    if spectra[wavelength] == 0:
+        spectra[wavelength] = 10**-16
+    #L = scipy.misc.derivative (lambda x:(spectra[int(x)]), wavelength)/spectra[int(wavelength)]
+    L = (spectra[wavelength+1]-spectra[wavelength])/spectra[wavelength]
+    if L == 0 :
+        L = 10**-16
+    return (L**-1)/(L**-2 + V_oi**2)
+def Ypendry3(TheoSpec,ExperSpec):
+    eTheo = ImaginaryEnergy(TheoSpec)
+    sumPendry =0
+    for wavelength in range(len(TheoSpec)-1):
+       sumPendry+=(newY(wavelength, TheoSpec,eTheo) - newY(wavelength, ExperSpec,eTheo))**2 \
+       / ((newY(wavelength, TheoSpec,eTheo)**2) + (newY(wavelength, ExperSpec,eTheo)**2))
+    return sumPendry/4000
+
 #nndsvd
 
 def file2Spectra(path):
@@ -89,92 +113,15 @@ def gaussian_broadening(spectra, broaden, resolution=1):
 
 
 
-def nmfMatcher(OG_spectra,Calc_spectra):
-    #pdb.set_trace() 
-        #print(len(OG_spectra))
-    #OG_spectra = np.transpose(OG_spectra)
-    mindim = np.amin(OG_spectra.shape)
-    errorTable = np.zeros((mindim,mindim))
-    for n in range (mindim):
-         for p in range(mindim):
-                 errorTable[n,p] += np.sum(abs( OG_spectra[n] - Calc_spectra[p]))
-    #print("hi \n", errorTable)
-   # print(errorTable)
-    matchTable=np.zeros((mindim,mindim))
-    #print("errorTable \n \n",errorTable)
-    for entry in range(mindim):
-         Match = np.where(np.amin(errorTable) == errorTable)
-         Match = list(Match) 
-         
-        
-         x = Match[0]
-         y = Match[1]
-         matchTable[entry,0] =  x
-         matchTable[entry,1] =  y
-         #print(Match, errorTable[Match])
-         errorTable[x]=10**12
-        # errorTable[1,y]=10**12
-         #print(errorTable)
-         #print(errorTable)
-    matchTable = matchTable.astype(int)
-    return matchTable
-
-
 fileList = glob.glob('Tri_A1*/Tri_A1*/input.log')
 
 #print(isinstance(fileList[0],str))
 #plt.vlines(file2Spectra(fileList[1])[:,0],0,file2Spectra(fileList[0])[:,1])
 
 
-# In[52]:
-
-
-def VertPlotParamaters():
-    plt.xlabel("Wavenumber cm^-1")
-    plt.ylabel("Intensity %")
-    plt.gca().invert_yaxis() 
-    plt.gca().invert_xaxis()
-    plt.show()
-    plt.clf()
-    
 
 
 # In[53]:
-
-def ImaginaryEnergy(spectra):
-    peaks, _ = find_peaks(spectra)
-    results_half = peak_widths(spectra, peaks, rel_height=0.5)
-    ImaginaryEnergy = np.average (results_half[0])/2
-    return ImaginaryEnergy
-def Y(wavelength, spectra,V_oi):
-    L = scipy.misc.derivative (lambda x:(spectra[int(x)]), wavelength)/spectra[int(wavelength)]
-    return (L**-1)/(L**-2 + V_oi**2)
-
-def num(wavelength, TheoSpec,ExperSpec,V_oi):
-    return (Y(wavelength, TheoSpec,V_oi) - Y(wavelength, ExperSpec,V_oi))**2
-def denom(wavelength, TheoSpec,ExperSpec,V_oi):
-    return (Y(wavelength, TheoSpec,V_oi)**2) + (Y(wavelength, ExperSpec,V_oi)**2)
-
-def ypendry(TheoSpec,ExperSpec):
-    #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
-    return ( ( scipy.integrate.quad(num,0, len(TheoSpec)-1, (TheoSpec,ExperSpec, ImaginaryEnergy(TheoSpec)))[0]) / (
-    scipy.integrate.quad(denom,0, len(TheoSpec)-1, (TheoSpec,ExperSpec,ImaginaryEnergy(TheoSpec))))[0])
-
-
-
-def newY(wavelength, spectra,V_oi):
-    if spectra[wavelength] == 0:
-        spectra[wavelength] = 10**-16
-    L = (spectra[wavelength+1]-spectra[wavelength])/spectra[wavelength]
-
-    return (L**-1)/(L**-2 + V_oi**2)
-def Ypendry3(TheoSpec,ExperSpec):
-    eTheo = ImaginaryEnergy(TheoSpec)
-    sumPendry =0
-    for wavelength in range(len(TheoSpec)-1):
-       sumPendry+=(newY(wavelength, TheoSpec,eTheo) - newY(wavelength, ExperSpec,eTheo))**2 \
-       / ((newY(wavelength, TheoSpec,eTheo)**2) + (newY(wavelength, ExperSpec,eTheo)**2))
-    return sumPendry/4000
 
 
 
@@ -187,10 +134,10 @@ def nmf2TesterMixB():
     
     #Creating Two Spectra
     IR0Name =random.choice(fileList)
-    print(IR0Name)
+  #  print(IR0Name)
     IR0 = file2Spectra(IR0Name)
     IR0 = gaussian_broadening(IR0,25,1)
-    axs[0,0].plot(IR0/np.max(IR0), color= 'blue')
+    axs[0,0].plot(IR0/np.max(IR0), color= 'orangered')
     axs[0,0].set_title("Glycan 1", x=.5, y= .75)
 
 
@@ -199,48 +146,77 @@ def nmf2TesterMixB():
     print(IR1Name)
     IR1 = file2Spectra(IR1Name)
     IR1 = gaussian_broadening(IR1,25,1)
-    axs[0,1].plot(IR1/np.max(IR1), color= 'red')
+    axs[0,1].plot(IR1/np.max(IR1), color= 'deepskyblue')
     axs[0,1].set_title("Glycan 2", x=.5, y= .75)
    # print(IR1.shape)
-    print("Correlation between Functions", ypendry(IR0,IR1))
+    #print("Correlation between Functions", ypendry(IR0,IR1))
     IRF = np.zeros((2,4001))
+    IRFPure = np.zeros((4,4001))
     IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
     IRF[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
-    axs[1,0].plot(IRF[0,:]/np.max(IRF[0,:]), color='purple')
+    axs[1,0].plot(IRF[0,:]/np.max(IRF[0,:]), color='darkorchid')
     axs[1,0].set_title("Mixture 1", x=.5, y= .75)
-    axs[1,1].plot(IRF[1,:]/np.max(IRF[1,:]), color = 'purple')
+    axs[1,1].plot(IRF[1,:]/np.max(IRF[1,:]), color = 'darkorchid')
     axs[1,1].set_title("Mixture 2", x=.5, y= .75)
     
-    IRF= np.transpose(IRF)
+    IRFPure[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
+    IRFPure[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
+    IRFPure[2,:] = IR0
+    IRFPure[3,:] = IR1
     
+    
+    
+    IRF= np.transpose(IRF)
+    IRFPure = np.transpose(IRFPure)
     model = NMF(n_components=2, max_iter=4000, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
     W = model.fit_transform(IRF)
     H = model.components_
+    
+    WPure = model.fit_transform(IRFPure)
+    HPure = model.components_
     Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    print("H", H)
-    print("H_Norm", Hnorm)
+    #print("H", H)
+   # print("H_Norm", Hnorm)
     product = np.matmul(W,H)
-    matchTable = nmfMatcher (IRF, W)
     IrOrgs = [IR0,IR1]
     #axs[4].plot(product[:,matchTable[0,1]])
     
 
     
     
+    scale1  = np.mean(IR0)/np.mean(WPure[:,0])
+    scale2  = np.mean(IR0)/np.mean(WPure[:,1])
+    #difference between first input and first NMF
+    RealdifA = np.sum(abs(IR0 - scale1 * WPure[:,0] ))
+    RealdifB = np.sum(abs(IR0 - scale2 * WPure[:,1] ))
+    if RealdifA > RealdifB: 
+        HPure[[0, 1]] = HPure[[1, 0]] 
+        WPure[:, [1, 0]] = WPure[:, [0, 1]]
+   # print(HPure)
     scale1  = np.mean(IR0)/np.mean(W[:,0])
-    scale2  = np.mean(IR1)/np.mean(W[:,0])
+    scale2  = np.mean(IR0)/np.mean(W[:,1])
+ 
+    
     #difference between first input and first NMF
     difA = np.sum(abs(IR0 - scale1 * W[:,0] ))
-    difB = np.sum(abs(IR1 - scale2 * W[:,0] ))
+    difB = np.sum(abs(IR0 - scale2 * W[:,1] ))
+    
+    
     if difA < difB:
-
-        axs[2,0].plot(W[:,0]/np.max(W[:,0]), color= 'blue')
+        H[[0, 1]] = H[[1, 0]] 
+        W[:, [1, 0]] = W[:, [0, 1]]
         
-        axs[2,1].plot(W[:,1]/np.max(W[:,1]), color = 'red')
-    else:
-        axs[2,0].plot(W[:,1]/np.max(W[:,1]), color= 'blue' )
         
-        axs[2,1].plot(W[:,0]/np.max(W[:,0]), color = 'red')  
+        
+    axs[2,0].plot(W[:,0]/np.max(W[:,0]), color= 'orangered')
+        
+    axs[2,1].plot(W[:,1]/np.max(W[:,1]), color = 'deepskyblue')
+   
+        
+        
+        
+        
+        
     axs[2,0].set_title("NMF Glycan 1", x=.5, y= .75)
     axs[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
     #IrPlotter([IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]],"First Calculated Spectra", [IR0Name[9:-10], 'NMF Generated IR'],True)
@@ -255,7 +231,28 @@ def nmf2TesterMixB():
     axs[1,1].set(xticks = [])
     plt.show()
     plt.clf()
-    print(matchTable)
+    plt.plot(IR0)
+    plt.show()
+    plt.plot(W[:,0])
+    plt.show()
+    product = np.matmul(W,H)
+    print(product.shape)
+    print(W.shape)
+    print(WPure.shape)
+    PureProduct = np.matmul(WPure,HPure)
+    print("Impure \n")
+    print (f"The expected fractions from the mixture are {getFrac(H)[0]:.6} and {getFrac(H)[1]:.6}")    
+    print (f"Percent error is {percentError(fraction1,getFrac(H)[0])}  \
+           and {percentError(fraction2,getFrac(H)[1])}")
+    print(f"Ypendry error is {Ypendry3(IR0,W[:,0])}")
+    print(f"Ypendry error is {Ypendry3(IR1,W[:,1])}")    
+    print("Pure \n")
+    print (f"The expected fractions from the mixture are {getFrac(HPure)[0]:.6} and {getFrac(HPure)[1]:.6}")    
+    print (f"Percent error is {percentError(fraction1,getFrac(HPure)[0])}  \
+           and {percentError(fraction2,getFrac(HPure)[1])}")
+    print(f"Ypendry error is {Ypendry3(IR0,WPure[:,0])}")
+    print(f"Ypendry error is {Ypendry3(IR1,WPure[:,1])}")    
+    print(f"Ypendry error of two spectra is  {Ypendry3(IR0,IR1)}")    
   #  print(ypendry(IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]))
    # print(ypendry(IrOrgs[matchTable[1,0]], product[:,matchTable[1,1]]))
    # print("Matrix product size", product.shape)

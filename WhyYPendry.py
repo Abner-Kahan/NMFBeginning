@@ -124,7 +124,8 @@ for n in range(4000):
 
 print(ypendry(IRBroad, IRBroad1))
 print(ypendrySub(IRBroad, IRBroad1))
-print(Ypendry3(IRBroad, IRBroad))
+print(Ypendry3(IRBroad, IRBroad1))
+print(Ypendry3(IRBroad, IRBroad1/1000))
 timeB = time.perf_counter_ns()
 #print((timeB-timeA)/10**9)
 #print(ypendry(IRBroad,IRBroad+1))

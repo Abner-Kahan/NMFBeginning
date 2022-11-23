@@ -139,15 +139,18 @@ sumsol  = np.load('sumsol.npy')
                   
                   
 
-def nmf2TesterMixB(broad):
+def nmf2TesterMixB(broad,selector):
     #pdb.set_trace()
-    IRF = np.zeros((33,(amide1_ran2-amide1_ran1+1)))
+    IRF = np.zeros((11*sum([selector]),(amide1_ran2-amide1_ran1+1)))
     for n in range(11):
-           IRF [n,:]= gaussian_broadening(fetchIr('UntreatedSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
-           
-           IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
-           IRF[n+22,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
-
+           if selector[0] == 1:
+               IRF [n,:]= gaussian_broadening(fetchIr('UntreatedSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           elif selector[1] == 1:
+               IRF[n,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           elif selector[2] == 1:
+               IRF[n,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           if selector[1] == 1:
+               IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
     Humdities = [5,10,20,30,40,50,60,70,80,90,95]
     fig, axs = plt.subplots(4)
     
@@ -288,75 +291,9 @@ def nmf2TesterMixB(broad):
     H = model.components_
     axsB[1].plot(np.matmul(W,H))
     plt.show()
-    #plt.plot(np.dot(W,H[0,randSpec]))
-    #Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    # for n in range(11): 
-    #     plt.plot(np.dot(W,H[0,n]))
-    #     #plt.plot(np.dot(W,H[1,n]))
-    #     #plt.plot(np.dot(W,H[2,n]))
-    #    # plt.plot(np.dot(W,H[3,n]))
-        
-    # plt.title('NMF Rebuilt Untreated Sample')
-    # plt.xlabel("cm-1")
-    # plt.legend(Humdities)
-    # plt.show()
-    # plt.clf()
-    
-    # for n in range(11,22): 
-    #     plt.plot(np.dot(W,H[0,n]))
-    # plt.title('NMF Rebuilt MeOH Sample')
-    # plt.xlabel("cm-1")
-    # plt.legend(Humdities)
-    # plt.show()
-    # plt.clf()
-    
-    # for n in range(22,33): 
-    #     plt.plot(np.dot(W,H[0,n]))
-    # plt.title('NMF Rebuilt WA45 Sample')
-    # plt.xlabel("cm-1")
-    # plt.legend(Humdities)
-    # plt.show()
-    # plt.clf()
-    #np.save("H.npy",H)
-    #np.save("Hnorm.npy",Hnorm)
-   #  Hnorm = np.apply_along_axis(lambda l : l/np.sum(l),0,H)
-   #  plt.plot(Humdities, Hnorm[sorter[0], :11], label = numPeaks0)
-   #  plt.plot(Humdities, Hnorm[sorter[1], :11], label = numPeaks1)
-   #  plt.plot(Humdities, Hnorm[sorter[2], :11], label = numPeaks2)
-   #  plt.plot(Humdities, Hnorm[sorter[3], :11], label = numPeaks3)
-   # # plt.plot(Humdities, Hnorm[4, :11], label = numPeaks4)
-   #  plt.xlabel("%humidity")
-   #  plt.legend()
-   #  plt.title('Untreated Sample')
-   #  plt.show()
-   #  plt.clf()
-    
-   #  plt.plot(Humdities, Hnorm[sorter[0], 11:22], label = numPeaks0)
-   #  plt.plot(Humdities, Hnorm[sorter[1], 11:22], label = numPeaks1)
-   #  plt.plot(Humdities, Hnorm[sorter[2], 11:22], label = numPeaks2)
-   #  plt.plot(Humdities, Hnorm[sorter[3], 11:22], label = numPeaks3)
-   # # plt.plot(Humdities, Hnorm[4, 11:22], label = numPeaks4)
-
-   #  plt.xlabel("%humidity")
-   #  plt.legend()
-   #  plt.title('MeOH Fractions')
-   #  plt.show()
-   #  plt.clf()    
-    
-   #  plt.plot(Humdities, Hnorm[sorter[0], 22:33], label = numPeaks0)
-   #  plt.plot(Humdities, Hnorm[sorter[1], 22:33], label = numPeaks1)
-   #  plt.plot(Humdities, Hnorm[sorter[2], 22:33], label = numPeaks2)
-   #  plt.plot(Humdities, Hnorm[sorter[3], 22:33], label = numPeaks3)
-   # # plt.plot(Humdities, Hnorm[4, 22:33], label = numPeaks4)
-
-   #  plt.xlabel("%humidity")
-   #  plt.legend()
-   #  plt.title('WA45 Fractions')
-   #  plt.show()
-   #  plt.clf()
-    
+ 
     
     
     return H
 
-H = nmf2TesterMixB(15)  
+H = nmf2TesterMixB(15,[1,1,1])

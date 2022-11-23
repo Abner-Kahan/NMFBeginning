@@ -162,8 +162,8 @@ def nmf2TesterMix(numPoints):
         H_ld = model.components_
         Errt = model.reconstruction_err_       
         ypendry = Ypendry3(IR0,W_ld[:,0])
-        ypendry2 = Ypendry3(IR0,W_ld[:,1])
-        ypendryFlip = Ypendry3(IR0,W_ld[:,1])
+        ypendry2 = Ypendry3(IR1,W_ld[:,1])
+        ypendryFlip = Ypendry3(IR1,W_ld[:,0])
         ypendryFlip2 = Ypendry3(IR0,W_ld[:,1])
         if ypendryFlip + ypendryFlip2 < ypendry + ypendry2:
            # print("flip")
@@ -210,7 +210,7 @@ def nmf2TesterMix(numPoints):
 # Frac2 -NMF Real, % error, 1-Frac2 NMF Real, %error  ]    
 timeA = time.perf_counter_ns() 
 
-iters = 250
+iters = 20
 ResultsTable = pd.DataFrame(columns = paramlist)
 
 with warnings.catch_warnings():

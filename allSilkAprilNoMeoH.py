@@ -148,7 +148,7 @@ def nmf2TesterMixB(broad):
            #IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
            IRF[n+11,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
 
-    Humdities = [5,10,20,30,40,50,60,70,80,90,95]
+    Humidities = [5,10,20,30,40,50,60,70,80,90,95]
     fig, axs = plt.subplots(3)
     
     figB, axsB = plt.subplots(nrows=1, ncols=2)
@@ -158,7 +158,7 @@ def nmf2TesterMixB(broad):
         axs[0].plot(x_range,spec)
         
     axs[0].set_title("Untreated Sample", x=.5, y= .2)
-    
+    axs[0].legend([str(n) for n in Humidities])
     #axs[0].legend(Humdities)
 
     
@@ -189,7 +189,7 @@ def nmf2TesterMixB(broad):
    # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
     IRF= np.transpose(IRF)
     
-    model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'mu', init= "random", beta_loss= 'kullback-leibler')#, alpha = .3  )
+    model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'cd', init= "nndsvdar", beta_loss= 'frobenius')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
     
@@ -212,8 +212,8 @@ def nmf2TesterMixB(broad):
     
     axs[2].legend(["NMF Calculated 1", "NMF Calculated 2", "NMF Calculated 3", "NMF Calculated 4"])
     axs[2].set_title("NMF Decomposition",  x=.5, y= .05)
-    print ("Peaks",numPeaks0,numPeaks1,numPeaks2,numPeaks3 )
-    print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
+   # print ("Peaks",numPeaks0,numPeaks1,numPeaks2,numPeaks3 )
+    #print('nums',numPeaks0,numPeaks1,numPeaks2,numPeaks3)
     K0= np.mean([W]) /  np.mean(IRF[:,0])
     K1= np.mean([W]) /  np.mean(IRF[:,1])
     K2= np.mean([W]) /  np.mean(IRF[:,2])
@@ -235,12 +235,12 @@ def nmf2TesterMixB(broad):
     SingPeaks += [np.argmax(W[:,1])]
     SingPeaks += [np.argmax(W[:,2])]
     SingPeaks += [np.argmax(W[:,3])]
-    print(SingPeaks, "\n\n\n\n\n----\n\n---")
+   # print(SingPeaks, "\n\n\n\n\n----\n\n---")
     sorter =np.argsort(SingPeaks)
     
     W_test = W/np.max(W)
-    print('\n\n\n\n' ,W, '')
-    
+   # print('\n\n\n\n' ,W, '')
+  #  
     axs[2].plot(x_range, W_test[:,sorter[0]])
     #meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
 

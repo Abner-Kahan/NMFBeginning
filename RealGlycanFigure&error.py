@@ -168,7 +168,7 @@ def nmf2TesterMixB():
     
     IRF= np.transpose(IRF)
     IRFPure = np.transpose(IRFPure)
-    model = NMF(n_components=2, max_iter=4000, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
+    model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
     W = model.fit_transform(IRF)
     H = model.components_
     
@@ -184,27 +184,28 @@ def nmf2TesterMixB():
 
     
     
-    scale1  = np.mean(IR0)/np.mean(WPure[:,0])
-    scale2  = np.mean(IR0)/np.mean(WPure[:,1])
+    #scale1  = np.mean(IR0)/np.mean(WPure[:,0])
+   # scale2  = np.mean(IR0)/np.mean(WPure[:,1])
     #difference between first input and first NMF
-    RealdifA = np.sum(abs(IR0 - scale1 * WPure[:,0] ))
-    RealdifB = np.sum(abs(IR0 - scale2 * WPure[:,1] ))
-    if RealdifA > RealdifB: 
+   # RealdifA = np.sum(abs(IR0 - scale1 * WPure[:,0] ))
+    #RealdifB = np.sum(abs(IR0 - scale2 * WPure[:,1] ))
+    ypendryPure = Ypendry3(IR0,WPure[:,0])
+    ypendryPureFlip = Ypendry3(IR0,WPure[:,1])
+    if ypendryPureFlip < ypendryPure: 
         HPure[[0, 1]] = HPure[[1, 0]] 
         WPure[:, [1, 0]] = WPure[:, [0, 1]]
+        ypendryPure = ypendryPureFlip
    # print(HPure)
-    scale1  = np.mean(IR0)/np.mean(W[:,0])
-    scale2  = np.mean(IR0)/np.mean(W[:,1])
- 
-    
-    #difference between first input and first NMF
-    difA = np.sum(abs(IR0 - scale1 * W[:,0] ))
-    difB = np.sum(abs(IR0 - scale2 * W[:,1] ))
-    
-    
-    if difA < difB:
+
+    ypendry = Ypendry3(IR0,W[:,0])
+    ypendry2 = Ypendry3(IR0,W[:,1])
+    ypendryFlip = Ypendry3(IR0,W[:,1])
+    ypendryFlip2 = Ypendry3(IR0,W[:,1])
+    if ypendryFlip + ypendryFlip2 < ypendry + ypendry2: 
         H[[0, 1]] = H[[1, 0]] 
         W[:, [1, 0]] = W[:, [0, 1]]
+        ypendry = ypendryFlip
+        print("Flip \n\n\n\n\n")
         
         
         
@@ -244,13 +245,19 @@ def nmf2TesterMixB():
     print (f"The expected fractions from the mixture are {getFrac(H)[0]:.6} and {getFrac(H)[1]:.6}")    
     print (f"Percent error is {percentError(fraction1,getFrac(H)[0])}  \
            and {percentError(fraction2,getFrac(H)[1])}")
-    print(f"Ypendry error is {Ypendry3(IR0,W[:,0])}")
+    print (f"The expected fractions from the mixture are {1-getFrac(H)[0]:.6} and {1-getFrac(H)[1]:.6}")    
+    print (f"Percent error is {percentError(1-fraction1,1-getFrac(H)[0])}  \
+               and {percentError(1-fraction2,1-getFrac(H)[1])}")   
+           
+    print(f"Ypendry error is {ypendry}")
     print(f"Ypendry error is {Ypendry3(IR1,W[:,1])}")    
     print("Pure \n")
     print (f"The expected fractions from the mixture are {getFrac(HPure)[0]:.6} and {getFrac(HPure)[1]:.6}")    
     print (f"Percent error is {percentError(fraction1,getFrac(HPure)[0])}  \
            and {percentError(fraction2,getFrac(HPure)[1])}")
-    print(f"Ypendry error is {Ypendry3(IR0,WPure[:,0])}")
+    print (f"Percent error is {percentError(1-fraction1,1-getFrac(HPure)[0])}  \
+           and {percentError(1-fraction2,1-getFrac(HPure)[1])}")      
+    print(f"Ypendry error is {ypendryPure}")
     print(f"Ypendry error is {Ypendry3(IR1,WPure[:,1])}")    
     print(f"Ypendry error of two spectra is  {Ypendry3(IR0,IR1)}")    
   #  print(ypendry(IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]))

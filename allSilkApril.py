@@ -142,10 +142,18 @@ sumsol  = np.load('sumsol.npy')
 def nmf2TesterMixB(broad):
     #pdb.set_trace()
     IRF = np.zeros((33,(amide1_ran2-amide1_ran1+1)))
+    #change this
+    #IRF = np.zeros((22,(amide1_ran2-amide1_ran1+1)))
+    #IRF = np.zeros((11,(amide1_ran2-amide1_ran1+1)))
     for n in range(11):
+            #change these
            IRF [n,:]= gaussian_broadening(fetchIr('UntreatedSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           #IRF [n,:]= gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+          # IRF [n,:]= gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
            
-           IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           #IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           IRF[n+11,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
+           
            IRF[n+22,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
 
     Humdities = [5,10,20,30,40,50,60,70,80,90,95]
@@ -178,7 +186,7 @@ def nmf2TesterMixB(broad):
     axsB[0].plot(IRF[randSpec,:])
 
     
-    #IrPlotter( IRF [:11,:], 'Unstreated Spectra', amide1_ran1,amide1_ran2, ['5','10','20','30','40','50','60','70','80','90','95']
+    #IrPlotter( IRF [:11,:], 'Unstreated Spectr IRF[n+22,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)a', amide1_ran1,amide1_ran2, ['5','10','20','30','40','50','60','70','80','90','95']
            #                                                                     ,True)
     #IrPlotter( IRF [11:22,:], 'MEOH Spectra', amide1_ran1,amide1_ran2, ['5','10','20','30','40','50','60','70','80','90','95']
        #                                                                          ,True)

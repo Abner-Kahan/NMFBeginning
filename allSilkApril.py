@@ -19,7 +19,7 @@ from scipy.signal import savgol_filter
 from scipy.signal import find_peaks
 
 
-amide1_ran1 =1590
+amide1_ran1 =1600
 amide1_ran2 =1715
 
 
@@ -229,7 +229,6 @@ def nmf2TesterMixB(broad):
     K2= np.mean([W]) /  np.mean(IRF[:,2])
     K3= np.mean([W]) /  np.mean(IRF[:,3])
     #K4= np.mean([W]) /  np.mean(IRF[:,4])
-   
      
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
     
@@ -279,6 +278,9 @@ def nmf2TesterMixB(broad):
     axs[0].set_xticklabels(())
     axs[1].set_xticklabels(())
     axs[2].set_xticklabels(())
+    axs[0].set(xticks = [])
+    axs[1].set(xticks = [])
+    axs[2].set(xticks = [])
     #axs[0].set(xticks=None)
     #axs[1].set(xticks=None)
     #axs[2].set(xticks=None)
@@ -370,9 +372,39 @@ def nmf2TesterMixB(broad):
    #  plt.title('WA45 Fractions')
    #  plt.show()
    #  plt.clf()
+    fig2, axs2 = plt.subplots(3,figsize=(8.0902,5))
+    axs2[0].plot(Humdities,H[0,:11]/np.sum(H[:,:11],axis=0)*100)
+    axs2[0].plot(Humdities,H[1,:11]/np.sum(H[:,:11],axis=0)*100)
+    axs2[0].plot(Humdities,H[2,:11]/np.sum(H[:,:11],axis=0)*100)
+    axs2[0].plot(Humdities,H[3,:11]/np.sum(H[:,:11],axis=0)*100)
+    axs2[0].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    
+    axs2[1].plot(Humdities,H[0,11:22]/np.sum(H[:,11:22],axis=0)*100)
+    axs2[1].plot(Humdities,H[1,11:22]/np.sum(H[:,11:22],axis=0)*100)
+    axs2[1].plot(Humdities,H[2,11:22]/np.sum(H[:,11:22],axis=0)*100)
+    axs2[1].plot(Humdities,H[3,11:22]/np.sum(H[:,11:22],axis=0)*100)
+    axs2[1].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
     
     
+    axs2[2].plot(Humdities,H[0,22:]/np.sum(H[:,22:],axis=0)*100)
+    axs2[2].plot(Humdities,H[1,22:]/np.sum(H[:,22:],axis=0)*100)
+    axs2[2].plot(Humdities,H[2,22:]/np.sum(H[:,22:],axis=0)*100)
+    axs2[2].plot(Humdities,H[3,22:]/np.sum(H[:,22:],axis=0)*100)
+    axs2[2].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
     
-    return IRF
+    axs2[0].set_ylim(0,100)
+    axs2[0].set_ylabel("% of Structure")
+    axs2[1].set_ylim(0,100)
+    axs2[1].set_ylabel("% of Structure")
+    axs2[2].set_ylim(0,100)
+    axs2[2].set_ylabel("% of Structure")
+    
+    axs2[0].set_xticklabels(())
+    axs2[1].set_xticklabels(())
+    axs2[0].set(xticks = [])
+    axs2[1].set(xticks = [])
+    axs2[2].set_xlabel("% Humidity")
+    
+    return W,H
 
-IRF = nmf2TesterMixB(15)  
+data = nmf2TesterMixB(15)  

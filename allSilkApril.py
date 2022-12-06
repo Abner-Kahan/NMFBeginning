@@ -28,6 +28,21 @@ solvents = ["Untreated", "MeOH", "WA45"]
 broad = 15
 x_range = np.linspace(amide1_ran1,amide1_ran2,(amide1_ran2-amide1_ran1+1))
 
+def addIRS(PointNum):
+    IR = np.zeros((PointNum,4))
+    X =  np.linspace(0, PointNum, PointNum)
+
+    thickness =  PointNum * .1
+
+    xloc = [25,50,75,100]
+    for n in range(4):
+        IR[:,n] = .5*np.exp(-0.5*((X-xloc[n])/int(thickness))**2)
+
+
+
+    return IR
+
+
 def fetchIr(path,column,ran1,ran2):
     logfile =  open(path, 'r')
     logtest = logfile.readlines()
@@ -85,8 +100,10 @@ def IrPlotter(item,title,ran1,ran2, leg = [], multiple = False):
     plt.xlabel("cm^-1")    
     plt.show()
     plt.clf() 
-    
-    
+customW = addIRS(116)
+plt.plot(customW)
+plt.show()
+plt.clf()
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolution=1):
  
@@ -117,7 +134,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolutio
 
 
 
-#Untreated =gaussian_broadening(fetchIr('UntreatedSample.txt',8),25,1000,4000)
+#Untreated =gaussian_broadening(fetcustomchIr('UntreatedSample.txt',8),25,1000,4000)
 #IrPlotter(Untreated,"untreated",1000,4000)
 
 #print(isinstance(fileList[0],str))
@@ -197,11 +214,17 @@ def nmf2TesterMixB(broad):
    # print(IR1.shape)
     
 
-   # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
+   
+# IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
+
     IRF= np.transpose(IRF)
-    model = NMF(n_components=4, max_iter=2000, tol= 1*10**-12, solver= 'cd', init= "nndsvdar", beta_loss= 'frobenius')
+    customH= np.full((4,33),.5)
+    print(customH)
+    model = NMF(n_components=4, max_iter=2000, tol= 1*10**-12, solver= 'cd', init= "nndsvd", beta_loss= 'frobenius')
     #model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler')#, alpha = .3  )
+    #W = model.fit_transform(IRF,W = customW,H = customH)
     W = model.fit_transform(IRF)
+    print("W", W.shape)
     #IrPlotter(W[:,0])
     
     print ("W-size",W.shape)
@@ -249,29 +272,29 @@ def nmf2TesterMixB(broad):
     peaks = [numPeaks0, numPeaks1, numPeaks2, numPeaks3]
     print(sorter,peaks)
     W_test = W
-    #axs[3].plot[x_range,]
+    #axs[3].plot[x_range,]Harray
     scale = np.max(np.mean(IRF,axis=1)/np.max(W_test))
     print("bob\n",scale,"\n bob")
     axs[3].plot(x_range,np.mean(IRF,axis=1)/np.max(W_test)/scale)
-    axs[3].plot(x_range, W_test[:,sorter[0]]/scale)
+    axs[3].plot(x_range, W_test[:,sorter[0]]/scale, color = 'firebrick')
     #meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
 
     #plt.plot(x_range, sumsol[0]*meany)
 
     
-    axs[3].plot(x_range, W_test[:,sorter[1]]/scale)
+    axs[3].plot(x_range, W_test[:,sorter[1]]/scale, color= 'gold')
     #meany = np.mean(W_test[:,sorter[1]]/sumsol[1])
 
     #plt.plot(x_range, sumsol[1]*meany)
 
     
-    axs[3].plot(x_range, W_test[:,sorter[2]]/scale)
+    axs[3].plot(x_range, W_test[:,sorter[2]]/scale, color ='limegreen')
    # meany = np.mean(W_test[:,sorter[2]]/sumsol[2])
 
    # plt.plot(x_range, sumsol[2]*meany)
 
     
-    axs[3].plot(x_range, W_test[:,sorter[3]]/scale)
+    axs[3].plot(x_range, W_test[:,sorter[3]]/scale,color='darkorange')
     
     axs[3].legend()
    # meany = np.mean(W_test[:,sorter[3]]/sumsol[3])
@@ -372,25 +395,29 @@ def nmf2TesterMixB(broad):
    #  plt.title('WA45 Fractions')
    #  plt.show()
    #  plt.clf()
+    print("H", H.shape)
     fig2, axs2 = plt.subplots(3,figsize=(8.0902,5))
-    axs2[0].plot(Humdities,H[0,:11]/np.sum(H[:,:11],axis=0)*100)
-    axs2[0].plot(Humdities,H[1,:11]/np.sum(H[:,:11],axis=0)*100)
-    axs2[0].plot(Humdities,H[2,:11]/np.sum(H[:,:11],axis=0)*100)
-    axs2[0].plot(Humdities,H[3,:11]/np.sum(H[:,:11],axis=0)*100)
+    axs2[0].plot(Humdities,H[0,:11]/np.sum(H[:,:11],axis=0)*100, color = 'firebrick')
+    axs2[0].plot(Humdities,H[1,:11]/np.sum(H[:,:11],axis=0)*100 , color= 'gold')
+    axs2[0].plot(Humdities,H[2,:11]/np.sum(H[:,:11],axis=0)*100, color ='limegreen')
+    axs2[0].plot(Humdities,H[3,:11]/np.sum(H[:,:11],axis=0)*100, color='darkorange')
     axs2[0].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    axs2[0].set_title("Untreated Sample", x=.5, y= .2)
     
-    axs2[1].plot(Humdities,H[0,11:22]/np.sum(H[:,11:22],axis=0)*100)
-    axs2[1].plot(Humdities,H[1,11:22]/np.sum(H[:,11:22],axis=0)*100)
-    axs2[1].plot(Humdities,H[2,11:22]/np.sum(H[:,11:22],axis=0)*100)
-    axs2[1].plot(Humdities,H[3,11:22]/np.sum(H[:,11:22],axis=0)*100)
+    axs2[1].plot(Humdities,H[0,11:22]/np.sum(H[:,11:22],axis=0)*100, color = 'firebrick')
+    axs2[1].plot(Humdities,H[1,11:22]/np.sum(H[:,11:22],axis=0)*100 , color= 'gold')
+    axs2[1].plot(Humdities,H[2,11:22]/np.sum(H[:,11:22],axis=0)*100, color ='limegreen')
+    axs2[1].plot(Humdities,H[3,11:22]/np.sum(H[:,11:22],axis=0)*100, color='darkorange')
     axs2[1].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    axs2[1].set_title("MeOH Sample", x=.5, y= .2)
     
     
-    axs2[2].plot(Humdities,H[0,22:]/np.sum(H[:,22:],axis=0)*100)
-    axs2[2].plot(Humdities,H[1,22:]/np.sum(H[:,22:],axis=0)*100)
-    axs2[2].plot(Humdities,H[2,22:]/np.sum(H[:,22:],axis=0)*100)
-    axs2[2].plot(Humdities,H[3,22:]/np.sum(H[:,22:],axis=0)*100)
+    axs2[2].plot(Humdities,H[0,22:]/np.sum(H[:,22:],axis=0)*100, color = 'firebrick')
+    axs2[2].plot(Humdities,H[1,22:]/np.sum(H[:,22:],axis=0)*100, color= 'gold')
+    axs2[2].plot(Humdities,H[2,22:]/np.sum(H[:,22:],axis=0)*100, color ='limegreen')
+    axs2[2].plot(Humdities,H[3,22:]/np.sum(H[:,22:],axis=0)*100 ,color='darkorange')
     axs2[2].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    axs2[2].set_title("WA45 Sample", x=.5, y= .2)
     
     axs2[0].set_ylim(0,100)
     axs2[0].set_ylabel("% of Structure")

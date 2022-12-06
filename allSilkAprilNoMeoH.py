@@ -188,7 +188,6 @@ def nmf2TesterMixB(broad):
 
    # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
     IRF= np.transpose(IRF)
-    
     model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'cd', init= "nndsvdar", beta_loss= 'frobenius')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])

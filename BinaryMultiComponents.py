@@ -11,7 +11,7 @@ from sklearn.decomposition import NMF
 from scipy.spatial.distance import cdist
 
 
-numNMF =1
+numNMF = 13
 
     
     
@@ -66,7 +66,7 @@ def positionmap(file, residues):
     # G2bondsB = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7) ,(7,8), (1,6), (2,4), (1,3), (2,7)]
     # G2fbonds = [(0,1), (0,2), (2,3), (3,4), (4,5), (5,6), (3,7),  (7,8), (8,9)  ]
     # G2fbondsB = [(0,1), (0,2), (2,3), (3,4), (4,5), (5,6), (3,7),  (7,8), (8,9), (1,2), (2,4), (3,8), (3,5), (2,7)  ]
-    M9bonds = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5), (8,10), (3,7),(3,5), (1,8), (2,9), (2,6), (1,3), (2,10), (7,8)   ]
+   # M9bonds = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5), (8,10), (3,7),(3,5), (1,8), (2,9), (2,6), (1,3), (2,10), (7,8)   ]
     # M9bondsC = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5), (1,3), (3,5),  (8,10), (2,6), (1,8), (3,7), (2,9), (2,10) ]
     # M9bondsB = [ (0,1), (1,2),(2,3),(2,8), (8,9), (9,10), (3,6), (6,7),(3,4), (4,5), (1,3),(3,5), (8, 10), (2,6), (1,8), (3,7), (2,9), (2,4) ]
     # N2bonds = [(0,1), (1,2), (2,3), (3,4), (2,5), (5,6)]
@@ -85,8 +85,9 @@ def positionmap(file, residues):
     #M5Bonds = [(0,1), (1,2), (2,3), (2,4), (4,5), (4,6), (2,5), (1,3), (2,6), (1,5)]
     #M6Bonds= [(0,1), (1,2), (2,3), (3,4), (2,5), (5,6), (5,7), (1,3), (2,4), (2,6)]   
     #M7Bonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (6,8), (1,3), (1,6), (2,7), (1,3), (3,5), (2,4), (1,7), (0,7)  ]
-    #M8Bonds = [(0,1), (1,2), (2,3), (3,4), (4,5),(3,6), (2,7), (7,8) , (8,9), (1,7),(2,6), (1,3), (3,5), (2,8), (7,9), (0,6), (1,6), (1,4)   ]   
-    for bond in M9bonds:
+    #M8Bonds = [(0,1), (1,2), (2,3), (3,4), (4,5),(3,6), (2,7), (7,8) , (8,9), (1,7),(2,6), (1,3), (3,5), (2,8), (7,9), (0,6), (1,6), (1,4)   ] 
+    
+    for bond in []:
         zerolist.append((bond[0]*residues)+bond[1])
         zerolist.append((bond[1]*residues)+bond[0])
     print(zerolist)
@@ -111,8 +112,9 @@ def positionmap(file, residues):
     return contactNP, customH, customW
 
 def nmfMap(distancemap, customH, customW):   
-    model = NMF(n_components = numNMF, max_iter=1200, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='custom' )
-    W = model.fit_transform(distancemap,  W = customW, H  = customH)
+    model = NMF(n_components = numNMF, max_iter=1200, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='nndsvda' )
+    #W = model.fit_transform(distancemap,  W = customW, H  = customH)
+    W = model.fit_transform(distancemap)
     H = model.components_
     plt.plot(W)
     plt.title("Protein Binary Components")
@@ -127,6 +129,9 @@ def nmfMap(distancemap, customH, customW):
          plt.xlabel("Frame")
          plt.show()
          plt.clf()  
+         plt.plot(W[:,indy])
+         plt.show()
+         plt.clf()  
     #plt.legend(["Component 1"])
     print(H.shape, "H")
     print(W.shape, "W")
@@ -134,5 +139,5 @@ def nmfMap(distancemap, customH, customW):
     np.save('ProCompons.npy', W)
     
         
-pm =positionmap('vmd/m9-45d.txt',11 )
+pm =positionmap('vmd/g1m5-45d.txt',11 )
 nmfMap(pm[0], pm[1], pm[2])

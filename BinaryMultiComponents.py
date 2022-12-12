@@ -11,7 +11,7 @@ from sklearn.decomposition import NMF
 from scipy.spatial.distance import cdist
 
 
-numNMF = 13
+numNMF = 6
 
     
     
@@ -112,7 +112,7 @@ def positionmap(file, residues):
     return contactNP, customH, customW
 
 def nmfMap(distancemap, customH, customW):   
-    model = NMF(n_components = numNMF, max_iter=1200, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='nndsvda' )
+    model = NMF(n_components = numNMF, max_iter=600, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='nndsvda' )
     #W = model.fit_transform(distancemap,  W = customW, H  = customH)
     W = model.fit_transform(distancemap)
     H = model.components_
@@ -135,8 +135,8 @@ def nmfMap(distancemap, customH, customW):
     #plt.legend(["Component 1"])
     print(H.shape, "H")
     print(W.shape, "W")
-    np.save('tempCompons.npy', H)
-    np.save('ProCompons.npy', W)
+    np.save('tempComponsg1m3.npy', H)
+    np.save('ProComponsg1m3.npy', W)
     
         
 pm =positionmap('vmd/g1m5-45d.txt',11 )

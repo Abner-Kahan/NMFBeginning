@@ -12,13 +12,18 @@ import pandas as pd
 import seaborn as sns
 
 
-numNMF =6
-residues = 11
+numNMF =7
+residues = 12
 def moveAverage(L,n):
     return np.convolve(L, np.ones(n), 'valid') / n
 print("bob")
-H = np.load('tempCompons.npy')
-W = np.load('ProCompons.npy')
+H = np.load('tempComponsg3f-7.npy')
+#6 is 10
+W = np.load('ProComponsg3f-7.npy')
+
+numNMF =7
+residues = 12
+
 H2 = np.zeros((numNMF, H.shape[1]-999))
 for entry in range(numNMF):
     H2[entry,:] = moveAverage(H[entry,:], 1000)
@@ -53,7 +58,7 @@ Hpeaks =  find_peaks(H2[0,:], prominence=.01)
 #for (p,z) M6Bondsin zip (Hmins[0], Hmins[1]['prominences']):
  #   print (p,z)
 #print ("----------------\n")
-# =============================================================================
+# =================2f-10============================================================
 # peaks = find_peaks(W[:,0], height = .3)
 # #print(peaks)
 # 
@@ -145,14 +150,18 @@ def funTable(W2,resids):
 #print(search)
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:], linewidth=.8)
-    plt.title("G1M5 Component "+ str(n))
+    plt.title("G2Fb Component "+ str(n))
     plt.xlabel("Frame")
+    #plt.figure(figsize=(3.46, 2.5))
     plt.show()
     plt.clf()
     Heatmap, axH = plt.subplots ()
     axH = sns.heatmap(funTable(W[:,n],residues))
     axH.set_xlabel('Residues')
+    axH.set_xticks([i+.5 for i in range(residues)] ,[i+1 for i in range(residues)])
     axH.set_ylabel('Residues')
+    axH.set_yticks([i + .5 for i in range(residues)] ,[i+1 for i in range(residues)])
+    #plt.figure(figsize=(3.46, 2.5))
     plt.show()
     plt.clf()
 
@@ -186,21 +195,9 @@ def myRandom(npAr):
     else:
         return ""
     
-#for n in range (50):
- #   print(0+n/100, myRandom(np.where(abs(H - 0-n/100) <.01)[1]))
-
-
-# for n in [7947,92768,85962, 64950 ,53011 ,83369 ,2078 , 45832 ,55691 ,57406 ,56477]:
-#     print(f"H[{n}] = {H[0, n]}")
- 
- #np.where(abs(H[0,20000:]-.38)<.01)
-# =============================================================================
-# counts = []
-# for n in range (int(np.ceil(np.max(H))*10)+1):
-#     counts.append(np.count_nonzero(np.logical_and (H[0] <= n/10, H[0] > (n-1)/10 )))
-# print(counts)
-# plt.bar(np.linspace(0,3, 31), counts, log = True)
-# plt.xlabel('value')
-# plt.ylabel('Frequency')
-#      
-# =============================================================================
+for n in range(numNMF):
+    print(np.max(H[n]/ np.sum(H,axis=0)))
+    q = np.argmax(H[n]/ np.sum(H,axis=0))
+    #print (q)
+    #print(H[:,q] / np.sum(H[:,q]) *100)
+    #print('\n')

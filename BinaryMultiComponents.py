@@ -11,7 +11,7 @@ from sklearn.decomposition import NMF
 from scipy.spatial.distance import cdist
 
 
-numNMF = 6
+
 
     
     
@@ -56,13 +56,13 @@ def positionmap(file, residues):
 
 
     
-    customW = np.ones((residues**2,numNMF))      
+    #customW = np.ones((residues**2,numNMF))      
    
     zerolist =[]
     for i in range(residues):
         zerolist.append(i*residues+i)
         
-    # G2bonds = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7) ,(7,8)]
+    # G2bonds = [(0,1), (1,2), (2,3), (3,print(sugar)4), (4,5), (2,6), (6,7) ,(7,8)]
     # G2bondsB = [(0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7) ,(7,8), (1,6), (2,4), (1,3), (2,7)]
     # G2fbonds = [(0,1), (0,2), (2,3), (3,4), (4,5), (5,6), (3,7),  (7,8), (8,9)  ]
     # G2fbondsB = [(0,1), (0,2), (2,3), (3,4), (4,5), (5,6), (3,7),  (7,8), (8,9), (1,2), (2,4), (3,8), (3,5), (2,7)  ]
@@ -94,10 +94,10 @@ def positionmap(file, residues):
     for frame in range(frames):
         for zero in zerolist:
             contactNP[zero,frame] = 0
-            if frame ==0:
-                customW[zero,0] =0
-                if numNMF == 2 :
-                    customW[zero,1] =0
+            # if frame ==0:
+            #     customW[zero,0] =0
+            #     if numNMF == 2 :
+            #         customW[zero,1] =0
                     
             
     noZero = np.count_nonzero(contactNP)
@@ -105,39 +105,51 @@ def positionmap(file, residues):
     print(noZero/ total)    
             
 
-    customH = np.full((numNMF,frames),.58)        
+   # customH = np.full((numNMF,frames),.58)        
 
 
     
-    return contactNP, customH, customW
+    return contactNP
 
-def nmfMap(distancemap, customH, customW):   
+def nmfMap(distancemap,numNMF):   
     model = NMF(n_components = numNMF, max_iter=600, tol= 1*10**-8, solver= 'mu', beta_loss= 'kullback-leibler', init ='nndsvda' )
     #W = model.fit_transform(distancemap,  W = customW, H  = customH)
     W = model.fit_transform(distancemap)
     H = model.components_
-    plt.plot(W)
-    plt.title("Protein Binary Components")
+    #plt.plot(W)
+    #plt.title("Protein Binary Components")
     #plt.legend(["Component 1"])
     #plt.legend(["Component 1"]) #G1M3bonds =  [ (0,1), (1,2), (2,3), (3,4), (4,5), (2,6), (6,7), (6,8), (1,3), (2,4),(1,6), (7,8), (2,7)    ]
 
-    plt.show()
-    plt.clf()
-    for indy in range(numNMF):
-         plt.plot(H[indy,:], linewidth=.3)
-         plt.title('M9 Component ' + str(indy +1))
-         plt.xlabel("Frame")
-         plt.show()
-         plt.clf()  
-         plt.plot(W[:,indy])
-         plt.show()
-         plt.clf()  
+    #plt.show()
+    #plt.clf()
+# =============================================================================
+#     for indy in range(numNMF):
+#          plt.plot(H[indy,:], linewidth=.3)
+#          plt.title('M9 Component ' + str(indy +1))
+#          plt.xlabel("Frame")
+#          plt.show()
+#          plt.clf()  
+#          plt.plot(W[:,indy])
+#          plt.show()
+#          plt.clf()  
+# =============================================================================
     #plt.legend(["Component 1"])
-    print(H.shape, "H")
-    print(W.shape, "W")
-    np.save('tempComponsg1m3.npy', H)
-    np.save('ProComponsg1m3.npy', W)
+    #print(H.shape, "H")
+    #print(W.shape, "W")
+    return H, W
+    #np.save('tempComponsg3f-7.npy', H)
+    #np.save('ProComponsg3f-7.npy', W)
+residueCount = [7,8, 9 ,10 ,11, 8, 7, 8, 8, 8, 8, 10, 11, 14, 14   ]
+sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt','n1fb-45d.txt' , 
+             'n2-45d.txt', 'n2b-45d.txt','n2f-45d.txt','n33-45d.txt','n36-45d.txt', 's1-45d.txt', 
+             's2-45d.txt',  's33-45d.txt', 's36-45d.txt']
+for sugar in zip(sugarList,residueCount)  : 
+    pm =positionmap('vmd/'+ sugar[0],sugar[1] )
+    for k in [4,5,6,7,8,9]:       
+          H, W  = nmfMap(pm,k)
+          np.save('tempCompons' + '_'+ sugar[0][:sugar[0].find('-')]+ '_' + str(k)+'.npy', H)
+          np.save('ProCompons' + '_' + sugar[0][:sugar[0].find('-')]+ '_'+ str(k)+'.npy', W)
     
-        
-pm =positionmap('vmd/g1m5-45d.txt',11 )
-nmfMap(pm[0], pm[1], pm[2])
+
+print('\a\a\a\a\a\a\a\a\a')

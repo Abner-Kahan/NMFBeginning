@@ -11,18 +11,31 @@ from scipy.signal import find_peaks
 import pandas as pd
 import seaborn as sns
 
+residueCount = [7,8, 9 ,10 ,11, 8, 7, 8, 8, 8, 8, 10, 11, 14, 14   ]
+sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt','n1fb-45d.txt' , 
+             'n2-45d.txt', 'n2b-45d.txt','n2f-45d.txt','n33-45d.txt','n36-45d.txt', 's1-45d.txt', 
+             's2-45d.txt',  's33-45d.txt', 's36-45d.txt']
+sugarDirectory = {'m5': 7, 'm6': 8, 'm7': 9, 'm8': 10, 'm9': 11, 'n1fb': 8, 'n2': 7, 'n2b': 8, 'n2f': 8, 'n33': 8, 'n36': 8, 's1': 10, 's2': 11, 's33': 14, 's36': 14}
 
-numNMF =7
-residues = 12
+
+numNMF = 5 #4-9
+sugar = 'n36'
+residues = sugarDirectory[sugar]
+H = np.load('tempCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
+W = np.load('ProCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
+
+H_df = pd.DataFrame(data= np.transpose(H), columns =  list(range(1,numNMF+1)))
+corr_matrix = H_df.corr()
+Heatmap5, axH5 = plt.subplots ()
+axH5 = sns.heatmap(corr_matrix,annot=True)
+
+
+plt.show(axH5)
+plt.clf()
 def moveAverage(L,n):
     return np.convolve(L, np.ones(n), 'valid') / n
-print("bob")
-H = np.load('tempComponsg3f-7.npy')
-#6 is 10
-W = np.load('ProComponsg3f-7.npy')
 
-numNMF =7
-residues = 12
+#6 is 10
 
 H2 = np.zeros((numNMF, H.shape[1]-999))
 for entry in range(numNMF):
@@ -51,7 +64,7 @@ for entry in range(numNMF):
 Hpeaks =  find_peaks(H2[0,:], prominence=.01)
 #print(Hpeaks[0])
 #for (p,z) in zip (Hpeaks[0], Hpeaks[1]['prominences']):
-#    print (p,z)
+#    print (p,z) 
 #print ("----------------\n")
 #Hmins = find_peaks(H2[0,:]*-1, prominence=1.3)
 #print(Hmins[0])
@@ -66,7 +79,7 @@ Hpeaks =  find_peaks(H2[0,:], prominence=.01)
 # 
 # 
 # 
-# tupleList = []
+# tupleList = []Copy of N2F
 # for n in peaks[0]:
 #      print(n)
 #      tupleList += [ tuple( [ (n // 11 + 1), (n % 11 + 1 )])]
@@ -123,7 +136,7 @@ if numNMF == 2:
 def funTable(W2,resids):
 # =============================================================================
 #     ext = np.zeros((resids,resids))
-#     ind =0 
+#     ind =0 Copy of N2F
 #     for a in range(resids):
 #         for b in range(resids):
 #             ext[a,b]= W2[ind]
@@ -144,13 +157,13 @@ def funTable(W2,resids):
 
 
     
-#for search in range (0,10000,10):
+#for search in range (0,10000,10):Copy of N2F
 #search= 
 #    print(H[0, search], search)
 #print(search)
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:], linewidth=.8)
-    plt.title("G2Fb Component "+ str(n))
+    plt.title(  sugar + " Component "+ str(n))
     plt.xlabel("Frame")
     #plt.figure(figsize=(3.46, 2.5))
     plt.show()
@@ -195,9 +208,17 @@ def myRandom(npAr):
     else:
         return ""
     
+def getPercentages(L):
+    Sentence = ''
+    for we in range(len(L)):
+        if L[we] != 0 :
+            Sentence += f" {L[we]} % Component {we}   "
+    return Sentence
 for n in range(numNMF):
     print(np.max(H[n]/ np.sum(H,axis=0)))
+print("__________________________________")
+for n in range(numNMF):
     q = np.argmax(H[n]/ np.sum(H,axis=0))
-    #print (q)
-    #print(H[:,q] / np.sum(H[:,q]) *100)
-    #print('\n')
+    print (q)
+    print(getPercentages(np.round(( H[:,q] / np.sum(H[:,q])*100),2)))
+    print('\n')

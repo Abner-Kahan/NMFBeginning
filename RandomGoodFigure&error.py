@@ -168,7 +168,6 @@ def nmf2TesterMixB():
     IrOrgs = [IR0,IR1]
     #axs[4].plot(product[:,matchTable[0,1]])
     
-
     
     
     #scale1  = np.mean(IR0)/np.mean(WPure[:,0])
@@ -262,11 +261,39 @@ def nmf2TesterMixB():
     ##print("Variable matrix", H)
    # print("Product Sizes", W.shape, IRF.shape)
     #print(nmfMatcher (IRF, product))
+
+    
+   
  
 nmf2TesterMixB()
 
+def addIRS2(peakNum,PointNum,xloc):
+    IR = np.zeros((PointNum,))
+    X =  np.linspace(0, PointNum, PointNum)
+    if type(xloc) ==int:
+        xloc =[xloc]
+    peakHeigh = [ .6 for i in range(peakNum) ] 
+    thickness = [ PointNum * .02 for i in range(peakNum) ] 
 
+    for f, i, b in zip(xloc, peakHeigh, thickness):  
+        IR += i*np.exp(-0.5*((X-f)/int(b))**2)
+    return IR
 
+plt.clf()
+fig3, axs3 = plt.subplots(3)
+spec1 =addIRS2(1,1000,200)
 
-
-
+spec2 =addIRS2(1,1000,240)
+MixedSpec =   addIRS2(2,1000,[200,240]) 
+axs3[0].plot(spec1/np.max(MixedSpec), color='red')
+axs3[1].plot(spec2/np.max(MixedSpec), color='blue') 
+axs3[0].set(ylim = [0,1])
+axs3[1].set(ylim = [0,1])
+axs3[0].set(xticks = [])
+axs3[1].set(xticks = [])
+axs3[2].plot(MixedSpec/np.max(MixedSpec), color='darkviolet')
+axs3[2].set(xlabel='cm$^-1$')
+axs3[0].set(title='Spectra 1')
+axs3[1].set(title='Spectra 2')
+axs3[2].set(title='Mixed IR Spectra')
+plt.show(fig3)

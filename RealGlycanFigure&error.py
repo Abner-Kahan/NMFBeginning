@@ -140,7 +140,7 @@ def nmf2TesterMixB():
     axs[0,0].plot(IR0/np.max(IR0), color= 'orangered')
     axs[0,0].set_title("Glycan 1", x=.5, y= .75)
 
-
+    
     
     IR1Name =random.choice(fileList)
     print(IR1Name)
@@ -150,10 +150,12 @@ def nmf2TesterMixB():
     axs[0,1].set_title("Glycan 2", x=.5, y= .75)
    # print(IR1.shape)
     #print("Correlation between Functions", ypendry(IR0,IR1))
+    
     IRF = np.zeros((2,4001))
     IRFPure = np.zeros((4,4001))
     IRF[0,:] = IR0 *fraction1 + IR1*(1-fraction1)
     IRF[1,:] = IR0 * fraction2 +  IR1*(1-fraction2)
+    
     axs[1,0].plot(IRF[0,:]/np.max(IRF[0,:]), color='darkorchid')
     axs[1,0].set_title("Mixture 1", x=.5, y= .75)
     axs[1,1].plot(IRF[1,:]/np.max(IRF[1,:]), color = 'darkorchid')
@@ -266,6 +268,12 @@ def nmf2TesterMixB():
     ##print("Variable matrix", H)
    # print("Product Sizes", W.shape, IRF.shape)
     #print(nmfMatcher (IRF, product))
+    fig2, axs2 = plt.subplots(1)
+    axs2.plot(np.transpose(IRF[:,0])/np.max(IRF[:,0]), color='Black')
+    axs2.set(xlabel='cm$^-1$')
+    axs2.set(title='Mixed IR Spectra')
+    plt.show(fig2)
+    
  
 nmf2TesterMixB()
 

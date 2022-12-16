@@ -144,11 +144,11 @@ residueCount = [7,8, 9 ,10 ,11, 8, 7, 8, 8, 8, 8, 10, 11, 14, 14   ]
 sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt','n1fb-45d.txt' , 
              'n2-45d.txt', 'n2b-45d.txt','n2f-45d.txt','n33-45d.txt','n36-45d.txt', 's1-45d.txt', 
              's2-45d.txt',  's33-45d.txt', 's36-45d.txt']
-residueCount=[9]
-sugarList = ['g1m3-45d.txt']
+#residueCount=[9,11,9,10,11,12]
+#sugarList = ['g1m3-45d.txt','g1m5-45d.txt','g2-45d.txt', 'g2f-45d.txt','g2fb-45d.txt','g3f-45d.txt','g1m3-45d.txt' ]
 for sugar in zip(sugarList,residueCount)  : 
     pm =positionmap('vmd/'+ sugar[0],sugar[1] )
-    for k in [6]:#[4,5,6,7,8,9]:       
+    for k in [2,3]:#[4,5,6,7,8,9]:       
           H, W  = nmfMap(pm,k)
           np.save('tempCompons' + '_'+ sugar[0][:sugar[0].find('-')]+ '_' + str(k)+'.npy', H)
           np.save('ProCompons' + '_' + sugar[0][:sugar[0].find('-')]+ '_'+ str(k)+'.npy', W)

@@ -309,7 +309,7 @@ def nmf2TesterMixB(broad):
     #axs[2].set(xticks=None)
    # plt.plot(x_range, sumsol[3]*meany)
     axs[3].set(xlabel='cm$^-1$')
-    fig.suptitle("NMF Decomposition of Amide II of Silk")
+    fig.suptitle("NMF Decomposition of Amide I of Silk")
     #plt.legend(["NMF", "Gaussian"])
 
     #IrPlotter(sumsol[0], "Gaussian",amide1_ran1,amide1_ran2) 

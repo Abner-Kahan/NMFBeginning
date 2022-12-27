@@ -18,8 +18,8 @@ sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt',
 sugarDirectory = {'g1m3': 9,'m5': 7, 'm6': 8, 'm7': 9, 'm8': 10, 'm9': 11, 'n1fb': 8, 'n2': 7, 'n2b': 8, 'n2f': 8, 'n33': 8, 'n36': 8, 's1': 10, 's2': 11, 's33': 14, 's36': 14}
 
 
-numNMF = 6 #4-9
-sugar = 'g1m3'
+numNMF = 4 #4-9
+sugar = 'n2f'
 residues = sugarDirectory[sugar]
 H = np.load('tempCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
 W = np.load('ProCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
@@ -41,9 +41,9 @@ H2 = np.zeros((numNMF, H.shape[1]-999))
 for entry in range(numNMF):
     H2[entry,:] = moveAverage(H[entry,:], 1000)
 
-H3 = np.zeros((numNMF, H.shape[1]-4999))
+H3 = np.zeros((numNMF, H.shape[1]-2499))
 for entry in range(numNMF):
-    H3[entry,:] = moveAverage(H[entry,:], 5000)
+    H3[entry,:] = moveAverage(H[entry,:], 2500)
 #print(np.argmin(H2, 1))
 #H_sort = np.sort(H2, 1)
 
@@ -181,12 +181,13 @@ for n in range(numNMF):
     #plt.figure(figsize=(3.46, 2.5))
     plt.show()
     plt.clf()
-
+plt.figure(figsize = (5,2))
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H3[n,:]), len(H3[n,:])), H3[n,:]/np.sum(H3,axis=0)*100)    
 plt.xlabel("Frame")
 plt.ylabel("% composition")
-plt.legend(['Com 0', 'Com 1', 'Com 2', 'Com 3', 'Com 4', 'Com 5' ],ncol =3)
+plt.legend(['Com 0', 'Com 1', 'Com 2', 'Com 3', 'Com 4', 'Com 5' ],ncol =2)
+
     #plt.figure(figsize=(3.46, 2.5))
 plt.show()
 plt.clf()

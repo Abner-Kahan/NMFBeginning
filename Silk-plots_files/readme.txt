@@ -1,0 +1,1 @@
+These images contain the silk amide I and Amide II band fit onto a collection of Gaussians in various conditions. The ones decomposed using NMF are labeled accordingly.

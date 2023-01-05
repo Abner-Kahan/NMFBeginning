@@ -1,0 +1,1 @@
+This directory contains snapshots, heat maps, and decompositions in the form of npy files from the MD simulations Each folder for a sugar contains that sugars snapshots. There are heat map examples in one folder, and the MD decompose contain the NMF decompositions of the MD simulations

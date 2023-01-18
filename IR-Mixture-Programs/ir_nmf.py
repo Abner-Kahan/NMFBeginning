@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+
+#This is old non functional code which uses cauchy distribution.
 import matplotlib.pyplot as plt
 import numpy as np
 #import pandas as pd
@@ -12,14 +14,14 @@ def addIRS(peakNum,PointNum):
     Ir = np.zeros(PointNum)
     for n in range(peakNum):
         xloc=  random.randrange(PointNum)
-        
+
         thickness = random.randrange(10,1000)
         thickness2 = random.randrange(1,5)
         peakHeight=random.random()
 #This is supposed to deal with peaks toward the ends of the spectra
         if (xloc + thickness+1) > PointNum:
             end = PointNum
-        else: 
+        else:
             end = (xloc + thickness+1)
         if (xloc-thickness < 0):
             start= 0
@@ -65,34 +67,7 @@ def nmfTester(spectra):
     plt.savefig("0of" + str(spectra)+ ":Original Spectra.png")
     plt.show()
     plt.close()
-    for n in range(spectra - 1):#plt.plot(np.linspace(4000,400,20000),IR2Stack)
-#plt.title("Two Original Spectra")
-plt.savefig("test.png")
-'''
-model = NMF(n_components=2, init='nndsvda', random_state=0)
-W = model.fit_transform(IR2Stack)
-plt.plot(np.linspace(4000,400,20000),W[:,0],color = 'cyan')
-plt.show()
-plt.close()
-plt.plot(np.linspace(4000,400,20000),W[:,1],color = 'yellow')
-plt.title("Two Calculated Spectra")
-plt.xlabel("cm^-1")
-#plt.savefig("calcSpectra.png")
-plt.show()
-plt.close()
-H = model.components_
-'''#plt.xlabel("cm^-1")
-#plt.savefig("basespectra.png")
-#plt.show()
-#plt.close()
-#IR2Stack = np.column_stack((IR2Stack, IR2Stack[:,1] + IR2Stack[:,0]))
-
-
-#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )
-#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
-
-#plt.plot(np.linspace(4000,400,20000),IR2Stack[:,2] )
-#
+    for n in range(spectra - 1):
         IR_stack = np.column_stack((IR_stack,addIRS(30,20000)))
         plt.plot(np.linspace(4000,400,20000),IR_stack[:,n+1])
         plt.title(str(n+1)+ " of " + str(spectra)+ ": Original Spectra")
@@ -117,7 +92,7 @@ H = model.components_
     plt.xlabel("cm^-1")
     return W
 nmfTester(4)
-        
+
 
 #old code that may not work
 #thickness= 10**(random.randrange(10,50)/10 )
@@ -130,6 +105,32 @@ Irs=[]
 for n in range (PointNum):
     Irs+=[0]
     '''
+
+'''
+    model = NMF(n_components=2, init='nndsvda', random_state=0)
+    W = model.fit_transform(IR2Stack)
+    plt.plot(np.linspace(4000,400,20000),W[:,0],color = 'cyan')
+    plt.show()
+    plt.close()
+    plt.plot(np.linspace(4000,400,20000),W[:,1],color = 'yellow')
+    plt.title("Two Calculated Spectra")
+    plt.xlabel("cm^-1")
+    #plt.savefig("calcSpectra.png")
+    plt.show()
+    plt.close()
+    H = model.components_
+    '''#plt.xlabel("cm^-1")
+    #plt.savefig("basespectra.png")
+    #plt.show()
+    #plt.close()
+    #IR2Stack = np.column_stack((IR2Stack, IR2Stack[:,1] + IR2Stack[:,0]))
+
+
+    #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )
+    #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
+
+    #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,2] )
+    #
     #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,0] )
 
 #plt.plot(np.linspace(4000,400,20000),IR2Stack[:,1] )

@@ -31,7 +31,7 @@ for entry in range(numNMF):
 #print(newList)
 #for n in range(len(newList)):
  #   for b in range(len(newList)):
-        
+
    #     if abs(newList[n] - newList[b])<25:
    #         newList[b] = 0
 #print(newList)
@@ -93,7 +93,7 @@ for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
        #      x+=5
        #  if index == 10:
        #      x+=5
-            
+
        # if index == 10:
        #      y  = y - 1
        # if index == 7:
@@ -117,16 +117,16 @@ if numNMF == 2:
             label = tupleList2[index]
             if index == 3:
                 x = x +4
-            
+
             plt.annotate(label, # this is the text
                   (x,y), # these are the coordinates to position the label
                       textcoords="offset points", # how to position the text
                       xytext=(0,1), # distance from text to points (x,y)
                       ha='center', color= "red") # horizontal alignment can be left, right or center
-            
+
             index += 1
     plt.plot(W[:,1], color='red')
-        
+
 
 plt.plot(W[:,0], color='green')
 #plt.ylim(0,1)
@@ -142,12 +142,12 @@ plt.xlabel("First residue in contact with second residue")
 plt.show()
 plt.clf()
 
-    
-    
 
-    
+
+
+
 #for search in range (0,10000,10):
-#search= 
+#search=
 #    print(H[0, search], search)
 #print(search)
 for n in range(numNMF):

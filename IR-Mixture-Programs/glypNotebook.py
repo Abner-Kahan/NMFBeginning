@@ -40,7 +40,7 @@ def file2Spectra(path):
     for freqTuple,intTuple in zip(freqstri,IRIntenstri):
         for n,p in zip(freqTuple,intTuple):
             IrDict.append( [float(n), float(p)])
-    
+
     Irs = np.array(IrDict)
     #normalize
     Irs[:,1] = 100*Irs[:,1]/np.amax(Irs[:,1])
@@ -59,15 +59,15 @@ def IrPlotter(item,title,leg = [], multiple = False):
         plt.legend(leg)
     plt.gca().invert_yaxis()
     plt.title(title)
-    plt.xlabel("cm^-1")    
+    plt.xlabel("cm^-1")
     plt.show()
     plt.clf()
 
 def gaussian_broadening(spectra, broaden, resolution=1):
- 
+
     """ Performs gaussian broadening on IR spectrum
     generates attribute self.IR - np.array with dimmension 4000/resolution consisting gaussian-boraden spectrum
-    
+
     spectra should be in numpy format or list with frequencies in 0 index then intensities in index 1
     :param broaden: (float) gaussian broadening in wn-1
     :param resolution: (float) resolution of the spectrum (number of points for 1 wn) defaults is 1, needs to be fixed in plotting
@@ -77,8 +77,8 @@ def gaussian_broadening(spectra, broaden, resolution=1):
     X = np.linspace(0,4000, int(4000/resolution)+1)
    # for f, i in zip(spectra[:,0], :  IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
    # self.IR=np.vstack((X, IR)).T #tspec
-                    
-                    
+
+
     for line in spectra:
         freq = line[0]
         inten = line[1]
@@ -90,7 +90,7 @@ def gaussian_broadening(spectra, broaden, resolution=1):
 
 
 def nmfMatcher(OG_spectra,Calc_spectra):
-    #pdb.set_trace() 
+    #pdb.set_trace()
         #print(len(OG_spectra))
     #OG_spectra = np.transpose(OG_spectra)
     mindim = np.amin(OG_spectra.shape)
@@ -104,9 +104,9 @@ def nmfMatcher(OG_spectra,Calc_spectra):
     #print("errorTable \n \n",errorTable)
     for entry in range(mindim):
          Match = np.where(np.amin(errorTable) == errorTable)
-         Match = list(Match) 
-         
-        
+         Match = list(Match)
+
+
          x = Match[0]
          y = Match[1]
          matchTable[entry,0] =  x
@@ -132,11 +132,11 @@ fileList = glob.glob('Tri_A1*/Tri_A1*/input.log')
 def VertPlotParamaters():
     plt.xlabel("Wavenumber cm^-1")
     plt.ylabel("Intensity %")
-    plt.gca().invert_yaxis() 
+    plt.gca().invert_yaxis()
     plt.gca().invert_xaxis()
     plt.show()
     plt.clf()
-    
+
 
 
 # In[53]:
@@ -184,7 +184,7 @@ def nmf2TesterMixB():
     fraction1 = random.random()
     fraction2 = random.random()
     print(f'The expected fractions are  {fraction1:.3}, {fraction2:.3}.')
-    
+
     #Creating Two Spectra
     IR0Name =random.choice(fileList)
     print(IR0Name)
@@ -194,7 +194,7 @@ def nmf2TesterMixB():
     axs[0,0].set_title("Glycan 1", x=.5, y= .75)
 
 
-    
+
     IR1Name =random.choice(fileList)
     print(IR1Name)
     IR1 = file2Spectra(IR1Name)
@@ -210,9 +210,9 @@ def nmf2TesterMixB():
     axs[1,0].set_title("Mixture 1", x=.5, y= .75)
     axs[1,1].plot(IRF[1,:]/np.max(IRF[1,:]), color = 'purple')
     axs[1,1].set_title("Mixture 2", x=.5, y= .75)
-    
+
     IRF= np.transpose(IRF)
-    
+
     model = NMF(n_components=2, max_iter=4000, tol= 1*10**-10, solver= 'mu', init ='nndsvda', beta_loss= 'kullback-leibler' )
     W = model.fit_transform(IRF)
     H = model.components_
@@ -223,10 +223,10 @@ def nmf2TesterMixB():
     matchTable = nmfMatcher (IRF, W)
     IrOrgs = [IR0,IR1]
     #axs[4].plot(product[:,matchTable[0,1]])
-    
 
-    
-    
+
+
+
     scale1  = np.mean(IR0)/np.mean(W[:,0])
     scale2  = np.mean(IR1)/np.mean(W[:,0])
     #difference between first input and first NMF
@@ -235,16 +235,16 @@ def nmf2TesterMixB():
     if difA < difB:
 
         axs[2,0].plot(W[:,0]/np.max(W[:,0]), color= 'blue')
-        
+
         axs[2,1].plot(W[:,1]/np.max(W[:,1]), color = 'red')
     else:
         axs[2,0].plot(W[:,1]/np.max(W[:,1]), color= 'blue' )
-        
-        axs[2,1].plot(W[:,0]/np.max(W[:,0]), color = 'red')  
+
+        axs[2,1].plot(W[:,0]/np.max(W[:,0]), color = 'red')
     axs[2,0].set_title("NMF Glycan 1", x=.5, y= .75)
     axs[2,1].set_title("NMF Glycan 2", x=.5, y= .75)
     #IrPlotter([IrOrgs[matchTable[0,0]], product[:,matchTable[0,1]]],"First Calculated Spectra", [IR0Name[9:-10], 'NMF Generated IR'],True)
-    #IrPlotter([IrOrgs[matchTable[1,0]] ,product[:,matchTable[1,1]]],"Second Calculated Spectra", [IR1Name[9:-10], 'NMF Generated IR'], True)      
+    #IrPlotter([IrOrgs[matchTable[1,0]] ,product[:,matchTable[1,1]]],"Second Calculated Spectra", [IR1Name[9:-10], 'NMF Generated IR'], True)
    # IrPlotter([IROrgs[matchTable[0][0]],product
                #[W[matchTable[0][1],:]]], "First Matched Spectra", True)
     axs[2,0].set(xlabel='cm$^-1$')
@@ -262,11 +262,5 @@ def nmf2TesterMixB():
     ##print("Variable matrix", H)
    # print("Product Sizes", W.shape, IRF.shape)
     #print(nmfMatcher (IRF, product))
- 
+
 nmf2TesterMixB()
-
-
-
-
-
-

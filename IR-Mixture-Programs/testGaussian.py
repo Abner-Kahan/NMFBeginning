@@ -23,7 +23,7 @@ def addIRS(peakNum,PointNum):
         for c in range(PointNum - thickness):
             if any(Ir[c + thickness : (c +thickness+10)]):
                 Irlocs[c] = 1
-
+                
         xloc=  random.choice(np.where(Irlocs == 0)[0])
         #print("xloc", xloc)
          #frcations of graph
@@ -33,7 +33,7 @@ def addIRS(peakNum,PointNum):
 #This is supposed to deal with peaks toward the ends of the spectra
         if (xloc + 1 + thickness ) > PointNum:
             end = PointNum
-        else:
+        else: 
             end = (xloc + 1 + thickness)
         if (xloc -  thickness < 0):
             start = 0

@@ -47,9 +47,9 @@ axs[0].plot(P, color = 'orange')
 axs[0].plot(Q, color = 'blue')
 
 axs[0].set_title(f"Frobenius Error {EucError:.3} > KL Error {KLError:.3}",
-                 
+
                  fontfamily='serif', loc='left', fontsize='medium')
-plt.subplots_adjust(hspace=(.4) )        
+plt.subplots_adjust(hspace=(.4) )
 axs[0].legend(['Original', 'Y-shifted upwards'])
 print(KLError,EucError, scipy.stats.energy_distance(P,Q), scipy.stats.wasserstein_distance(P,Q), ypendry(P,Q))
 
@@ -67,4 +67,4 @@ axs[1].plot(P, color = 'orange')
 axs[1].plot(Q2, color = 'green')
 axs[1].set_title(f"KL Error {KLError2:.3} > Frobenius Error {EucError2:.3}",fontfamily='serif', loc='left', fontsize='medium')
 axs[1].legend(['Original', 'Original Shifted by 4'])
-
+plt.show()

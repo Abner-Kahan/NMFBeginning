@@ -22,9 +22,9 @@ axs[0].plot(P)
 axs[0].plot(Q)
 
 axs[0].set_title(f"Frobenius Error {EucError:.3} > KL Error {KLError:.3}",
-                 
+
                  fontfamily='serif', loc='left', fontsize='medium')
-plt.subplots_adjust(hspace=(.4) )        
+plt.subplots_adjust(hspace=(.4) )
 
 P2 = [.05, .1, .2, .05, .15, .25, .08, .12]
 Q2 =rotate(P2,4)
@@ -33,3 +33,4 @@ EucError2 = distance.euclidean(P2,Q2)
 axs[1].plot(P2)
 axs[1].plot(Q2)
 axs[1].set_title(f"KL Error {KLError2:.3} > Frobenius Error {EucError2:.3}",fontfamily='serif', loc='left', fontsize='medium')
+plt.show()

@@ -53,10 +53,10 @@ def ypendrySub(TheoSpec,ExperSpec):
     #eExper = ImaginaryEnergy(ExperSpec)
     #specDif = SpecDifferenceSq(TheoSpec,ExperSpec)
     sumPendry = 0
-    
+
     for n in range(len(TheoSpec)-1):
        sumPendry+=num(n,TheoSpec,ExperSpec,eTheo )/denom(n,TheoSpec,ExperSpec,eTheo)
-        
+
     return sumPendry/4000
 def Ypendry3(TheoSpec,ExperSpec):
     eTheo = ImaginaryEnergy(TheoSpec)
@@ -77,16 +77,16 @@ def file2Spectra(path):
     for freqTuple,intTuple in zip(freqstri,IRIntenstri):
         for n,p in zip(freqTuple,intTuple):
             IrDict.append( [float(n), float(p)])
-    
+
     Irs = np.array(IrDict)
     #normalize
     Irs[:,1] = 100*Irs[:,1]/np.amax(Irs[:,1])
     return Irs
 def gaussian_broadening(spectra, broaden, resolution=1):
- 
+
     """ Performs gaussian broadening on IR spectrum
     generates attribute self.IR - np.array with dimmension 4000/resolution consisting gaussian-boraden spectrum
-    
+
     spectra should be in numpy format or list with frequencies in 0 index then intensities in index 1
     :param broaden: (float) gaussian broadening in wn-1
     :param resolution: (float) resolution of the spectrum (number of points for 1 wn) defaults is 1, needs to be fixed in plotting
@@ -96,8 +96,8 @@ def gaussian_broadening(spectra, broaden, resolution=1):
     X = np.linspace(0,4000, int(4000/resolution)+1)
    # for f, i in zip(spectra[:,0], :  IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
    # self.IR=np.vstack((X, IR)).T #tspec
-                    
-                    
+
+
     for line in spectra:
         freq = line[0]
         inten = line[1]

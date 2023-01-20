@@ -329,31 +329,31 @@ def nmf2TesterMixB(ran1,ran2,broad):
     plt.show()
     plt.clf()
     
-# =============================================================================
-#     plt.plot(Humdities, Hnorm[sorter[0], 11:22], label = numPeaks0)
-#     plt.plot(Humdities, Hnorm[sorter[1], 11:22], label = numPeaks1)
-#     plt.plot(Humdities, Hnorm[sorter[2], 11:22], label = numPeaks2)
-#     plt.plot(Humdities, Hnorm[sorter[3], 11:22], label = numPeaks3)
-#    # plt.plot(Humdities, Hnorm[4, 11:22], label = numPeaks4)
-# 
-#     plt.xlabel("%humidity")
-#     plt.legend()
-#     plt.title('MeOH Fractions')
-#     plt.show()
-#     plt.clf()    
-#     
-#     plt.plot(Humdities, Hnorm[sorter[0], 22:33], label = numPeaks0)
-#     plt.plot(Humdities, Hnorm[sorter[1], 22:33], label = numPeaks1)
-#     plt.plot(Humdities, Hnorm[sorter[2], 22:33], label = numPeaks2)
-#     plt.plot(Humdities, Hnorm[sorter[3], 22:33], label = numPeaks3)
-#    # plt.plot(Humdities, Hnorm[4, 22:33], label = numPeaks4)
-# 
-#     plt.xlabel("%humidity")
-#     plt.legend()
-#     plt.title('WA45 Fractions')
-#     plt.show()
-#     plt.clf()
-#     
+#=============================================================================
+    plt.plot(Humdities, Hnorm[sorter[0], 11:22], label = numPeaks0)
+    plt.plot(Humdities, Hnorm[sorter[1], 11:22], label = numPeaks1)
+    plt.plot(Humdities, Hnorm[sorter[2], 11:22], label = numPeaks2)
+    plt.plot(Humdities, Hnorm[sorter[3], 11:22], label = numPeaks3)
+    # plt.plot(Humdities, Hnorm[4, 11:22], label = numPeaks4)
+    
+    plt.xlabel("%humidity")
+    plt.legend()
+    plt.title('MeOH Fractions')
+    plt.show()
+    plt.clf()    
+    
+    plt.plot(Humdities, Hnorm[sorter[0], 22:33], label = numPeaks0)
+    plt.plot(Humdities, Hnorm[sorter[1], 22:33], label = numPeaks1)
+    plt.plot(Humdities, Hnorm[sorter[2], 22:33], label = numPeaks2)
+    plt.plot(Humdities, Hnorm[sorter[3], 22:33], label = numPeaks3)
+    # plt.plot(Humdities, Hnorm[4, 22:33], label = numPeaks4)
+    
+    plt.xlabel("%humidity")
+    plt.legend()
+    plt.title('WA45 Fractions')
+    plt.show()
+    plt.clf()
+
 # =============================================================================
     
     

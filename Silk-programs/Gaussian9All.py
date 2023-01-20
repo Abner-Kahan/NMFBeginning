@@ -65,21 +65,21 @@ def gauss(x, h, A, x0, c):
 def fetchIr(path,column,ran1,ran2):
     logfile =  open(path, 'r')
     logtest = logfile.readlines()
-   
+
     logfile.close()
     rows = len(logtest[0].split())
     columns = len (logtest)
-              
+
     IrArray = np.zeros((rows,columns ))
-    x= 0 
+    x= 0
     y = 0
     for line in logtest:
-        
+
 
         for word in line.split():
             word = word.replace(',' , '.')
             if (x == 0) and (float(word) < ran1 or float(word) > ran2):
-                
+
                 break
 
 
@@ -95,13 +95,13 @@ def fetchIr(path,column,ran1,ran2):
     #print(IrArray.shape)
     mask = (IrArray[0,:]) != [0] *len(IrArray[0])
     #print(mask)
-    
+
     IrArray2 = IrArray[:,mask]
     #print(IrArray2.shape)
     #plt.scatter(IrArray2[0],IrArray2[1])
     #print(IrArray)
-    
-    
+
+
     return IrArray2[(0,column),:]
 
 
@@ -111,7 +111,7 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
     #colors =['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603']
    # print(colors)
 
-        
+
     if not(multiple):
         plt.plot(np.linspace(ran1,ran2,(int(ran2-ran1) + 1)),item)
     else:
@@ -126,17 +126,17 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
     plt.title(title)
     plt.xlabel("cm^-1")
     plt.xlim(ran2,ran1)
-    
+
     plt.show()
-    plt.clf()   
+    plt.clf()
 
 
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
- 
+
     """ Performs gaussian broadening on IR spectrum
     generates attribute self.IR - np.array with dimmension 4000/resolution consisting gaussian-boraden spectrum
-    
+
     spectra should be in numpy format or list with frequencies in 0 index then intensities in index 1
     :param broaden: (float) gaussian broadening in wn-1"""
     """
@@ -148,7 +148,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
     #for f, i in zip(spectra[:,0]):
       #  IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
       #  IR=np.vstack((X, IR)).T #tspec
-   
+
     freq = spectra[0]
     inten = spectra[1]
     if theory:
@@ -161,7 +161,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1,theory=False):
     for f,i in zip(freq,inten):
        IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
     return IR
-       
+
 def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))  + \
@@ -171,7 +171,7 @@ def fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma
 def gaussTwo(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1):
     return (H_0 + A_0 * np.exp(-(x - x0_0) ** 2 / (sigma_0 ** 2))) +   \
               ( A_1 * np.exp(-(x - x0_1) ** 2 / (sigma_1 ** 2)))
-              
+
 def gaussEight(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3, \
                 A_4, x0_4, sigma_4,  A_5, x0_5, sigma_5,  A_6, x0_6, sigma_6, A_7, x0_7, sigma_7, A_8, x0_8, sigma_8):
     return fourgauss(x, H_0, A_0, x0_0, sigma_0,  A_1, x0_1, sigma_1,  A_2, x0_2, sigma_2, A_3, x0_3, sigma_3) + gauss(x, H_0, A_4, x0_4, sigma_4) + \
@@ -201,7 +201,7 @@ def fitEightComp(selec,sol):
 
     peak1 =  1530 #1620
     peak2 =  1554
-    peak3 =  1564    
+    peak3 =  1564
     peak4 = 1580# could be 1540
     peak5 =  1600
     peak6 =  1620
@@ -215,7 +215,7 @@ def fitEightComp(selec,sol):
                     np.inf,amide1_ran2,15,  np.inf, amide1_ran2,15, np.inf, amide1_ran2,15, np.inf, amide1_ran2,15] )
     fit_y8 = curve_fit(gaussEight,IRboy[0],IRboy[1], p0 = guesses,bounds = constraints, method ='trf')
     par8 = fit_y8[0]
-    yplot8 =gaussEight(x_range, par8[0],par8[1],par8[2],par8[3],par8[4],par8[5],par8[6], 
+    yplot8 =gaussEight(x_range, par8[0],par8[1],par8[2],par8[3],par8[4],par8[5],par8[6],
                        par8[7],par8[8],par8[9],par8[10],par8[11],par8[12],par8[13],par8[14],par8[15],
                        par8[16],par8[17],par8[18],par8[19],par8[20],par8[21],par8[22],par8[23],par8[24], par8[25],par8[26],par8[27])
     plt.plot(x_range, yplot8)#,markersize=1)import matplotlib.image as mpimg
@@ -228,7 +228,7 @@ def fitEightComp(selec,sol):
     plt.clf()
     peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23], par8[26] ])
     indexL =[]
-    
+
     amide2Colors = ['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#e6550d','#a63603']
     amide1Colors = ['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#756bb1','#54278f']
     plt.plot(x_range, (fourgauss(x_range,par8[0],par8[1],par8[2],par8[3], par8[4],par8[5],par8[6],
@@ -240,7 +240,7 @@ def fitEightComp(selec,sol):
     plt.plot(x_range, gauss(x_range, par8[0],par8[13],par8[14],par8[15]),color = 'black')
     plt.plot(x_range, (fourgauss(x_range,par8[0],par8[16],par8[17],par8[18],
                                   par8[19],par8[20],par8[21], par8[22],par8[23],par8[24],par8[25],par8[26],par8[27])),color = amide1Colors[5])
-    
+
 
     plt.plot(x_range, gauss(x_range, par8[0],par8[16],par8[17],par8[18]),color = amide1Colors[1])
     plt.plot(x_range, gauss(x_range, par8[0],par8[19],par8[20],par8[21]),color = amide1Colors[2])
@@ -251,42 +251,42 @@ def fitEightComp(selec,sol):
     plt.xlim(max(x_range), min(x_range))
     plt.title(f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]}")
     plt.legend(["Amide II", "BT","RC","BS","AH","Correction", "Amide I","BS","RC","AH","BT"])
-    
+
     plt.savefig(f"8Gaussians{Humdities[selec-1]}humiditySolvent{solvents[sol]}.png")
     plt.show()
     plt.clf()
-    
+
     peaks8s = ([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23],par8[26]  ])
     GaussOrder = np.argsort([par8[2], par8[5],par8[8],par8[11],par8[14], par8[17], par8[20], par8[23],par8[26] ])
     #indexL =[]
     #for peaky in sorted(peaks8s):
     #    indexL.append(peaks8s.index(peaky))
-     
+
   #  for p in peaks8s:
        # print(round(p,1), end = " ")
     gaussA = gauss(x_range, par8[0], par8[1], par8[2], par8[3])
       #area1 = scipy.integrate.quad(gauss, ran1,ran2, (par4[0], par4[1], par4[2], par4[3] ) )[0]
-      
+
     gaussB = gauss(x_range, par8[0], par8[4], par8[5], par8[6])
     gaussC = gauss(x_range, par8[0], par8[7], par8[8], par8[9])
     gaussD = gauss(x_range, par8[0], par8[10], par8[11], par8[12])
-   
+
     areaA = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[1], par8[2], par8[3] ) )[0]
     areaB = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[4], par8[5], par8[6] ) )[0]
     areaC = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[7], par8[8], par8[9] ) )[0]
     areaD = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[10], par8[11], par8[12] ) )[0]
-    
+
     areaE = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[13], par8[14], par8[15] ) )[0]
     areaF = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[16], par8[17], par8[18] ) )[0]
     areaG = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[19], par8[20], par8[21] ) )[0]
     areaH = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[22], par8[23], par8[24] ) )[0]
     areaI = scipy.integrate.quad(gauss, ran1,ran2, (par8[0], par8[25], par8[26], par8[27] ) )[0]
-    
+
     areas = [areaA,areaB,areaC,areaD,areaE, areaF, areaG, areaH,areaI ]
-      
+
     #gausses = [gaussA,gaussB,gaussC,gaussD]
-   
-      
+
+
     #gausses =  [gausses[i] for i in GaussOrder]
     areas =  [areas[i] for i in GaussOrder]
     peaks8s = [peaks8s[i] for i in GaussOrder]
@@ -296,18 +296,19 @@ def fitEightComp(selec,sol):
         areas[ind] = area/summa
         ind +=1
     print ("\n")
-    print( f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]} \n")  
+    print( f"8 Gaussians:{Humdities[selec-1]}% humidity Solvent: {solvents[sol]} \n")
+    print (f"Peaks: {peaks8s}")
     print ("Areas", np.round(areas,3), "\n\n\n\n")
     return peaks8s, areas
     #return peaks8s
     #1620
-fitEightComp(1,0)  
-#Peak finder    
+#fitEightComp(1,0)
+#Peak finder
 #indices = []
 #for solv in solvents:
  #   for humi in Humdities:
   #      indices.append(str(solv)+": "+str(humi)+'%')
-#Peaks = pd.DataFrame(columns =["Am II -A","Am II -B", "Am II -C", "Am II -D", "Solvent", "Am I - BS" , 
+#Peaks = pd.DataFrame(columns =["Am II -A","Am II -B", "Am II -C", "Am II -D", "Solvent", "Am I - BS" ,
               #                 "Am I - RC" ,"Am I - AH" ,"Am I - BT" ], index = indices)
 #print(Peaks)
 
@@ -316,56 +317,47 @@ fitEightComp(1,0)
 # model = 0
 # for sol in range(len(solvents)):
 #     for hum in range(len(Humdities)):
-        
+
 #         Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)
 #         model+=1
 
-# Peaks.to_csv('AllSpectraNEW.csv')       
-        
-  
+# Peaks.to_csv('AllSpectraNEW.csv')
+
+
 #rea Finder
 indices = []
 for solv in solvents:
     for humi in Humdities:
         indices.append(str(solv)+": "+str(humi)+'%')
- #       
+ #
 Peaks = pd.DataFrame(columns =["BT II","RC II","BS II","AH II","Correction", "BS I","RC I","AH I","BT I"], index = indices)
+Areas = pd.DataFrame(columns =["BT II","RC II","BS II","AH II","Correction", "BS I","RC I","AH I","BT I"], index = indices)
 
 
 
 model = 0
 for sol in range(len(solvents)):
     for hum in range(len(Humdities)):
-        
-        Peaks.loc[indices[model]] = fitEightComp(hum+1,sol)[0]
+        decomp = fitEightComp(hum+1,sol)
+        Peaks.loc[indices[model]] = decomp[0]
+        Areas.loc[indices[model]] = decomp[1]
         model+=1
 
-Peaks.to_csv('PeaksOf8A.csv')       
-        
-# =============================================================================
-#   
-#area Finder
-indices = []
-for solv in solvents:
-      for humi in Humdities:
-          indices.append(str(solv)+": "+str(humi)+'%')
-Areas = pd.DataFrame(columns =["BT II","RC II","BS II","AH II","Correction", "BS I","RC I","AH I","BT I"], index = indices)
-model = 0
-for sol in range(len(solvents)):
-      for hum in range(len(Humdities)):          
-         Areas.loc[indices[model]] = fitEightComp(hum+1,sol)[1]
-         model+=1
-# 
+Peaks.to_csv('PeaksOf8A.csv')
+print(Peaks)
 print(Areas)
-Areas.to_csv('Areasof8A.csv')       
-                                           
-         
+Areas.to_csv('Areasof8A.csv')
+# =============================================================================
+#
+#area Finder
+#
 
-  
+
+
+
+
 
 
 #IR1 = fetchIr('WA45Sample.txt',9,ran1,ran2)
 #IRBroad = gaussian_broadening(IR1,broad,ran1,ran2)
 #plt.plot(IR1[0],IR1[1])
-        
-    

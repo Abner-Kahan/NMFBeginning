@@ -104,29 +104,30 @@ ind = 0
     #output = output.split(B'C:/Users/Abner/Documents/Python Scripts')
 
     #output=output[::2]
-output = glob.glob('**/*/input_ir.txt',recursive = True)
-print (output)
-
+output= glob.glob('SilkGeometries/*/*/**/input_ir.txt',recursive=True)
+for n in output:
+    print(n)
 #print (output)
 if OperatingSystem =='Windows':
     TypeList = ['\\gas\\', '\\wat_gas\\', '\\pcm\\', '\\wat_pcm\\']
+    
     for Type in TypeList:
         type_filter = filter(lambda x: ('A15' in x) and (Type in x), output)
         Inter =list(type_filter)
 
-    #print(Inter)
+        print(Inter)
         specs = []
         legend = []
 
-    for spec in Inter:
-       i = spec.index('\\',9)
-       legend.append(spec[8:i])
-       specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
+        for spec in Inter:
+            i = spec.index('\\',9)
+            legend.append(spec[8:i])
+            specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
        #print("check" ,specs)
        #print('specs', len(specs))
     #print(specs)
 
-    IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
+        IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
 
     for Type in TypeList:
         type_filter = filter(lambda x: ('A15' in x) and (Type in x), output)
@@ -145,7 +146,7 @@ if OperatingSystem =='Windows':
 
 if OperatingSystem =='Linux':
     TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
-    for Type in TypeList:center
+    for Type in TypeList:
         type_filter = filter(lambda x: ('bturn' in x) and (Type in x), output)
         Inter =list(type_filter)
         Inter =sorted(Inter)
@@ -153,7 +154,7 @@ if OperatingSystem =='Linux':
         specs = []
         legend = []
        # offset = -50
-        for spec in Inter:
+    for spec in Inter:
             m = spec.index('/',3)
             i = spec.index('/',7)
 
@@ -169,9 +170,9 @@ if OperatingSystem =='Linux':
             #offset +=25
             legend.append(str(spec[m+1:i])+ " Peaks: " +str(peaks+1450)[1:-1]+ " cm-1")
             #print("check" ,specs)
-        IrPlotter(specs, "Bturn " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True, colors =4 )
-        plt.show()
-        plt.clf()
+    IrPlotter(specs, "Bturn " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True, colors =4 )
+    plt.show()
+    plt.clf()
     for Type in TypeList:
         type_filter = filter(lambda x: ('helix' in x) and (Type in x), output)
         Inter =list(type_filter)
@@ -201,8 +202,8 @@ if OperatingSystem =='Linux':
             #for peak in peaks:
               #  plt.annotate(peak+1450,(peak+1450,info[peak]))
             #print("check" ,specs)
-        IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
-        plt.show()
-        plt.clf()
+    IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
+    plt.show()
+    plt.clf()
 
 #=============================================================================

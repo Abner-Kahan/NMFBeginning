@@ -27,15 +27,15 @@ def addIRS(peakNum,PointNum):
     IR = np.zeros((PointNum,))
     X =  np.linspace(0, PointNum, PointNum)
 
-    xloc = [ random.randrange(0, PointNum) for i in range(peakNum) ] 
-    peakHeigh = [ random.random() for i in range(peakNum) ] 
-    thickness = [ PointNum * random.choice([.007,.008,.009,.01,.011,.012,.013,.014,.042]) for i in range(peakNum) ] 
+    xloc = [ random.randrange(0, PointNum) for i in range(peakNum) ]
+    peakHeigh = [ random.random() for i in range(peakNum) ]
+    thickness = [ PointNum * random.choice([.007,.008,.009,.01,.011,.012,.013,.014,.042]) for i in range(peakNum) ]
 
-    for f, i, b in zip(xloc, peakHeigh, thickness):  
+    for f, i, b in zip(xloc, peakHeigh, thickness):
         IR += i*np.exp(-0.5*((X-f)/int(b))**2)
 
     plt.clf
-    return IR 
+    return IR
 def ImaginaryEnergy(spectra):
     peaks, _ = find_peaks(spectra)
     results_half = peak_widths(spectra, peaks, rel_height=0.5)
@@ -50,7 +50,7 @@ def getFrac(aray):
     k = (aray[1,0]/aray[1,1] - 1.0 )/    \
     ( aray[0,1] * aray[1,0] / ( aray[0,0] * aray[1,1] ) - 1.0)
     j = ( aray[1,0]/aray[1,1] -1) / ( aray[1,0]/aray[1,1]- aray[0,0]/aray[0,1] )
-    
+
     #print(k,j)
     return k,j
 def newY(wavelength, spectra,V_oi):
@@ -74,7 +74,7 @@ def Ypendry3(TheoSpec,ExperSpec):
 paramlist = ['random_cd_frobenius' ,
                'nndsvd_cd_frobenius' ,
                'nndsvda_cd_frobenius' ,
-               'nndsvdar_cd_frobenius' , 
+               'nndsvdar_cd_frobenius' ,
                'random_mu_frobenius' ,
                'nndsvd_mu_frobenius' ,
                'nndsvda_mu_frobenius' ,
@@ -93,32 +93,32 @@ def nmf2TesterMix(numPoints):
    # print(IR0Name)
 
 
-    
+
     # IrMix = np.zeros((4,numPoints))
-    # IrMix[0,:] = IR0*fraction1 + IR1*(1-fraction1) 
-    # IrMix[1,:] = IR0*fraction2 + IR1*(1-fraction2) 
+    # IrMix[0,:] = IR0*fraction1 + IR1*(1-fraction1)
+    # IrMix[1,:] = IR0*fraction2 + IR1*(1-fraction2)
     # IrMix[2,:] = IR0
-    # IrMix[3,:] = IR1  
-    
+    # IrMix[3,:] = IR1
+
     #plt.plot(IR0)
    # plt.plot(IR1)
    # plt.show()
     #plt.clf()
     IrMixLD = np.zeros((2,numPoints))
-    IrMixLD[0,:] = IR0*fraction1 + IR1*(1-fraction1) 
-    IrMixLD[1,:] = IR0*fraction2 + IR1*(1-fraction2) 
+    IrMixLD[0,:] = IR0*fraction1 + IR1*(1-fraction1)
+    IrMixLD[1,:] = IR0*fraction2 + IR1*(1-fraction2)
     IrOrg = IrMixLD
     IrMixLD = np.transpose(IrMixLD)
   #  IrMix= np.transpose(IrMix)
     ErrorDict ={}
     for param in paramlist:
         model = NMF(n_components=2, max_iter=1000, tol= 1*10**-10, \
-        init =param[:param.find('_')], solver = param[param.find('_')+1:param.rfind('_')],  
+        init =param[:param.find('_')], solver = param[param.find('_')+1:param.rfind('_')],
         beta_loss = param[param.rfind('_')+1:])
-            
+
         W_ld = model.fit_transform(IrMixLD)
         H_ld = model.components_
-        Errt = model.reconstruction_err_       
+        Errt = model.reconstruction_err_
         ypendry = Ypendry3(IR0,W_ld[:,0])
         ypendry2 = Ypendry3(IR1,W_ld[:,1])
         ypendryFlip = Ypendry3(IR0,W_ld[:,1])
@@ -136,7 +136,7 @@ def nmf2TesterMix(numPoints):
             print("flip\n\n\n")
         NewFrac1 =  getFrac(H_ld)[0]
         NewFrac2 =  getFrac(H_ld)[1]
-    
+
         PendryR = (ypendry+ypendry2)/2
      #   RealFrac1 = H[0,0]/np.max(H[0])
      #   RealFrac2 = H[0,1]/np.max(H[0])
@@ -146,9 +146,9 @@ def nmf2TesterMix(numPoints):
         #    RealFrac2 = 1- RealFrac2
        # wassertein1 = scipy.stats.wasserstein_distance(IrMixLD[:,0],product[:,0])
         #wassertein2 = scipy.stats.wasserstein_distance(IrMixLD[:,1],product[:,1])
-    
+
         FractionError =    (percentError(fraction1,NewFrac1 ) + percentError(1.0 - fraction1,1.0- NewFrac1 ) +  \
-            percentError(fraction2, NewFrac2) + percentError(1.0- fraction2, 1.0 - NewFrac2)  )/4.0                   
+            percentError(fraction2, NewFrac2) + percentError(1.0- fraction2, 1.0 - NewFrac2)  )/4.0
         # if Errt> 50:
         #     plt.plot(IR0)
         #     plt.plot(W_ld[:,0])
@@ -159,17 +159,17 @@ def nmf2TesterMix(numPoints):
 
             #5,7,9,11
             #13,15,17,19
-            
-            
-            
-# [Fraction1, 1-Fraction, Fraction2, 1-Fraction2, 
-# Frac1 -NMF, % error, 1-Frac1 NMF, %error, 
+
+
+
+# [Fraction1, 1-Fraction, Fraction2, 1-Fraction2,
+# Frac1 -NMF, % error, 1-Frac1 NMF, %error,
 #Frac2 -NMF, % error, 1-Frac2 NMF, %error,
 # Frac1 -NMF Real, % error, 1-Frac1 NMF Real, %error,
-# Frac2 -NMF Real, % error, 1-Frac2 NMF Real, %error  ]    
-timeA = time.perf_counter_ns() 
+# Frac2 -NMF Real, % error, 1-Frac2 NMF Real, %error  ]
+timeA = time.perf_counter_ns()
 
-iters = 30
+iters = 50
 ResultsTable = pd.DataFrame(columns = paramlist)
 
 with warnings.catch_warnings():
@@ -182,7 +182,7 @@ print ("Fro Error")
 print(ResultsTable.loc[1,:].mean())
 print ("Pendry Error")
 print(ResultsTable.loc[2,:].mean())
-    
+
 
 
 #print(ResultsTable)
@@ -201,5 +201,3 @@ sys.stdout.flush()
 
 #print(np.mean(BigTable2[:,3]))
 #np.save('BigIterFractions.npy',ResultsTable)
-
-    

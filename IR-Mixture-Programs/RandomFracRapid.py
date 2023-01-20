@@ -110,7 +110,7 @@ def nmf2TesterMix(numPoints):
 # Frac1 -NMF Real, % error, 1-Frac1 NMF Real, %error,
 # Frac2 -NMF Real, % error, 1-Frac2 NMF Real, %error  ]    
     
-iters = 100
+iters = 10
 ResultsTable = np.zeros((iters, 20))
 for n in range(iters):
     ResultsTable[n] =  nmf2TesterMix(10000)

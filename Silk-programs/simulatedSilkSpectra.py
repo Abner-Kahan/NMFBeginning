@@ -39,21 +39,21 @@ def IrPlotter(item,title,ran1,ran2,leg = [], multiple = False):
     #colors = np.array([(254,230,206), (253,174,107),(230,85,13)])
     #colors = colors/256
     colors =['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603']
-    print(colors)
-
+    #print(colors)
+    print(len(item))
 
     if not(multiple):
         plt.plot(np.linspace(ran1,ran2,(int(ran2-ran1) + 1)),item,markersize=.1)
     else:
         index = 0
         for n in item:
-            plt.plot(np.linspace(ran1,ran2,(int(ran2-ran1) + 1)),n,markersize=.1,color=colors[index+1])
-            index += 1
+                plt.plot(np.linspace(ran1,ran2,(int(ran2-ran1) + 1)),n,markersize=.1,color = colors[index])
+                index += 1
     if len (leg) > 0:
         plt.legend(leg)
     #plt.gca().invert_yaxis()
     plt.title(title)
-    plt.ylim(0,45000)
+    #plt.ylim(0,45000)
     plt.xlabel("cm^-1")
     plt.show()
     plt.clf()
@@ -86,7 +86,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
 
 
     return IR
-OperatingSystem= 'Windows'
+OperatingSystem= 'Linux'
 ind = 0
 
 
@@ -102,7 +102,9 @@ ind = 0
     #output=output[::2]
 #output = (glob.glob('SilkGeometries/*/*/*/*/input_ir.txt') +  glob.glob('SilkGeometries/*/*/*/input_ir.txt')
 output= glob.glob('SilkGeometries/*/*/**/input_ir.txt',recursive=True)
-print (output)
+#for out in sorted(output):
+    #print(out)
+#print (output)
 
 #print (output)
 if OperatingSystem =='Windows':
@@ -141,27 +143,33 @@ if OperatingSystem =='Windows':
 
 if OperatingSystem =='Linux':
     TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
-# =============================================================================
-#     for Type in TypeList:
-#         type_filter = filter(lambda x: ('A15' in x) and (Type in x), output)
-#         Inter =list(type_filter)
-#         print("test", Inter)
-#         specs = []
-#         legend = []
-#
-#
-#         for spec in Inter:
-#            #m = spec.index('/',4)
-#            #i = spec.index('/',9)
-#            legend.append(spec[:])
-#        #i = spec.index('/',9)
-#        #legend.append(spec[8:i])
-#            specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
-#        #print("check" ,specs)
-#        #print('specs', len(specs))
-#     #print(specs)
-#         IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg =legend, multiple = True)
-# =============================================================================
+#=============================================================================
+    for Type in ['/gas/',  '/pcm/']:
+        type_filter = filter(lambda x: ('A15' in x) and (Type in x), output)
+        Inter =list(type_filter)
+        Inter =sorted(Inter)
+
+        #print("test", Inter)
+        specs = []
+        legend = []
+
+        #print(Inter)
+
+        for spec in Inter:
+            m = spec.index('/',16)
+            #print(m)
+            i = spec.index('/', 21)
+            #print(i)
+            legend.append(spec[m+1:i])
+        #i = spec.index('/',9)
+        #legend.append(spec[8:i])
+            specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
+            #print(spec)
+        #print("check" ,specs)
+        #print('specs', len(specs))
+    #print(specs)
+        IrPlotter(specs, "Helix " + Type[1:-1] + ' amide region', 1450, 1800, leg =legend, multiple = True)
+#=============================================================================
 
     for Type in TypeList:
         type_filter = filter(lambda x: ('A6' in x) and (Type in x), output)
@@ -170,14 +178,36 @@ if OperatingSystem =='Linux':
         specs = []
         legend = []
         for spec in Inter:
+           #print(spec)
            #m = spec.index('/',4)
            #i = spec.index('/',8)
-           legend.append(spec[:])
+           m = spec.index('/',23)
+           #print(m)
+           i = spec.index('/', 26)
+           #print(i)
+           legend.append(spec[m+1:i])
            specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
            #print("check" ,specs)
         IrPlotter(specs, "Bsheets " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
-    else:
-        TypeList = ['/gas/', '/wat_gas/', '/pcm/', '/wat_pcm/']
+    for Type in TypeList:
+         type_filter = filter(lambda x: ('bturn' in x) and (Type in x), output)
+         Inter =list(type_filter)
+         Inter =sorted(Inter)
+         specs = []
+         legend = []
+         for spec in Inter:
+            #print(spec)
+            #m = spec.index('/',4)
+            #i = spec.index('/',8)
+            m = spec.index('/',16)
+            #print(m)
+            i = spec.index('/', 21)
+            #print(i)
+            legend.append(spec[m+1:i])
+            specs.append(gaussian_broadening(fetchIr(spec), 20, 1450, 1800))
+            #print("check" ,specs)
+         IrPlotter(specs, "Bturn " + Type[1:-1] + ' amide region', 1450, 1800, leg = legend, multiple = True)
+
 
 
 

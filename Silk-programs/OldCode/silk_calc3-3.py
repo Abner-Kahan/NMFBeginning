@@ -105,8 +105,11 @@ ind = 0
 
     #output=output[::2]
 output= glob.glob('SilkGeometries/*/*/**/input_ir.txt',recursive=True)
+dawg =0 
 for n in output:
     print(n)
+    dawg += 1
+print(dawg)
 #print (output)
 if OperatingSystem =='Windows':
     TypeList = ['\\gas\\', '\\wat_gas\\', '\\pcm\\', '\\wat_pcm\\']
@@ -149,6 +152,7 @@ if OperatingSystem =='Linux':
     for Type in TypeList:
         type_filter = filter(lambda x: ('bturn' in x) and (Type in x), output)
         Inter =list(type_filter)
+        print(Inter)
         Inter =sorted(Inter)
 
         specs = []
@@ -159,7 +163,7 @@ if OperatingSystem =='Linux':
             i = spec.index('/',7)
 
 
-            info = gaussian_broadening(fetchIr(spec), 20, 1450, 1800)
+            info = gaussian_broadening(fetchIr(spec), 20, 1450, 1800)           
             specs.append(info)
             peaks = find_peaks(info)[0]
             #for peak in peaks:

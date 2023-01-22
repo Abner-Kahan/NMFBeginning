@@ -13,4 +13,3 @@ tom.index =[ 'Residue 1', 'Residue 2','Residue 3',,'Residue 4','Residue 5','Resi
 for n in range(1, 82):
     tom[n] = n
 print(n)
-

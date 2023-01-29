@@ -1,0 +1,11 @@
+All files are easily run on an IDE or using python on command line without further modification.
+
+KL_vs_Fro.py plots a figure that illastrates the difference between the Frobenius and KL divergences, as well as calculates errors numerically.
+
+OneRandomMixture generates two random spectra from 8 gaussians, mixes them, and then reforms them after the decomposition. The output is a figure of input, mixtures, and output along with the expected fraction. One could adjust the number of points, the number of gaussians, NMF hyper parameters in the code, but the current setting where the ones used in the paper. The program also prints out various errors of the decomposition.
+
+OneTrimer selects two trisaccharides from the Tri_A131 and Tri_A154 libraries, mixes them, and then reforms them after the decomposition. The output is a figure of input, mixtures, and output along with the expected fraction. One could adjust the resolution, the gaussian broadening (default 25) of the IR spectra, NMF hyper parameters in the code, but the current setting where the ones used in the paper. The program also prints out various errors of the decomposition.
+
+Random Param applies various hyperparamaters to the decomposition of a mixture of two sugars and calculates the error. It repeats this process for "iterations" number of times, which can be adjusted to get a larger sample size for comparing hyper parameters. One could also adjust the number of Guassians, points, and the hyper paramaters tested, such as using Ikaro-Saito error function, which was not tested as part of the paper. The output is the average percent error of the mixture's fractions, the ypendry error, and the Frobenius error across every set of hyperparameters.
+
+Random Param applies various hyperparamaters to the decomposition of a mixture of two sugars and calculates the error. It repeats this process for "iterations" number of times, which can be adjusted to get a larger sample size for comparing hyper parameters. One could also adjust the number of Guassians, points, and the hyper paramaters tested, such as using Ikaro-Saito error function, which was not tested as part of the paper. The output is the average percent error of the mixture's fractions, the ypendry error, and the Frobenius error across every set of hyperparameters.

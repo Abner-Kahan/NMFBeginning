@@ -201,7 +201,7 @@ np.savetxt("LowFreqDiff.csv", DiffList, delimiter=",")
 plt.title("Low Frequency Difference")
 plt.show()
 plt.clf()
-print(HotGuessSpec)
+#print(HotGuessSpec)
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 # def gaussian_broadening(spectra, broaden, experiment =False, resolution=1):
  

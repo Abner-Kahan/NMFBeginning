@@ -210,7 +210,7 @@ def nmf2TesterMix(numPoints):
 # Frac2 -NMF Real, % error, 1-Frac2 NMF Real, %error  ]    
 timeA = time.perf_counter_ns() 
 
-iters = 20
+iters = 100
 ResultsTable = pd.DataFrame(columns = paramlist)
 
 with warnings.catch_warnings():

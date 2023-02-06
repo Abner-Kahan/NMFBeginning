@@ -100,10 +100,10 @@ def IrPlotter(item,title,ran1,ran2, leg = [], multiple = False):
     plt.xlabel("cm^-1")    
     plt.show()
     plt.clf() 
-customW = addIRS(116)
-plt.plot(customW)
-plt.show()
-plt.clf()
+#customW = addIRS(116)
+#plt.plot(customW)
+#plt.show()
+#plt.clf()
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolution=1):
  
@@ -150,7 +150,7 @@ def peakPlotter(W,numPeaks,ran1,ran2,col):
     plt.clf()
 
 
-sumsol  = np.load('sumsol.npy')
+#sumsol  = np.load('sumsol.npy')
 
 
                   
@@ -219,12 +219,12 @@ def nmf2TesterMixB(broad):
 
     IRF= np.transpose(IRF)
     customH= np.full((4,33),.5)
-    print(customH)
+   # print(customH)
     model = NMF(n_components=4, max_iter=2000, tol= 1*10**-12, solver= 'cd', init= "nndsvd", beta_loss= 'frobenius')
     #model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'mu', init='nndsvda', beta_loss= 'kullback-leibler')#, alpha = .3  )
     #W = model.fit_transform(IRF,W = customW,H = customH)
     W = model.fit_transform(IRF)
-    print("W", W.shape)
+   # print("W", W.shape)
     #IrPlotter(W[:,0])
     
     print ("W-size",W.shape)
@@ -274,7 +274,7 @@ def nmf2TesterMixB(broad):
     W_test = W
     #axs[3].plot[x_range,]Harray
     scale = np.max(np.mean(IRF,axis=1)/np.max(W_test))
-    print("bob\n",scale,"\n bob")
+    print("scale \n",scale,"Max of NMF over mean of IR")
     axs[3].plot(x_range,np.mean(IRF,axis=1)/np.max(W_test)/scale)
     axs[3].plot(x_range, W_test[:,sorter[0]]/scale, color = 'firebrick')
     #meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
@@ -296,7 +296,7 @@ def nmf2TesterMixB(broad):
     
     axs[3].plot(x_range, W_test[:,sorter[3]]/scale,color='darkorange')
     
-    axs[3].legend()
+    #axs[3].legend()
    # meany = np.mean(W_test[:,sorter[3]]/sumsol[3])
     axs[0].set_xticklabels(())
     axs[1].set_xticklabels(())
@@ -319,6 +319,7 @@ def nmf2TesterMixB(broad):
    # axsB[0].plot(W_test[:,sorter[3]])
     print(numPeaks0, numPeaks1, numPeaks2, numPeaks3)
     axs[3].legend([ "Spec","BS", "RC", "AH", "BT"], loc="upper left")
+    plt.show()
     
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1]*K1 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,2]*K2 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH B"], True)
@@ -328,7 +329,7 @@ def nmf2TesterMixB(broad):
    # IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3] ],'4Spectra',["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra"], True)
     H = model.components_
    # axsB[1].plot(np.matmul(W,H))
-   # plt.show()
+    
     #plt.plot(np.dot(W,H[0,randSpec]))
     #Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     # for n in range(11): 
@@ -431,7 +432,7 @@ def nmf2TesterMixB(broad):
     axs2[0].set(xticks = [])
     axs2[1].set(xticks = [])
     axs2[2].set_xlabel("% Humidity")
-    
+    plt.show()
     return W,H
 
 data = nmf2TesterMixB(15)  

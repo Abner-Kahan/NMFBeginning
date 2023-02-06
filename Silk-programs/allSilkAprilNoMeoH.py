@@ -133,7 +133,7 @@ def peakPlotter(W,numPeaks,ran1,ran2,col):
     plt.clf()
 
 
-sumsol  = np.load('sumsol.npy')
+#sumsol  = np.load('sumsol.npy')
 
 
                   
@@ -151,7 +151,7 @@ def nmf2TesterMixB(broad):
     Humidities = [5,10,20,30,40,50,60,70,80,90,95]
     fig, axs = plt.subplots(3)
     
-    figB, axsB = plt.subplots(nrows=1, ncols=2)
+    #figB, axsB = plt.subplots(nrows=1, ncols=2)
  
     for spec in IRF[:11,:]:
         spec =spec/np.max(IRF[:11,:])
@@ -268,21 +268,22 @@ def nmf2TesterMixB(broad):
     #axs[2].set(xticks=None)
    # plt.plot(x_range, sumsol[3]*meany)
     axs[2].set(xlabel='cm$^-1$')
-    print (np.shape(IRF[randSpec,:]))
+    plt.show()
+   # print (np.shape(IRF[randSpec,:]))
     #axs[2].set(xticks = np.arange(amide1_ran1, amide1_ran2, 10))
     #fig.suptitle("NMF Decomposition of Amide II of Silk")
     #plt.legend(["NMF", "Gaussian"])
 
     #IrPlotter(sumsol[0], "Gaussian",amide1_ran1,amide1_ran2) 
-    axsB[0].plot(IRF[:,randSpec]/np.max(IRF[:,randSpec]))
-    WB = model.transform(np.transpose(np.tile(IRF[:,randSpec], (22, 1))))
+    #axsB[0].plot(IRF[:,randSpec]/np.max(IRF[:,randSpec]))
+    #WB = model.transform(np.transpose(np.tile(IRF[:,randSpec], (22, 1))))
     print (np.size(IRF[:,randSpec]))
     #WB = model.fit_transform([x_range,IRF[randSpec,:]])
-    WB = WB/ np.max(WB)
-    axsB[1].plot(x_range, WB)
-    axsB[1].plot(x_range, WB)
-    axsB[1].plot(x_range, WB)
-    axsB[1].plot(x_range, WB)
+    #WB = WB/ np.max(WB)
+   # axsB[1].plot(x_range, WB)
+    #axsB[1].plot(x_range, WB)
+    #axsB[1].plot(x_range, WB)
+    #axsB[1].plot(x_range, WB)
     #axsB[0].plot(W_test[:,sorter[0]])
     #axsB[0].plot(W_test[:,sorter[1]])
     #axsB[0].plot(W_test[:,sorter[2]])
@@ -297,9 +298,8 @@ def nmf2TesterMixB(broad):
     #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
    # IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3] ],'4Spectra',["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra"], True)
     H = model.components_
-    axsB[1].plot(np.matmul(W,H))
-    plt.show()
-    #plt.plot(np.dot(W,H[0,randSpec]))
+    #axsB[1].plot(np.matmul(W,H))
+    #plt.show()    #plt.plot(np.dot(W,H[0,randSpec]))
     #Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
     # for n in range(11): 
     #     plt.plot(np.dot(W,H[0,n]))

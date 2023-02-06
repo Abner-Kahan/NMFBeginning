@@ -15,7 +15,12 @@ Gaussian9All iterates through all combinations of solvation and humidities start
 For each combination, a figure is generated for the combined Amide I and Amide II region showing a blue line representing the sum of 9 Gaussians, and underlaid red dots representing the IR data points. The ypendry error is then displayed at the bottom of the figure.
 After each figure of the sum, an additional figure is shown graphing the nine individual 9 Gaussians. The first four are added together to make the Amide I band, which is displayed on top of those four. This fifth Gaussian is labeled as a correction. The Amide II band is also displayed which is the sum of the four remaining spectra. The wavelengths and areas of all 9 peaks are printed from smallest to largest wavenumber. At the end of the program, a table is printed with the very peak location for the nine gaussians for each solvent conditions, which is saved (with an erroneous name) in Peaksof8A.csv, while the areas for the nine gaussians are  printed and saved into Areasof8A.csv
 
-allSilkApril.py
+Silk5NMF plots all the spectra from 0 to 4000 cm-1 across all 33 combinations of solvent conditions.
+It then performs NMF decomposition across this window into 5 constituent spectra across the range and displays each of the five constituents individually. One could adjust NMF hyper parameters, the window, and even oscillate through a smaller number of spectra. To adjust the number of components, one adjusts the line when making the NMF model, and displays more or less peak plots.
+
+ 
+allSilkApril.py displays two figures. The first figure shows the Amide I region of the Silk for all samples across every condition of humidity. It then shows an NMF decomposition of the amide I band into four labeled components along with an overlaid example of a spectra being decomposed. The wavenumber of the peaks are printed. The hyper parameters of NMF and window can be adjusted.
+The next figure shows the percentage of each secondary structure across every solvent and humidity condition. One could correlate the peaks in the last figure, to the percentages in this figure.
 
 allSilkAprilNoMeoH
 

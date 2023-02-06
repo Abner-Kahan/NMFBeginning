@@ -15,6 +15,10 @@ Gaussian9All iterates through all combinations of solvation and humidities start
 For each combination, a figure is generated for the combined Amide I and Amide II region showing a blue line representing the sum of 9 Gaussians, and underlaid red dots representing the IR data points. The ypendry error is then displayed at the bottom of the figure.
 After each figure of the sum, an additional figure is shown graphing the nine individual 9 Gaussians. The first four are added together to make the Amide I band, which is displayed on top of those four. This fifth Gaussian is labeled as a correction. The Amide II band is also displayed which is the sum of the four remaining spectra. The wavelengths and areas of all 9 peaks are printed from smallest to largest wavenumber. At the end of the program, a table is printed with the very peak location for the nine gaussians for each solvent conditions, which is saved (with an erroneous name) in Peaksof8A.csv, while the areas for the nine gaussians are  printed and saved into Areasof8A.csv
 
- 
+allSilkApril.py
+
+allSilkAprilNoMeoH
+
+Simulated silk spectra 
 
 

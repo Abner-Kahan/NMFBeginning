@@ -455,5 +455,5 @@ for sol in range(len(solvents)):
       #IRF [1,:] = gaussian_broadening(IR2,broad,ran1,ran2)
       print(f"Error: {ypendry(broadMan, yplot4):.5f}")
 
-      IrPlotter( broadMan, 'Unstreated Spectra_Old_fit', ran1,ran2)
-IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)
+     IrPlotter( broadMan, 'Gaussian Broadened', ran1,ran2)
+#IrPlotter( IRF [1,:], 'Unstreated Spectra_new_fit', ran1,ran2)

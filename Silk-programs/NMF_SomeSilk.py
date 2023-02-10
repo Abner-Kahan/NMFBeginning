@@ -31,21 +31,21 @@ x_range = np.linspace(amide1_ran1,amide1_ran2,(amide1_ran2-amide1_ran1+1))
 def fetchIr(path,column,ran1,ran2):
     logfile =  open(path, 'r')
     logtest = logfile.readlines()
-   
+
     logfile.close()
     rows = len(logtest[0].split())
     columns = len (logtest)
-              
+
     IrArray = np.zeros((rows,columns ))
-    x= 0 
+    x= 0
     y = 0
     for line in logtest:
-        
+
 
         for word in line.split():
             word = word.replace(',' , '.')
             if (x == 0) and (float(word) < ran1 or float(word) > ran2):
-                
+
                 break
 
 
@@ -61,13 +61,13 @@ def fetchIr(path,column,ran1,ran2):
     #print(IrArray.shape)
     mask = (IrArray[0,:]) != [0] *len(IrArray[0])
     #print(mask)
-    
+
     IrArray2 = IrArray[:,mask]
     #print(IrArray2.shape)
     #plt.scatter(IrArray2[0],IrArray2[1])
     #print(IrArray)
-    
-    
+
+
     return IrArray2[(0,column),:]
 
 #print(fetchIr('UntreatedSample.txt',3))
@@ -82,17 +82,17 @@ def IrPlotter(item,title,ran1,ran2, leg = [], multiple = False):
         plt.legend(leg,fontsize='x-small')
     #plt.gca().invert_yaxis()
     plt.title(title)
-    plt.xlabel("cm^-1")    
+    plt.xlabel("cm^-1")
     plt.show()
-    plt.clf() 
-    
-    
+    plt.clf()
+
+
 #IrPlotter(fetchIr('UntreatedSample.txt',1), "Test")
 def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolution=1):
- 
+
     """ Performs gaussian broadening on IR spectrum
     generates attribute self.IR - np.array with dimmension 4000/resolution consisting gaussian-boraden spectrum
-    
+
     spectra should be in numpy format or list with frequencies in 0 index then intensities in index 1
     :param broaden: (float) gaussian broadening in wn-1
     :param resolution: (float) resolution of the spectrum (number of points for 1 wn) defaults is 1, needs to be fixed in plotting
@@ -103,7 +103,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolutio
     #for f, i in zip(spectra[:,0]):
       #  IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
       #  IR=np.vstack((X, IR)).T #tspec
-   
+
     freq = spectra[0]
     if experiment:
          freq = spectra[0] *.965
@@ -111,8 +111,8 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,experiment =False, resolutio
     #print(len(freq))
     for f,i in zip(freq,inten):
        IR += i*np.exp(-0.5*((X-f)/int(broaden))**2)
-        
-    
+
+
     return IR
 
 
@@ -136,47 +136,47 @@ def peakPlotter(W,numPeaks,ran1,ran2,col):
 #sumsol  = np.load('sumsol.npy')
 
 
-                  
-                  
+
+
 
 def nmf2TesterMixB(broad):
     #pdb.set_trace()
     IRF = np.zeros((22,(amide1_ran2-amide1_ran1+1)))
     for n in range(11):
            IRF [n,:]= gaussian_broadening(fetchIr('UntreatedSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
-           
+
            #IRF[n+11,:] =  gaussian_broadening(fetchIr('MeOHSample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
            IRF[n+11,:] =  gaussian_broadening(fetchIr('WA45Sample.txt',n+1,amide1_ran1,amide1_ran2),broad,amide1_ran1,amide1_ran2)
 
     Humidities = [5,10,20,30,40,50,60,70,80,90,95]
     fig, axs = plt.subplots(3)
-    
+
     #figB, axsB = plt.subplots(nrows=1, ncols=2)
- 
+
     for spec in IRF[:11,:]:
         spec =spec/np.max(IRF[:11,:])
         axs[0].plot(x_range,spec)
-        
+
     axs[0].set_title("Untreated Sample", x=.5, y= .2)
-    axs[0].legend([str(n) for n in Humidities])
+    #axs[0].legend([str(n) for n in Humidities])
     #axs[0].legend(Humdities)
 
-    
 
-    
+
+
     #axs[1].legend(Humdities)
 
-    for spec in IRF[11:22,:]: 
+    for spec in IRF[11:22,:]:
         spec =spec/np.max(IRF[11:22,:])
         axs[1].plot(x_range, spec)
-    
+
     axs[1].set_title("WA45ample Sample", x=.5, y= .2)
-    
+
     #axs[2].legend(Humdities)
     randSpec = random.choice(list(range(22)))
-    
 
-    
+
+
     #IrPlotter( IRF [:11,:], 'Unstreated Spectra', amide1_ran1,amide1_ran2, ['5','10','20','30','40','50','60','70','80','90','95']
            #                                                                     ,True)
     #IrPlotter( IRF [11:22,:], 'MEOH Spectra', amide1_ran1,amide1_ran2, ['5','10','20','30','40','50','60','70','80','90','95']
@@ -184,31 +184,31 @@ def nmf2TesterMixB(broad):
     #IrPlotter( IRF [22:,:], 'WA45 Spectra', amide1_ran1,amide1_ran2,['5','10','20','30','40','50','60','70','80','90','95']
        #                                                                          ,True)
    # print(IR1.shape)
-    
+
 
    # IrPlotter (gaussian_broadening(fetchIr('UntreatedSample.txt',1),broad,ran1,ran2,res), "test", ran1, ran2)
     IRF= np.transpose(IRF)
     model = NMF(n_components=4, max_iter=3000, tol= 1*10**-12, solver= 'cd', init= "nndsvdar", beta_loss= 'frobenius')#, alpha = .3  )
     W = model.fit_transform(IRF)
     #IrPlotter(W[:,0])
-    
+
     print ("W-size",W.shape)
     #print("mean", np.mean(W), np.mean(IRF[:,0]))
     numPeaks0 = (find_peaks(W[:,0],'prominence' == 1)[0])+amide1_ran1
-    
+
     numPeaks1 = (find_peaks(W[:,1],'prominence' == 1)[0])+amide1_ran1
     numPeaks2 = (find_peaks(W[:,2],'prominence' == 1)[0]) +amide1_ran1
     numPeaks3 = (find_peaks(W[:,3],'prominence' == 1)[0]) +amide1_ran1
     #numPeaks4 = (find_peaks(W[:,4],'prominence' == .1)[0]) +amide1_ran1
-    
-    
+
+
 # =============================================================================
 #     peakPlotter(W,numPeaks0,amide1_ran1,amide1_ran2,0)
 #     peakPlotter(W,numPeaks1,amide1_ran1,amide1_ran2,1)
 #     peakPlotter(W,numPeaks2,amide1_ran1,amide1_ran2,2)
 #     peakPlotter(W,numPeaks3,amide1_ran1,amide1_ran2,3)
 # =============================================================================
-    
+
     axs[2].legend(["NMF Calculated 1", "NMF Calculated 2", "NMF Calculated 3", "NMF Calculated 4"])
     axs[2].set_title("NMF Decomposition",  x=.5, y= .05)
    # print ("Peaks",numPeaks0,numPeaks1,numPeaks2,numPeaks3 )
@@ -218,16 +218,16 @@ def nmf2TesterMixB(broad):
     K2= np.mean([W]) /  np.mean(IRF[:,2])
     K3= np.mean([W]) /  np.mean(IRF[:,3])
     #K4= np.mean([W]) /  np.mean(IRF[:,4])
-   
-     
+
+
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,0]*K0 ],'Output Spectra vs Untreated Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "Untreated Spectra"], True)
-    
+
     #IrPlotter(W[:,ordPeaks[0]], "NMF Calculated 1",amide1_ran1,amide1_ran2)
     #IrPlotter(W[:,ordPeaks[1]], "NMF Calculated 2",amide1_ran1,amide1_ran2)
     #IrPlotter(W[:,ordPeaks[2]], "NMF Calculated 3",amide1_ran1,amide1_ran2)
     #IrPlotter(W[:,ordPeaks[3]], "NMF Calculated 4",amide1_ran1,amide1_ran2)
     #IrPlotter(W[:,4], "NMF Calculated 5",amide1_ran1,amide1_ran2)
-    
+
     #IrPlotter(W[:,4], "Calculated Spectra 5",ran1,ran2)
     SingPeaks =[]
     SingPeaks += [np.argmax(W[:,0])]
@@ -236,28 +236,28 @@ def nmf2TesterMixB(broad):
     SingPeaks += [np.argmax(W[:,3])]
    # print(SingPeaks, "\n\n\n\n\n----\n\n---")
     sorter =np.argsort(SingPeaks)
-    
+
     W_test = W/np.max(W)
    # print('\n\n\n\n' ,W, '')
-  #  
+  #
     axs[2].plot(x_range, W_test[:,sorter[0]])
     #meany = np.mean(W_test[:,sorter[0]]/sumsol[0])
 
     #plt.plot(x_range, sumsol[0]*meany)
 
-    
+
     axs[2].plot(x_range, W_test[:,sorter[1]])
     #meany = np.mean(W_test[:,sorter[1]]/sumsol[1])
 
     #plt.plot(x_range, sumsol[1]*meany)
 
-    
+
     axs[2].plot(x_range, W_test[:,sorter[2]])
    # meany = np.mean(W_test[:,sorter[2]]/sumsol[2])
 
    # plt.plot(x_range, sumsol[2]*meany)
 
-    
+
     axs[2].plot(x_range, W_test[:,sorter[3]])
    # meany = np.mean(W_test[:,sorter[3]]/sumsol[3])
     axs[0].set_xticklabels(())
@@ -274,7 +274,7 @@ def nmf2TesterMixB(broad):
     #fig.suptitle("NMF Decomposition of Amide II of Silk")
     #plt.legend(["NMF", "Gaussian"])
 
-    #IrPlotter(sumsol[0], "Gaussian",amide1_ran1,amide1_ran2) 
+    #IrPlotter(sumsol[0], "Gaussian",amide1_ran1,amide1_ran2)
     #axsB[0].plot(IRF[:,randSpec]/np.max(IRF[:,randSpec]))
     #WB = model.transform(np.transpose(np.tile(IRF[:,randSpec], (22, 1))))
     print (np.size(IRF[:,randSpec]))
@@ -288,9 +288,9 @@ def nmf2TesterMixB(broad):
     #axsB[0].plot(W_test[:,sorter[1]])
     #axsB[0].plot(W_test[:,sorter[2]])
    # axsB[0].plot(W_test[:,sorter[3]])
-    
-    
-    
+
+
+
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,1]*K1 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH A"], True)
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,2]*K2 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "MeOH B"], True)
     #IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3],IRF[:,3]*K3 ],'Output Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", "WA45 A"], True)
@@ -298,30 +298,66 @@ def nmf2TesterMixB(broad):
     #IrPlotter([product[:,0],product[:,1],product[:,2],product[:,3],IRF[:,1] ],'4Spectra',ran1,ran2,["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra", f'MeOH Spectra 1:  {Humdities[FileSelection1]}% humidity'], True)
    # IrPlotter([W[:,0],W[:,1],W[:,2],W[:,3] ],'4Spectra',["1st Spectra", "2nd Spectra", "3rd Spectra", "4th Spectra"], True)
     H = model.components_
+    fig2, axs2 = plt.subplots(2,figsize=(8.0902,5))
+    axs2[0].plot(Humdities,H[0,:11]/np.sum(H[:,:11],axis=0)*100, color = 'firebrick')
+    axs2[0].plot(Humdities,H[1,:11]/np.sum(H[:,:11],axis=0)*100 , color= 'gold')
+    axs2[0].plot(Humdities,H[2,:11]/np.sum(H[:,:11],axis=0)*100, color ='limegreen')
+    axs2[0].plot(Humdities,H[3,:11]/np.sum(H[:,:11],axis=0)*100, color='darkorange')
+    axs2[0].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    axs2[0].set_title("Untreated Sample", x=.5, y= .2)
+
+    axs2[1].plot(Humdities,H[0,11:22]/np.sum(H[:,11:22],axis=0)*100, color = 'firebrick')
+    axs2[1].plot(Humdities,H[1,11:22]/np.sum(H[:,11:22],axis=0)*100 , color= 'gold')
+    axs2[1].plot(Humdities,H[2,11:22]/np.sum(H[:,11:22],axis=0)*100, color ='limegreen')
+    axs2[1].plot(Humdities,H[3,11:22]/np.sum(H[:,11:22],axis=0)*100, color='darkorange')
+    axs2[1].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    axs2[1].set_title("WA45ample Sample", x=.5, y= .2)
+
+
+    # axs2[2].plot(Humdities,H[0,22:]/np.sum(H[:,22:],axis=0)*100, color = 'firebrick')
+    # axs2[2].plot(Humdities,H[1,22:]/np.sum(H[:,22:],axis=0)*100, color= 'gold')
+    # axs2[2].plot(Humdities,H[2,22:]/np.sum(H[:,22:],axis=0)*100, color ='limegreen')
+    # axs2[2].plot(Humdities,H[3,22:]/np.sum(H[:,22:],axis=0)*100 ,color='darkorange')
+    # axs2[2].legend([ "BS", "RC", "AH", "BT"],loc='upper left')
+    # axs2[2].set_title("WA45 Sample", x=.5, y= .2)
+
+    axs2[0].set_ylim(0,100)
+    axs2[0].set_ylabel("% of Structure")
+    axs2[1].set_ylim(0,100)
+    axs2[1].set_ylabel("% of Structure")
+    # axs2[2].set_ylim(0,100)
+    # axs2[2].set_ylabel("% of Structure")
+
+    axs2[0].set_xticklabels(())
+    axs2[1].set_xticklabels(())
+    axs2[0].set(xticks = [])
+    # axs2[1].set(xticks = [])
+    axs2[1].set_xlabel("% Humidity")
+    plt.show()
     #axsB[1].plot(np.matmul(W,H))
     #plt.show()    #plt.plot(np.dot(W,H[0,randSpec]))
     #Hnorm = np.apply_along_axis(lambda l :l/np.amax(l) ,1,H)
-    # for n in range(11): 
+    # for n in range(11):
     #     plt.plot(np.dot(W,H[0,n]))
     #     #plt.plot(np.dot(W,H[1,n]))
     #     #plt.plot(np.dot(W,H[2,n]))
     #    # plt.plot(np.dot(W,H[3,n]))
-        
+
     # plt.title('NMF Rebuilt Untreated Sample')
     # plt.xlabel("cm-1")
     # plt.legend(Humdities)
     # plt.show()
     # plt.clf()
-    
-    # for n in range(11,22): 
+
+    # for n in range(11,22):
     #     plt.plot(np.dot(W,H[0,n]))
     # plt.title('NMF Rebuilt MeOH Sample')
     # plt.xlabel("cm-1")
     # plt.legend(Humdities)
     # plt.show()
     # plt.clf()
-    
-    # for n in range(22,33): 
+
+    # for n in range(22,33):
     #     plt.plot(np.dot(W,H[0,n]))
     # plt.title('NMF Rebuilt WA45 Sample')
     # plt.xlabel("cm-1")
@@ -341,7 +377,7 @@ def nmf2TesterMixB(broad):
    #  plt.title('Untreated Sample')
    #  plt.show()
    #  plt.clf()
-    
+
    #  plt.plot(Humdities, Hnorm[sorter[0], 11:22], label = numPeaks0)
    #  plt.plot(Humdities, Hnorm[sorter[1], 11:22], label = numPeaks1)
    #  plt.plot(Humdities, Hnorm[sorter[2], 11:22], label = numPeaks2)
@@ -352,8 +388,8 @@ def nmf2TesterMixB(broad):
    #  plt.legend()
    #  plt.title('MeOH Fractions')
    #  plt.show()
-   #  plt.clf()    
-    
+   #  plt.clf()
+
    #  plt.plot(Humdities, Hnorm[sorter[0], 22:33], label = numPeaks0)
    #  plt.plot(Humdities, Hnorm[sorter[1], 22:33], label = numPeaks1)
    #  plt.plot(Humdities, Hnorm[sorter[2], 22:33], label = numPeaks2)
@@ -365,9 +401,9 @@ def nmf2TesterMixB(broad):
    #  plt.title('WA45 Fractions')
    #  plt.show()
    #  plt.clf()
-    
-    
-    
+
+
+
     return H
 
-H = nmf2TesterMixB(15)  
+H = nmf2TesterMixB(15)

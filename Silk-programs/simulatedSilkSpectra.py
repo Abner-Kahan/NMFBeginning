@@ -86,7 +86,7 @@ def gaussian_broadening(spectra, broaden, ran1,ran2,resolution=1):
 
 
     return IR
-OperatingSystem= 'Linux'
+OperatingSystem= 'linux'
 ind = 0
 
 

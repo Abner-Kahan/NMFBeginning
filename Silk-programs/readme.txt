@@ -28,4 +28,4 @@ One then comments and then uncomments the lines representing which spectra are b
 Finally one needs to change the fig2, axs2 to get the correct number of subplots corresponding to the solvent conditions being tested, and then graphs the corresponding entries of H
 
 
-Simulated silk spectra
+Simulated silk spectra only works in linux 

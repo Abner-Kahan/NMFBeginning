@@ -28,4 +28,5 @@ One then comments and then uncomments the lines representing which spectra are b
 Finally one needs to change the fig2, axs2 to get the correct number of subplots corresponding to the solvent conditions being tested, and then graphs the corresponding entries of H
 
 
-Simulated silk spectra only works in linux 
+Simulated Amide Silk works in Linux and Windows, although to use Windows one must change the value of Operating System after gaussian broadening is defined.This programs plots different models for the secondary structures of the Amide I and II spectra of silk. For the helix gas, there is A15, A15_11C, A15_11C_6N,A15_6N, A_15full. For helix PCM, there is A15, A15_11C, A15_11C_6N,A15_6N, A_15full. 
+For Beta sheets gas, there is 1A6, 2A6, 3A6, and 4A6. For Beta sheets water gas, there is 1A6, 2A6, 3A6, and 4A6. For Beta sheets pcm, there is 1A6, 2A6, 3A6, and 4A6. For Beta sheets wat_pcm, there is 1A6, 2A6, 3A6, and 4A6. For beta turns gas, there is b1,b1p,b2,and b2p. For beta turns water gas, there is b1,b1p,b2,and b2p. For beta turns pcm, there is b1,b1p,b2,and b2p. For beta turns water pcm, there is b1,b1p,b2,and b2p. All of these plots, show the theoretical peaks of each of the secondary structures of silk for Amide I and Amide II

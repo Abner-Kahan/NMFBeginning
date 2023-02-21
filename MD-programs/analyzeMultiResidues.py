@@ -21,8 +21,8 @@ sugarDirectory = {'g1m3': 9,'m5': 7, 'm6': 8, 'm7': 9, 'm8': 10, 'm9': 11, 'n1fb
 numNMF = 4 #4-9
 sugar = 'n2f'
 residues = sugarDirectory[sugar]
-H = np.load('tempCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
-W = np.load('ProCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
+H = np.load('MDdecomps/tempCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
+W = np.load('MDdecomps/ProCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )
 
 H_df = pd.DataFrame(data= np.transpose(H), columns =  list(range(1,numNMF+1)))
 corr_matrix = H_df.corr()
@@ -30,7 +30,7 @@ Heatmap5, axH5 = plt.subplots ()
 axH5 = sns.heatmap(corr_matrix,annot=True)
 
 
-plt.show(axH5)
+plt.show()
 plt.clf()
 def moveAverage(L,n):
     return np.convolve(L, np.ones(n), 'valid') / n
@@ -171,7 +171,7 @@ for n in range(numNMF):
     plt.xlabel("Frame")
     #plt.figure(figsize=(3.46, 2.5))
     plt.show()
-    plt.clf()
+   # plt.clf()
     Heatmap, axH = plt.subplots ()
     axH = sns.heatmap(funTable(W[:,n],residues),cmap='flare')
     axH.set_xlabel('Residues')
@@ -181,13 +181,13 @@ for n in range(numNMF):
     #plt.figure(figsize=(3.46, 2.5))
     plt.show()
     plt.clf()
-plt.figure(figsize = (5,2))
+    #
 for n in range(numNMF):
     plt.plot(np.linspace(0, len(H3[n,:]), len(H3[n,:])), H3[n,:]/np.sum(H3,axis=0)*100)    
 plt.xlabel("Frame")
 plt.ylabel("% composition")
 plt.legend(['Com 0', 'Com 1', 'Com 2', 'Com 3', 'Com 4', 'Com 5' ],ncol =2)
-
+#plt.figure(figsize = (5,2))
     #plt.figure(figsize=(3.46, 2.5))
 plt.show()
 plt.clf()

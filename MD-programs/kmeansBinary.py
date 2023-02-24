@@ -72,10 +72,10 @@ def positionmap(file, residues):
     S2bonds = [(0,1), (1,2), (2,3), (3,4),(4,5), (5,6), (2,7), (7,8), (8,9), (9,10)  ]
     S2bondsB = [(0,1), (1,2), (2,3), (3,4),(4,5), (5,6), (2,7), (7,8), (8,9), (9,10), (1,7), (8,10), (4,6), (2,4), (2,8), (1,3)  ]
     
-    for bond in G2bondsB:
-        zerolist.append((bond[0]*residues)+bond[1])
-        zerolist.append((bond[1]*residues)+bond[0])
-    print(zerolist)
+    #for bond in G2bondsB:
+    #    zerolist.append((bond[0]*residues)+bond[1])
+    #    zerolist.append((bond[1]*residues)+bond[0])
+  #  print(zerolist)
     for frame in range(frames):
         for zero in zerolist:
             contactNP[zero,frame] = 0
@@ -109,7 +109,8 @@ def calculate_WSS(points, kmax):
   return sse, info, silhouette
 pm =positionmap('vmd/g2-45d.txt',9 ).transpose()
 trainData, testData = train_test_split(pm)
-yellow = calculate_WSS(pm, 20)
+MaxTestCase =12
+yellow = calculate_WSS(pm, MaxTestCase-1)
 def findVals(clusters,index, range1, range2, value):
     info = clusters[1][index][range1:range2]
     info = np.where(info ==value)
@@ -118,15 +119,15 @@ def findVals(clusters,index, range1, range2, value):
     
 print(yellow[0])      
 plt.title("Means squared error")
-plt.plot(range(2,21),yellow[0], 'bx-')
-plt.xticks(range(2,21,2))
+plt.plot(range(2,MaxTestCase),yellow[0], 'bx-')
+plt.xticks(range(2,MaxTestCase,2))
 plt.xlabel("Number of clusters") 
 plt.show()
 plt.clf()
 
 plt.title("Silhouette squared error")
-plt.plot(range(2,21),yellow[2], 'rx-')
-plt.xticks(range(2,21,2))
+plt.plot(range(2,MaxTestCase),yellow[2], 'rx-')
+plt.xticks(range(2,MaxTestCase,2))
 plt.xlabel("Number of clusters") 
 plt.show()
 plt.clf()

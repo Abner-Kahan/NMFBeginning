@@ -18,7 +18,7 @@ sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt',
 sugarDirectory = {'g1m3': 9,'m5': 7, 'm6': 8, 'm7': 9, 'm8': 10, 'm9': 11, 'n1fb': 8, 'n2': 7, 'n2b': 8, 'n2f': 8, 'n33': 8, 'n36': 8, 's1': 10, 's2': 11, 's33': 14, 's36': 14}
 
 
-numNMF = 4 #4-9
+numNMF = 4 #2-9
 sugar = 'n2f'
 residues = sugarDirectory[sugar]
 H = np.load('MDdecomps/tempCompons' + '_' + sugar + '_'+ str(numNMF)+ '.npy' )

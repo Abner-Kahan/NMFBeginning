@@ -84,6 +84,7 @@ def calculate_WSS(points, kmax):
 
 mappo = distancemap(positionmap('vmd/g2-center.txt', 9))
 wss = calculate_WSS(mappo, 10)
+print(wss)
 #tom2 = moveAverage(tom, 10)
 #peaks = find_peaks(tom2*-1, rel_height=.3)
 #print(peaks)

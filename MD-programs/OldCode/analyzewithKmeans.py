@@ -11,12 +11,12 @@ from scipy.signal import find_peaks
 import sklearn.cluster
 
 
-numNMF =1
+numNMF =6
 def moveAverage(L,n):
     return np.convolve(L, np.ones(n), 'valid') / n
 print("bob")
-H = np.load('tempCompons.npy')
-W = np.load('ProCompons.npy')
+H = np.load('MDdecomps/tempCompons_m9_6.npy')
+W = np.load('MDdecomps/ProCompons_m9_6.npy')
 H2 = np.zeros((numNMF, H.shape[1]-9))
 for entry in range(numNMF):
     H2[entry,:] = moveAverage(H[entry,:], 10)

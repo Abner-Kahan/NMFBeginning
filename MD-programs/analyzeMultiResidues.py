@@ -12,8 +12,8 @@ import pandas as pd
 import seaborn as sns
 
 residueCount = [7,8, 9 ,10 ,11, 8, 7, 8, 8, 8, 8, 10, 11, 14, 14   ]
-sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt','n1fb-45d.txt' , 
-             'n2-45d.txt', 'n2b-45d.txt','n2f-45d.txt','n33-45d.txt','n36-45d.txt', 's1-45d.txt', 
+sugarList = ['m5-45d.txt','m6-45d.txt','m7-45d.txt', 'm8-45d.txt', 'm9-45d.txt','n1fb-45d.txt' ,
+             'n2-45d.txt', 'n2b-45d.txt','n2f-45d.txt','n33-45d.txt','n36-45d.txt', 's1-45d.txt',
              's2-45d.txt',  's33-45d.txt', 's36-45d.txt']
 sugarDirectory = {'g1m3': 9,'m5': 7, 'm6': 8, 'm7': 9, 'm8': 10, 'm9': 11, 'n1fb': 8, 'n2': 7, 'n2b': 8, 'n2f': 8, 'n33': 8, 'n36': 8, 's1': 10, 's2': 11, 's33': 14, 's36': 14}
 
@@ -55,7 +55,7 @@ for entry in range(numNMF):
 #print(newList)
 #for n in range(len(newList)):
  #   for b in range(len(newList)):
-        
+
    #     if abs(newList[n] - newList[b])<25:
    #         newList[b] = 0
 #print(newList)
@@ -68,7 +68,7 @@ for entry in range(numNMF):
 Hpeaks =  find_peaks(H2[0,:], prominence=.01)
 #print(Hpeaks[0])
 #for (p,z) in zip (Hpeaks[0], Hpeaks[1]['prominences']):
-#    print (p,z) 
+#    print (p,z)
 #print ("----------------\n")
 #Hmins = find_peaks(H2[0,:]*-1, prominence=1.3)
 #print(Hmins[0])
@@ -78,11 +78,11 @@ Hpeaks =  find_peaks(H2[0,:], prominence=.01)
 # =================2f-10============================================================
 # peaks = find_peaks(W[:,0], height = .3)
 # #print(peaks)
-# 
-# 
-# 
-# 
-# 
+#
+#
+#
+#
+#
 # tupleList = []Copy of N2F
 # for n in peaks[0]:
 #      print(n)
@@ -90,8 +90,8 @@ Hpeaks =  find_peaks(H2[0,:], prominence=.01)
 # index = 0
 # for (x,y) in zip(peaks[0], peaks[1]['peak_heights']) :
 #         label = tupleList[index]
-# 
-# 
+#
+#
 #         plt.annotate(label, # this is the text
 #              (x,y), # these are the coordinates to position the label
 #                  textcoords="offset points", # how to position the text
@@ -111,17 +111,17 @@ if numNMF == 2:
             label = tupleList2[index]
             if index == 3:
                 x = x +4
-            
+
             plt.annotate(label, # this is the text
                   (x,y), # these are the coordinates to position the label
                       textcoords="offset points", # how to position the text
                       xytext=(0,1), # distance from text to points (x,y)
                       ha='center', color= "red") # horizontal alignment can be left, right or center
-            
+
             index += 1
-            
+
     plt.plot(W[:,1], color='red')
-        
+
 
 #plt.plot(np.linspace(0,11**2,121), W, color='green')
 #plt.ylim(0,1)
@@ -155,14 +155,14 @@ def funTable(W2,resids):
          n=n+1
          mapContact.loc[n] = W2[n*resids:(n+1)*resids]
     return mapContact
-    
+
 # =============================================================================
-    
 
 
-    
+
+
 #for search in range (0,10000,10):Copy of N2F
-#search= 
+#search=
 #    print(H[0, search], search)
 #print(search)
 for n in range(numNMF):
@@ -183,7 +183,7 @@ for n in range(numNMF):
     plt.clf()
     #
 for n in range(numNMF):
-    plt.plot(np.linspace(0, len(H3[n,:]), len(H3[n,:])), H3[n,:]/np.sum(H3,axis=0)*100)    
+    plt.plot(np.linspace(0, len(H2[n,:]), len(H2[n,:])), H2[n,:]/np.sum(H2,axis=0)*100)
 plt.xlabel("Frame")
 plt.ylabel("% composition")
 plt.legend(['Com 0', 'Com 1', 'Com 2', 'Com 3', 'Com 4', 'Com 5' ],ncol =2)
@@ -207,18 +207,18 @@ plt.clf()
 #             index += 1
 # =============================================================================
 
-    
-    
+
+
 #for n in range (50):
  #   print(.02+n/100, np.where(abs(H - .02-n/100) <.01))
- 
+
 #numpy.random.choice
 def myRandom(npAr):
     if npAr.size > 0:
         return np.random.choice(npAr)
     else:
         return ""
-    
+
 def getPercentages(L):
     Sentence = ''
     for we in range(len(L)):
